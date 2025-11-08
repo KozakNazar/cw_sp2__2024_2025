@@ -90,7 +90,7 @@ struct cwgrammar : qi::grammar<Iterator> {
         digit = digit_0 | non_zero_digit;
         digit_optional = digit | "";
         non_zero_digit = digit_1 | digit_2 | digit_3 | digit_4 | digit_5 | digit_6 | digit_7 | digit_8 | digit_9;
-        unsigned_value = non_zero_digit >> (digit_optional | digit_0) >> BOUNDARIES;
+        unsigned_value = (non_zero_digit >> digit_optional | digit_0) >> BOUNDARIES;
         value = sign_optional >> unsigned_value >> BOUNDARIES;
         letter_in_lower_case = a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z;
         letter_in_upper_case = A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z;
