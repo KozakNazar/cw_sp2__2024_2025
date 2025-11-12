@@ -469,7 +469,7 @@ IF_USE_REVERSE_ASSIGNMENT(\
 )\
 {LA_IS, { "ident_terminal" }, { "cycle_counter_init",{\
     IF_NONUSE_REVERSE_ASSIGNMENT({LA_IS, { T_RLBIND_0 }, 1, { "cycle_counter_rl_init" }})\
-    IF_USE_REVERSE_ASSIGNMENT({LA_NOT, { T_RLBIND_0 }, 1, { "cycle_counter_lr_init" }})\
+    IF_USE_REVERSE_ASSIGNMENT({LA_NOT, { T_LRBIND_0 }, 1, { "cycle_counter_lr_init" }})\
 }}},\
 IF_USE_REVERSE_ASSIGNMENT(\
 {LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "unsigned_value_terminal" }, { "cycle_counter_init",{\
@@ -1114,4 +1114,5 @@ IF_USE_REVERSE_ASSIGNMENT(\
 
 //#define DEFAULT_MODE (DEBUG_MODE | LEXICAL_ANALISIS_MODE)
 #define DEFAULT_MODE (DEBUG_MODE | LEXICAL_ANALYZE_MODE | SYNTAX_ANALYZE_MODE | SEMANTIX_ANALYZE_MODE | MAKE_ASSEMBLY | MAKE_BINARY)
+
 
