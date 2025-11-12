@@ -629,7 +629,6 @@ IF_USE_REVERSE_ASSIGNMENT(\
 }}},\
 \
 },\
-103,\
 "program_rule"
 // TODO:
 //{ LA_IS, { T_NAME_0 }, { "program____part1",{
@@ -679,7 +678,6 @@ typedef struct {
 
 typedef struct {
 	MarkedRule multiRules[MAX_RULES];
-	int rule_count;
 	char start_symbol[MAX_TOKEN_SIZE];
 } Grammar;
 
