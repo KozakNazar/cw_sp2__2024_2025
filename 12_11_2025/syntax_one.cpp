@@ -1210,18 +1210,31 @@ int main(int argc, char* argv[]) {
 	else {
 		printLexemes(lexemesInfoTable, 0);
 
-
-
-
 		errorMessagesPtrToLastBytePtr[0] = '\0';
 		unsigned char* errorMessagesPtrToLastBytePtr_ = errorMessagesPtrToLastBytePtr;
 		if (SUCCESS_STATE != syntaxAnalyze(lexemesInfoTable, &grammar, 0, (char*)AST_OUTPUT_FILE, (char*)&errorMessagesPtrToLastBytePtr, true)) {
-
-			return 0;
+				(void)getchar();
+				printf("\r\nPress Enter: ");
+				(void)getchar();
+				system("CLS");
+				fflush(stdin);
+				fflush(stdout);
+				fflush(stderr);
+				//(void)getchar();
+				printf("No command line arguments are entered, so you are working in interactive mode.\r\n");
+				printf("\nEnter 'y' to rerun (to pass action enter other key): ");
+				char valueByGetChar = getchar();
+				if (valueByGetChar == 'y' || valueByGetChar == 'Y') {
+					system("CLS");
+					fflush(stdin);
+					fflush(stdout);
+					fflush(stderr);
+					system((std::string("\"") + argv[0] + "\"").c_str());
+				}
+				else {
+					return 0;
+				}
 		}
-
-
-
 
 	}
 
@@ -1229,7 +1242,7 @@ int main(int argc, char* argv[]) {
 
 	(void)getchar();
 #ifdef RERUN_MODE
-	printf("\nEnter 'y' to rerun program action(to pass action enter other key): ");
+	printf("\nEnter 'y' to rerun (to pass action enter other key): ");
 	char valueByGetChar = getchar();
 	if (valueByGetChar == 'y' || valueByGetChar == 'Y') {
 		system((std::string("\"") + argv[0] + "\"").c_str());

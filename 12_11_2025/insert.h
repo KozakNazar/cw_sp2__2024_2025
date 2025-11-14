@@ -1,5 +1,5 @@
 /*
-Дані для перевірки перевірки граматики за допомогою LL2-аналізатора
+Дані для LL2-аналізатора
 
 УВАГА: при копіюванні зважайте, щоб у кожному рядку після символу «\» не містилось жодних інших символів.
 */
@@ -7,6 +7,34 @@
 
 
 
+#define T_BEGIN_GROUPEXPRESSION_0 "("
+#define T_BEGIN_GROUPEXPRESSION_1 ""
+#define T_BEGIN_GROUPEXPRESSION_2 ""
+#define T_BEGIN_GROUPEXPRESSION_3 ""
+#define T_END_GROUPEXPRESSION_0 ")"
+#define T_END_GROUPEXPRESSION_1 ""
+#define T_END_GROUPEXPRESSION_2 ""
+#define T_END_GROUPEXPRESSION_3 ""
+#define T_LEFT_SQUAREBRACKETS_0 "["
+#define T_LEFT_SQUAREBRACKETS_1 ""
+#define T_LEFT_SQUAREBRACKETS_2 ""
+#define T_LEFT_SQUAREBRACKETS_3 ""
+#define T_RIGHT_SQUAREBRACKETS_0 "]"
+#define T_RIGHT_SQUAREBRACKETS_1 ""
+#define T_RIGHT_SQUAREBRACKETS_2 ""
+#define T_RIGHT_SQUAREBRACKETS_3 ""
+#define T_BEGIN_BLOCK_0 "{"
+#define T_BEGIN_BLOCK_1 ""
+#define T_BEGIN_BLOCK_2 ""
+#define T_BEGIN_BLOCK_3 ""
+#define T_END_BLOCK_0 "}"
+#define T_END_BLOCK_1 ""
+#define T_END_BLOCK_2 ""
+#define T_END_BLOCK_3 ""
+#define T_SEMICOLON_0 ";"
+#define T_SEMICOLON_1 ""
+#define T_SEMICOLON_2 ""
+#define T_SEMICOLON_3 ""
 #define T_COLON_0 ":"
 #define T_COLON_1 ""
 #define T_COLON_2 ""
@@ -91,14 +119,6 @@
 #define T_MOD_1 ""
 #define T_MOD_2 ""
 #define T_MOD_3 ""
-#define T_BEGIN_GROUPEXPRESSION_0 "("
-#define T_BEGIN_GROUPEXPRESSION_1 ""
-#define T_BEGIN_GROUPEXPRESSION_2 ""
-#define T_BEGIN_GROUPEXPRESSION_3 ""
-#define T_END_GROUPEXPRESSION_0 ")"
-#define T_END_GROUPEXPRESSION_1 ""
-#define T_END_GROUPEXPRESSION_2 ""
-#define T_END_GROUPEXPRESSION_3 ""
 #define T_LRBIND_0 "=:"
 #define T_LRBIND_1 ""
 #define T_LRBIND_2 ""
@@ -108,7 +128,7 @@
 #define T_THEN_BLOCK_2 ""
 #define T_THEN_BLOCK_3 ""
 #define T_ELSE_BLOCK_0 "ELSE"
-#define T_ELSE_BLOCK_1 "{"
+#define T_ELSE_BLOCK_1 T_BEGIN_BLOCK_0
 #define T_ELSE_BLOCK_2 ""
 #define T_ELSE_BLOCK_3 ""
 #define T_IF_0 "IF"
@@ -116,7 +136,7 @@
 #define T_IF_2 ""
 #define T_IF_3 ""
 #define T_ELSE_IF_0 "ELSE"
-#define T_ELSE_IF_1 "IF"
+#define T_ELSE_IF_1 T_IF_0
 #define T_ELSE_IF_2 ""
 #define T_ELSE_IF_3 ""
 #define T_DO_0 "DO"
@@ -187,26 +207,6 @@
 #define T_END_1 ""
 #define T_END_2 ""
 #define T_END_3 ""
-#define T_BEGIN_BLOCK_0 "{"
-#define T_BEGIN_BLOCK_1 ""
-#define T_BEGIN_BLOCK_2 ""
-#define T_BEGIN_BLOCK_3 ""
-#define T_END_BLOCK_0 "}"
-#define T_END_BLOCK_1 ""
-#define T_END_BLOCK_2 ""
-#define T_END_BLOCK_3 ""
-#define T_LEFT_SQUAREBRACKETS_0 "["
-#define T_LEFT_SQUAREBRACKETS_1 ""
-#define T_LEFT_SQUAREBRACKETS_2 ""
-#define T_LEFT_SQUAREBRACKETS_3 ""
-#define T_RIGHT_SQUAREBRACKETS_0 "]"
-#define T_RIGHT_SQUAREBRACKETS_1 ""
-#define T_RIGHT_SQUAREBRACKETS_2 ""
-#define T_RIGHT_SQUAREBRACKETS_3 ""
-#define T_SEMICOLON_0 ";"
-#define T_SEMICOLON_1 ""
-#define T_SEMICOLON_2 ""
-#define T_SEMICOLON_3 ""
 #define T_NULL_STATEMENT_0 "NULL"
 #define T_NULL_STATEMENT_1 "STATEMENT"
 #define T_NULL_STATEMENT_2 ""
@@ -228,12 +228,12 @@
     { LA_IS, {""}, 3, {"[", "unsigned_value", "]"}}\
 }}},\
 { LA_IS, {"ident_terminal"}, { "declaration_element",{\
-    { LA_IS, {""}, 2, {"ident", "array_specify_optional"}}\
+    { LA_IS, {""}, 2, {"ident", "array_specify__optional"}}\
 }}},\
-{ LA_IS, {"["}, { "array_specify_optional",{\
+{ LA_IS, {"["}, { "array_specify__optional",{\
     { LA_IS, {""}, 1, {"array_specify"}}\
 }}},\
-{ LA_NOT, {"["}, { "array_specify_optional",{\
+{ LA_NOT, {"["}, { "array_specify__optional",{\
     { LA_IS, {""}, 0, {""}}\
 }}},\
 { LA_IS, {T_COMA_0}, { "other_declaration_ident",{\
@@ -316,17 +316,17 @@ IF_USE_COMPARE_WITH_EQUAL(\
 {LA_IS, { T_NOT_0 }, { "left_expression",{\
     {LA_IS, { "" }, 1, { "unary_operation" }}\
 }}},\
-{LA_IS, { T_ADD_0, T_SUB_0 }, { "left_expression",{\
-    {LA_IS,  { "unsigned_value_terminal"}, 1, { "value" }},\
-    {LA_NOT, { "unsigned_value_terminal" }, 1, { "unary_operation" }}\
-}}},\
 {LA_IS, { "ident_terminal" }, { "left_expression",{\
     {LA_IS, {""}, 2, { "ident", "index_action__optional" }}\
 }}},\
 {LA_IS, { "unsigned_value_terminal" }, { "left_expression",{\
     {LA_IS, {""}, 1, { "value" }}\
 }}},\
-{LA_IS, { "T_IF_0" }, { "left_expression",{\
+{LA_IS, { T_ADD_0, T_SUB_0 }, { "left_expression",{\
+    {LA_IS,  { "unsigned_value_terminal"}, 1, { "value" }},\
+    /*{LA_NOT, { "unsigned_value_terminal" }, 1, { "unary_operation" }}*/\
+}}},\
+{LA_IS, { T_IF_0 }, { "left_expression",{\
     {LA_IS, { "" }, 1, { "cond_block" }}\
 }}},\
 {LA_IS, { "[" }, { "index_action__optional",{\
@@ -335,7 +335,7 @@ IF_USE_COMPARE_WITH_EQUAL(\
 {LA_NOT, { "[" }, { "index_action__optional",{\
     {LA_IS, {""}, 0, { "" }}\
 }}},\
-{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "expression",{\
+{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "expression",{\
     {LA_IS, {""}, 2, { "left_expression", "binary_action__iteration" }}\
 }}},\
 IF_NONUSE_COMPARE_WITH_EQUAL(\
@@ -357,7 +357,7 @@ IF_USE_COMPARE_WITH_EQUAL(\
 {LA_IS, { "(" }, { "group_expression",{\
     {LA_IS, {""}, 3, { "(", "expression", ")" }}\
 }}},\
-{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "expression_or_bind_left_to_right",{\
+{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "expression_or_bind_left_to_right",{\
     {LA_IS, {""}, 2, { "expression", "bind_to_right__optional" }}\
 }}},\
 {LA_IS, { T_LRBIND_0 }, { "bind_to_right",{\
@@ -369,7 +369,7 @@ IF_USE_COMPARE_WITH_EQUAL(\
 { LA_NOT, { T_LRBIND_0 }, { "bind_to_right__optional",{\
     { LA_IS, {""}, 0, { "" }}\
 }}},\
-{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "if_expression",{\
+{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "if_expression",{\
     {LA_IS, {""}, 1, { "expression" }}\
 }}},\
 {LA_IS, { T_BEGIN_BLOCK_0 }, { "body_for_true",{\
@@ -400,22 +400,22 @@ IF_USE_COMPARE_WITH_EQUAL(\
 {LA_IS, { T_IF_0 }, { "cond_block__with_optional_bind",{\
     {LA_IS, {""}, 2, { "cond_block", "bind_to_right__optional" }}\
 }}},\
-{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "cycle_begin_expression",{\
+{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "cycle_begin_expression",{\
     {LA_IS, {""}, 1, { "expression" }}\
 }}},\
-{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "cycle_end_expression",{\
+{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "cycle_end_expression",{\
     {LA_IS, {""}, 1, { "expression" }}\
 }}},\
 {LA_IS, { "ident_terminal" }, { "cycle_counter",{\
     {LA_IS, {""}, 1, { "ident" }}\
 }}},\
-{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "cycle_counter_lr_init",{\
+{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "cycle_counter_lr_init",{\
     {LA_IS, {""}, 3, { "cycle_begin_expression", T_LRBIND_0, "cycle_counter" }}\
 }}},\
-{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "cycle_counter_init",{\
+{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "cycle_counter_init",{\
     {LA_IS, { "" }, 1, { "cycle_counter_lr_init" }}\
 }}},\
-{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "cycle_counter_last_value",{\
+{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "cycle_counter_last_value",{\
     {LA_IS, {""}, 1, { "cycle_end_expression" }}\
 }}},\
 {LA_IS, { T_DO_0 }, { "cycle_body",{\
@@ -430,11 +430,11 @@ IF_USE_COMPARE_WITH_EQUAL(\
 {LA_IS, { T_FOR_0 }, { "forto_cycle",{\
     {LA_IS, {""}, 5, { T_FOR_0, "cycle_counter_init", "forto_direction", "cycle_counter_last_value", "cycle_body" }}\
 }}},\
-{LA_IS, { "T_CONTINUE_WHILE_0" }, { "continue_while",{\
-    {LA_IS, {""}, 1, { "T_CONTINUE_WHILE_0" }}\
+{LA_IS, { T_CONTINUE_WHILE_0 }, { "continue_while",{\
+    {LA_IS, {""}, 1, { T_CONTINUE_WHILE_0 }}\
 }}},\
-{LA_IS, { "T_EXIT_WHILE_0" }, { "break_while",{\
-    {LA_IS, {""}, 1, { "T_EXIT_WHILE_0" }}\
+{LA_IS, { T_EXIT_WHILE_0 }, { "break_while",{\
+    {LA_IS, {""}, 1, { T_EXIT_WHILE_0 }}\
 }}},\
 {LA_IS, { "ident_terminal", "(", T_NOT_0, "unsigned_value_terminal", T_ADD_0, T_SUB_0, T_IF_0, T_FOR_0, T_WHILE_0, T_REPEAT_0, T_GOTO_0, T_INPUT_0, T_OUTPUT_0, T_SEMICOLON_0 }, { "statement_in_while_and_if_body",{\
     {LA_IS, {""}, 1, { "statement" }}\
@@ -454,13 +454,13 @@ IF_USE_COMPARE_WITH_EQUAL(\
 {LA_NOT, { "ident_terminal", "(", T_NOT_0, "unsigned_value_terminal", T_ADD_0, T_SUB_0, T_IF_0, T_FOR_0, T_WHILE_0, T_REPEAT_0, T_GOTO_0, T_INPUT_0, T_OUTPUT_0, T_SEMICOLON_0, T_CONTINUE_WHILE_0, T_EXIT_WHILE_0 }, { "statement_in_while_and_if_body__iteration",{\
     {LA_IS, {""}, 0, { "" }}\
 }}},\
-{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "while_cycle_head_expression",{\
+{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "while_cycle_head_expression",{\
     {LA_IS, {""}, 1, { "expression" }}\
 }}},\
 {LA_IS, { T_WHILE_0 }, { "while_cycle",{\
     {LA_IS, {""}, 3, { T_WHILE_0, "while_cycle_head_expression", "block_statements_in_while_and_if_body" }}\
 }}},\
-{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "repeat_until_cycle_cond",{\
+{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "repeat_until_cycle_cond",{\
     {LA_IS, {""}, 1, { "expression" }}\
 }}},\
 {LA_IS, { T_REPEAT_0 }, { "repeat_until_cycle",{\
@@ -524,10 +524,10 @@ IF_USE_COMPARE_WITH_EQUAL(\
 { LA_IS, { T_BEGIN_BLOCK_0 }, { "block_statements",{\
     { LA_IS, {""}, 3, { T_BEGIN_BLOCK_0, "statement__iteration", T_END_BLOCK_0 }}\
 }}},\
-{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "expression__optional",{\
+{LA_IS, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "expression__optional",{\
     {LA_IS, {""}, 1, { "expression" }}\
 }}},\
-{LA_NOT, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", "T_IF_0" }, { "expression__optional",{\
+{LA_NOT, { "(", T_NOT_0, T_ADD_0, T_SUB_0, "ident_terminal", "unsigned_value_terminal", T_IF_0 }, { "expression__optional",{\
     {LA_IS, {""}, 0, { "" }}\
 }}},\
 { LA_IS, { T_NAME_0 }, { "program_rule",{\
@@ -571,51 +571,6 @@ IF_USE_COMPARE_WITH_EQUAL(\
 {LA_IS, { T_SUB_0 }, { "sign_minus", {\
     {LA_IS, {""}, 1, {T_SUB_0} }\
 }}},\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
 \
 \
 \
