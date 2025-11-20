@@ -62,6 +62,7 @@ expression__optional, \
 program_rule, \
 declaration__optional, \
 non_zero_digit, \
+digit__iteration, \
 digit, \
 unsigned_value, \
 value, \
@@ -250,7 +251,7 @@ unary_operation = unary_operator >> expression;
 binary_operator = tokenAND | tokenOR | tokenEQUAL | tokenNOTEQUAL | tokenLESSOREQUAL | tokenGREATEROREQUAL | tokenLESS | tokenGREATER | tokenPLUS | tokenMINUS | tokenMUL | tokenDIV | tokenMOD;
 binary_action = binary_operator >> expression;
 left_expression = group_expression | unary_operation | ident >> index_action__optional | value | cond_block;
-index_action__optional = index_action_action | "";
+index_action__optional = index_action | "";
 expression = left_expression >> binary_action__iteration;
 binary_action__iteration = binary_action >> binary_action__iteration | "";
 group_expression = tokenGROUPEXPRESSIONBEGIN >> expression >> tokenGROUPEXPRESSIONEND;
@@ -262,7 +263,7 @@ body_for_true = SAME_RULE(block_statements_in_while_and_if_body);
 false_cond_block_without_else = tokenELSE >> tokenIF >> if_expression >> body_for_true;
 body_for_false = tokenELSE >> block_statements_in_while_and_if_body;
 cond_block = tokenIF >> if_expression >> body_for_true >> false_cond_block_without_else__iteration >> body_for_false__optional;
-false_cond_block_without_else__iteration = false_cond_block_without_else, false_cond_block_without_else__iteration | "";
+false_cond_block_without_else__iteration = false_cond_block_without_else >> false_cond_block_without_else__iteration | "";
 body_for_false__optional = body_for_false | "";
 cycle_begin_expression = SAME_RULE(expression);
 cycle_end_expression = SAME_RULE(expression);
@@ -286,7 +287,7 @@ statements__or__block_statements = statement__iteration | block_statements;
 input_rule = tokenGET >> argument_for_input;
 argument_for_input = ident >> index_action__optional | tokenGROUPEXPRESSIONBEGIN >> ident >> index_action__optional >> tokenGROUPEXPRESSIONEND;
 output_rule = tokenPUT >> expression;
-statement = expression_or_cond_block__with_optional_assign | labeled_point | goto_label | forto_cycle | while_cycle | repeat_until_cycle | input_rule | output_rule | tokenSEMICOLON;
+statement = labeled_point /* labeled_point first*/ | expression_or_cond_block__with_optional_assign | goto_label | forto_cycle | while_cycle | repeat_until_cycle | input_rule | output_rule | tokenSEMICOLON;
 statement__iteration = statement >> statement__iteration | "";
 block_statements = tokenBEGINBLOCK >> statement__iteration >> tokenENDBLOCK;
 expression__optional = expression | "";
@@ -298,7 +299,7 @@ sign = sign_plus | sign_minus;
 sign_plus = SAME_RULE(tokenPLUS);
 sign_minus = SAME_RULE(tokenMINUS);
 unsigned_value = (non_zero_digit >> digit__iteration | digit_0) >> BOUNDARIES;
-digit__iteration = digit, digit__iteration | "";
+digit__iteration = digit >> digit__iteration | "";
 digit_0 = '0';
 digit = digit_0 | non_zero_digit;
 digit_1 = '1';
@@ -369,11 +370,25 @@ z = "z";
 letter_in_upper_case = A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z;
 STRICT_BOUNDARIES = (BOUNDARY >> *(BOUNDARY)) | (!(qi::alpha | qi::char_("_")));
 BOUNDARIES = (BOUNDARY >> *(BOUNDARY) | NO_BOUNDARY);
-BOUNDARY = BOUNDARY__SPACE | BOUNDARY__TAB | BOUNDARY__CARRIAGE_RETURN | BOUNDARY__LINE_FEED | BOUNDARY__NULL;
+BOUNDARY = BOUNDARY__SPACE | BOUNDARY__TAB | BOUNDARY__VERTICAL_TAB | BOUNDARY__FORM_FEED | BOUNDARY__CARRIAGE_RETURN | BOUNDARY__LINE_FEED | BOUNDARY__NULL;
 BOUNDARY__SPACE = " ";
 BOUNDARY__TAB = "\t";
+BOUNDARY__VERTICAL_TAB = "\v";
+BOUNDARY__FORM_FEED = "\f";
 BOUNDARY__CARRIAGE_RETURN = "\r";
 BOUNDARY__LINE_FEED = "\n";
 BOUNDARY__NULL = "\0";
 NO_BOUNDARY = "";
+#define WHITESPACES \
+STRICT_BOUNDARIES, \
+BOUNDARIES, \
+BOUNDARY, \
+BOUNDARY__SPACE, \
+BOUNDARY__TAB, \
+BOUNDARY__VERTICAL_TAB, \
+BOUNDARY__FORM_FEED, \
+BOUNDARY__CARRIAGE_RETURN, \
+BOUNDARY__LINE_FEED, \
+BOUNDARY__NULL, \
+NO_BOUNDARY
 

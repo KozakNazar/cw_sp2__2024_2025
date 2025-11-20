@@ -62,6 +62,7 @@ output_rule, \
 program_rule, \
 \
 non_zero_digit, \
+digit__iteration, \
 digit, \
 unsigned_value, \
 value, \
@@ -286,7 +287,7 @@ repeat_until_cycle = tokenREPEAT >> (*statement | block_statements) >> tokenUNTI
 input_rule = tokenGET >> (ident >> -index_action | tokenGROUPEXPRESSIONBEGIN >> ident >> -index_action >> tokenGROUPEXPRESSIONEND);
 
 output_rule = tokenPUT >> expression;
-statement = expression_or_cond_block__with_optional_assign | labeled_point | goto_label | forto_cycle | while_cycle | repeat_until_cycle | input_rule | output_rule | tokenSEMICOLON;
+statement = labeled_point /* labeled_point first*/ | expression_or_cond_block__with_optional_assign | goto_label | forto_cycle | while_cycle | repeat_until_cycle | input_rule | output_rule | tokenSEMICOLON;
 
 block_statements = tokenBEGINBLOCK >> *statement >> tokenENDBLOCK;
 
@@ -390,12 +391,4 @@ BOUNDARY__CARRIAGE_RETURN, \
 BOUNDARY__LINE_FEED, \
 BOUNDARY__NULL, \
 NO_BOUNDARY
-
-
-
-
-
-
-
-
 
