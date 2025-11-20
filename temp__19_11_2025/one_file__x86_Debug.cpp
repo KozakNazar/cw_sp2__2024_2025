@@ -39,22 +39,27 @@ namespace phx = boost::phoenix;
 template <typename Iterator>
 struct cwsyntax : qi::grammar<Iterator> {
     cwsyntax(std::ostringstream& error_stream) : cwsyntax::base_type(program_rule), error_stream_(error_stream) {
-#include "EBNF_N1.h"
+#include "EBNF_N2.h"
     }
     std::ostringstream& error_stream_;
 
     qi::rule<Iterator> NONTERMINALS, TOKENS, WHITESPACES;
+#undef NONTERMINALS
+#undef TOKENS
+#undef WHITESPACES
 };
-
+ 
 template <typename Iterator>
 struct cwgrammar : qi::grammar<Iterator> {
     cwgrammar(std::ostringstream& error_stream) : cwgrammar::base_type(program_rule), error_stream_(error_stream) {
-#include "EBNF_N1.h"
+#include "EBNF_N2.h"
     }
     std::ostringstream& error_stream_;
 
     qi::rule<Iterator> NONTERMINALS, TOKENS, WHITESPACES;
-
+#undef NONTERMINALS
+#undef TOKENS
+#undef WHITESPACES
 };
 
 int main_spirit(int argc, char* argv[]) {
