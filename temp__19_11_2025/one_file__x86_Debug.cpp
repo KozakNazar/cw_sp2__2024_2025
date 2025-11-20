@@ -92,7 +92,7 @@ int main_spirit(int argc, char* argv[]) {
     printf("-------------------------------------------------------------------\r\n");
     printf("%s\r\n", text_);
     printf("-------------------------------------------------------------------\r\n\r\n");
-    int commentRemoverResult = commentRemover(text_, "#*", "*#");
+    int commentRemoverResult = commentRemover(text_, COMMENT_BEGIN_STR, COMMENT_END_STR);
     if (commentRemoverResult) {
         printf("Comment remover return %d\r\n", commentRemoverResult);
         printf("Press Enter to exit . . .");
@@ -110,22 +110,31 @@ int main_spirit(int argc, char* argv[]) {
     typedef str_t::iterator str_t_it;
 
     std::ostringstream error_stream;
-    cwgrammar<str_t_it> cwg(error_stream);
+    cwsyntax<str_t_it> cwg1(error_stream);
+    cwgrammar<str_t_it> cwg2(error_stream);
 
     str_t_it begin = text.begin(), end = text.end();
-
-
-    bool success = qi::parse(begin, end, cwg);
-
-    if (!success) {
-        std::cout << "\nParsing failed!\n";
-        std::cout << "Error message: " << error_stream.str();
+    if (!qi::parse(begin, end, cwg1)) {
+        std::cout << "\nEBNF N1: Parsing failed!\n";
+        std::cout << "EBNF N1: Error message: " << error_stream.str();
     }
     else if (begin != end) {
-        std::cout << "\nUnknown fragment ofter successs parse at: \"" << str_t(begin, end) << "\"\n";
+        std::cout << "\nEBNF N1: Unknown fragment ofter successs parse at: \"" << str_t(begin, end) << "\"\n";
     }
     else {
-        std::cout << "\nParsing success!\n";
+        std::cout << "\nEBNF N1: Parsing success!\n";
+    }
+
+    begin = text.begin(), end = text.end();
+    if (!qi::parse(begin, end, cwg2)) {
+        std::cout << "\nEBNF N2: Parsing failed!\n";
+        std::cout << "EBNF N2: Error message: " << error_stream.str();
+    }
+    else if (begin != end) {
+        std::cout << "\nEBNF N2: Unknown fragment ofter successs parse at: \"" << str_t(begin, end) << "\"\n";
+    }
+    else {
+        std::cout << "\nEBNF N2: Parsing success!\n";
     }
 
     free(text_);

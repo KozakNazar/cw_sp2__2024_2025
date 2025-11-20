@@ -182,7 +182,8 @@ w, \
 x, \
 y, \
 z
-
+#define COMMENT_BEGIN_STR "#*"
+#define COMMENT_END_STR   "*#"
 tokenGROUPEXPRESSIONBEGIN = "(" >> BOUNDARIES;
 tokenGROUPEXPRESSIONEND = ")" >> BOUNDARIES;
 tokenLEFTSQUAREBRACKETS = "[" >> BOUNDARIES;
