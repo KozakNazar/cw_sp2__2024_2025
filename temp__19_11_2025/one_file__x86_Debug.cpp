@@ -39,7 +39,7 @@ namespace phx = boost::phoenix;
 template <typename Iterator>
 struct cwsyntax : qi::grammar<Iterator> {
     cwsyntax(std::ostringstream& error_stream) : cwsyntax::base_type(program_rule), error_stream_(error_stream) {
-#include "EBNF_N2.h"
+#include "EBNF_N1.h"
     }
     std::ostringstream& error_stream_;
 
