@@ -214,7 +214,7 @@ unary_operator = SAME_RULE(tokenNOT);
 unary_operation = unary_operator >> expression;
 binary_operator = tokenAND | tokenOR | tokenEQUAL | tokenNOTEQUAL | tokenLESSOREQUAL | tokenGREATEROREQUAL | tokenPLUS | tokenMINUS | tokenMUL | tokenDIV | tokenMOD;
 binary_action = binary_operator >> expression;
-left_expression = group_expression | unary_operation | ident >> index_action__optional | value | cond_block;
+left_expression = group_expression | unary_operation | cond_block | value | ident >> index_action__optional;
 index_action__optional = index_action | "";
 expression = left_expression >> binary_action__iteration;
 binary_action__iteration = binary_action >> binary_action__iteration | "";
@@ -235,7 +235,7 @@ statements__or__block_statements = statement__iteration | block_statements;
 input_rule = tokenGET >> argument_for_input;
 argument_for_input = ident >> index_action__optional | tokenGROUPEXPRESSIONBEGIN >> ident >> index_action__optional >> tokenGROUPEXPRESSIONEND;
 output_rule = tokenPUT >> expression;
-statement = expression_or_cond_block__with_optional_assign | repeat_until_cycle | input_rule | output_rule | tokenSEMICOLON; 
+statement = expression_or_cond_block__with_optional_assign | repeat_until_cycle | input_rule | output_rule | tokenSEMICOLON;
 statement__iteration = statement >> statement__iteration | "";
 block_statements = tokenBEGINBLOCK >> statement__iteration >> tokenENDBLOCK;
 expression__optional = expression | "";
@@ -261,7 +261,44 @@ digit_8 = '8';
 digit_9 = '9';
 non_zero_digit = digit_1 | digit_2 | digit_3 | digit_4 | digit_5 | digit_6 | digit_7 | digit_8 | digit_9;
 tokenUNDERSCORE = "_";
-ident = tokenUNDERSCORE >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> STRICT_BOUNDARIES;
+ident =
+!(
+	tokenINTEGER16 |
+	tokenCOMMA |
+	tokenNOT |
+	tokenAND |
+	tokenOR |
+	tokenEQUAL |
+	tokenNOTEQUAL |
+	tokenLESSOREQUAL |
+	tokenGREATEROREQUAL |
+	tokenPLUS |
+	tokenMINUS |
+	tokenMUL |
+	tokenDIV |
+	tokenMOD |
+	tokenGROUPEXPRESSIONBEGIN |
+	tokenGROUPEXPRESSIONEND |
+	tokenLRASSIGN |
+	tokenELSE |
+	tokenIF |
+	tokenEXIT |
+	tokenREPEAT |
+	tokenUNTIL |
+	tokenGET |
+	tokenPUT |
+	tokenNAME |
+	tokenBODY |
+	tokenDATA |
+	tokenBEGIN |
+	tokenEND |
+	tokenBEGINBLOCK |
+	tokenENDBLOCK |
+	tokenLEFTSQUAREBRACKETS |
+	tokenRIGHTSQUAREBRACKETS |
+	tokenSEMICOLON
+	) >>
+	tokenUNDERSCORE >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> STRICT_BOUNDARIES;
 A = "A";
 B = "B";
 C = "C";
