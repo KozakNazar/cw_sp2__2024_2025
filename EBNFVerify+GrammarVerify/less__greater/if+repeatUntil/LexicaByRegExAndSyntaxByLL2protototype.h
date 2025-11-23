@@ -255,8 +255,8 @@
 {LA_IS, { T_NOT_0 }, { "left_expression",{\
     {LA_IS, { "" }, 1, { "unary_operation" }}\
 }}},\
-{LA_IS, { "ident_terminal" }, { "left_expression",{\
-    {LA_IS, {""}, 2, { "ident", "index_action__optional" }}\
+{LA_IS, { T_IF_0 }, { "left_expression",{\
+    {LA_IS, { "" }, 1, { "cond_block" }}\
 }}},\
 {LA_IS, { "unsigned_value_terminal" }, { "left_expression",{\
     {LA_IS, {""}, 1, { "value" }}\
@@ -265,8 +265,8 @@
     {LA_IS,  { "unsigned_value_terminal"}, 1, { "value" }},\
     /*{LA_NOT, { "unsigned_value_terminal" }, 1, { "unary_operation" }}*/\
 }}},\
-{LA_IS, { T_IF_0 }, { "left_expression",{\
-    {LA_IS, { "" }, 1, { "cond_block" }}\
+{LA_IS, { "ident_terminal" }, { "left_expression",{\
+    {LA_IS, {""}, 2, { "ident", "index_action__optional" }}\
 }}},\
 {LA_IS, { "[" }, { "index_action__optional",{\
     {LA_IS, {""}, 1, { "index_action" }}\
