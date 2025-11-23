@@ -341,7 +341,7 @@ unsigned int tryToGetUnsignedValue(struct LexemInfo* lexemInfoInTable) {
 	return ~SUCCESS_STATE;
 }
 
-int commentRemover(char* text, const char* openStrSpc, const char* closeStrSpc) {
+extern int commentRemover(char* text, const char* openStrSpc, const char* closeStrSpc); /* {
 	bool eofAlternativeCloseStrSpcType = false;
 	bool explicitCloseStrSpc = true;
 	if (!strcmp(closeStrSpc, "\n")) {
@@ -389,7 +389,7 @@ int commentRemover(char* text, const char* openStrSpc, const char* closeStrSpc) 
 	}
 
 	return 0;
-}
+} */
 
 void prepareKeyWordIdGetter(char* keywords_, char* keywords_re) {
 	if (keywords_ == NULL || keywords_re == NULL) {
@@ -498,7 +498,7 @@ struct LexemInfo tokenize(char* text, struct LexemInfo** lastLexemInfoInTable, c
 }
 
 // after using this function use free(void *) function to release text buffer
-size_t loadSource(char** text, char* fileName) {
+extern size_t loadSource(char** text, char* fileName); /* {
 	if (!fileName) {
 		printf("No input file name\r\n");
 		return 0;
@@ -546,7 +546,7 @@ size_t loadSource(char** text, char* fileName) {
 	fclose(file);
 
 	return fileSize;
-}
+} */
 
 void writeBytesToFile(const char* output_file, unsigned char* byteImage, unsigned long long int imageSize);
 int syntaxAnalyze(struct LexemInfo* lexemInfoTable, Grammar* grammar, char syntaxlAnalyzeMode/* not used */, char* astFileName, char* errorMessagesPtrToLastBytePtr, bool viewAST);
