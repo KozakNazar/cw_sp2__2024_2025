@@ -222,7 +222,7 @@ unary_operator = SAME_RULE(tokenNOT);
 unary_operation = unary_operator >> expression;
 binary_operator = tokenAND | tokenOR | tokenEQUAL | tokenNOTEQUAL | tokenLESS | tokenGREATER | tokenPLUS | tokenMINUS | tokenMUL | tokenDIV | tokenMOD;
 binary_action = binary_operator >> expression;
-left_expression = group_expression | unary_operation | ident >> -index_action | value | cond_block;
+left_expression = group_expression | unary_operation | cond_block | value | ident >> -index_action;
 
 expression = left_expression >> *binary_action;
 
@@ -275,7 +275,45 @@ digit_8 = '8';
 digit_9 = '9';
 non_zero_digit = digit_1 | digit_2 | digit_3 | digit_4 | digit_5 | digit_6 | digit_7 | digit_8 | digit_9;
 tokenUNDERSCORE = "_";
-ident = tokenUNDERSCORE >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> STRICT_BOUNDARIES;
+ident =
+!(
+	tokenINTEGER16 |
+	tokenCOMMA |
+	tokenNOT |
+	tokenAND |
+	tokenOR |
+	tokenEQUAL |
+	tokenNOTEQUAL |
+	tokenLESS |
+	tokenGREATER |
+	tokenPLUS |
+	tokenMINUS |
+	tokenMUL |
+	tokenDIV |
+	tokenMOD |
+	tokenGROUPEXPRESSIONBEGIN |
+	tokenGROUPEXPRESSIONEND |
+	tokenLRASSIGN |
+	tokenELSE |
+	tokenIF |
+	tokenDO |
+	tokenFOR |
+	tokenTO |
+	tokenEXIT |
+	tokenGET |
+	tokenPUT |
+	tokenNAME |
+	tokenBODY |
+	tokenDATA |
+	tokenBEGIN |
+	tokenEND |
+	tokenBEGINBLOCK |
+	tokenENDBLOCK |
+	tokenLEFTSQUAREBRACKETS |
+	tokenRIGHTSQUAREBRACKETS |
+	tokenSEMICOLON
+	) >>
+	tokenUNDERSCORE >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> letter_in_upper_case >> STRICT_BOUNDARIES;
 A = "A";
 B = "B";
 C = "C";
