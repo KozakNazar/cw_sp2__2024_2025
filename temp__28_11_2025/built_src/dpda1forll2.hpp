@@ -51,6 +51,7 @@ typedef PDAInstruction DPDA1Program[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
 #define PDA_DEAD_STATE_INSTRUCTION { 0, NO_SCROLL, {NOTHING, {-1, -1, -1, -1}}}
 
 typedef char DPDA1IndexingForSecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
+DPDA1IndexingForSecondElement dpdaIndexingForSecondElement;
 
 // TODO: USE MEMSET !
 
