@@ -266,7 +266,6 @@ bool execution_order(const char* input) {
 }
 
 bool execution_order__arguments_in_forward_order(const char* input) {
-    printf("order: (arguments in reverse order)\n");
     const char* strpos = input, * strend = input + strlen(input);
     char c, res[4];
     unsigned long long int sl = 0, sc, stack[32], rn = 0;
