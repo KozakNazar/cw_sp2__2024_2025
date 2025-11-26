@@ -344,8 +344,8 @@ int main() {
     // functions: A() B(a) C(a, b), D(a, b, c) ...
     // identifiers: 0 1 2 3 ... and a b c d e ...
     // operators: = - + / * % !
-    const char* input = "a = D(f - b * c + d, !e, g)";
-    //const char* input = "a = 1 + 2 * ((3 * 4) + (1/5))"; 
+    //const char* input = "a = D(f - b * c + d, !e, g)";
+    const char* input = "a = 1 + 2 * ((3 * 4) + (1/5))"; 
     char output[128];
     printf("input: %s\n", input);
     if (shunting_yard(input, output)) {
