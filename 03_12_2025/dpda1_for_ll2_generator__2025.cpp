@@ -671,7 +671,7 @@ void addNonTerminalInterpretationInstructions(DPDA1Program* dpdaProgramPtr, Gram
 
 // used
 // init f
-void initBuild_AllÒùòDeadStatesToDeadState__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+void initBuild_AllÃ’Ã¹Ã²DeadStatesToDeadState__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
 	// MIN_TERMIN
 	// All Symbol
 	char emptyStringCode = getLexemId((char*)"");
@@ -755,7 +755,7 @@ void buildDeadState__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, D
 
 
 
-		// + äåðåâî âèâîäó
+		// + Ã¤Ã¥Ã°Ã¥Ã¢Ã® Ã¢Ã¨Ã¢Ã®Ã¤Ã³
 		
 		char emptyStringCode = getLexemId((char*)"");
 		char deadStateCode = getLexemId((char*)"DEAD_STATE");
@@ -1137,7 +1137,7 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexin
 	buildDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
 	return;
 	// set -1 // to dead state
-	initBuild_AllÒùòDeadStatesToDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
+	initBuild_AllÃ’Ã¹Ã²DeadStatesToDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
 
 
 	// 123
