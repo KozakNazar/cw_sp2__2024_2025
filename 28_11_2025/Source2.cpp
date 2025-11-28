@@ -414,92 +414,7 @@ bool genCModelOfSSA(const char* input) {
         }
         sc = stack[sl - 1];
         sl--;
-        printf("\n%s\nprintf(\"%%d\\n\", %s);\n", outputData, (char*)&sc);
-        printf("(void)getchar();\n");
-        printf("\nreturn 0;\n");
-        printf("}\n");
-        return true;
-    }
-    // If there are more values in the stack
-    // (Error) The user input has too many values.
-    return false;
-}
-
-bool OLD__genCModelOfSSA(const char* input) {
-    const char* strpos = input, * strend = input + strlen(input);
-    char c, res[4], outputData[2048], * currentOutputDataPosition = outputData;
-    unsigned long long int sl = 0, sc, stack[32], rn = 0;
-    // While there are input tokens left
-    while (strpos < strend) {
-        // Read the next token from input.
-        c = *strpos;
-        // If the token is a value or identifier
-        if (is_ident(c)) {
-            // Push it onto the stack.
-            stack[sl] = c;
-            ++sl;
-        }
-        // Otherwise, the token is an operator  (operator here includes both operators, and functions).
-        else if (is_operator(c) || is_function(c)) {
-            sprintf(res, "_%02d", (int)rn);
-            currentOutputDataPosition += sprintf(currentOutputDataPosition, "int %s = ", res);
-            ++rn;
-            // It is known a priori that the operator takes n arguments.
-            unsigned long long int nargs = op_arg_count(c);
-            // If there are fewer than n values on the stack
-            if (sl < nargs) {
-                // (Error) The user has not input sufficient values in the expression.
-                return false;
-            }
-            // Else, Pop the top n values from the stack.
-            // Evaluate the operator, with the values as arguments.
-            if (is_function(c)) {
-                currentOutputDataPosition += sprintf(currentOutputDataPosition, "%c(", c);
-                while (nargs > 0) {
-                    sc = stack[sl - nargs];
-                    if (nargs > 1) {
-                        currentOutputDataPosition += sprintf(currentOutputDataPosition, "%s, ", (char*)&sc);
-                    }
-                    else {
-                        currentOutputDataPosition += sprintf(currentOutputDataPosition, "%s)\n", (char*)&sc);
-                    }
-                    --nargs;
-                }
-                sl -= op_arg_count(c);
-            }
-            else {
-                if (nargs == 1) {
-                    sc = stack[sl - 1];
-                    sl--;
-                    currentOutputDataPosition += sprintf(currentOutputDataPosition, "%c %s;\n", c, (char*)&sc);
-                }
-                else {
-                    sc = stack[sl - 2];
-                    currentOutputDataPosition += sprintf(currentOutputDataPosition, "%s %c ", (char*)&sc, c);
-                    sc = stack[sl - 1];
-                    sl -= 2;
-                    currentOutputDataPosition += sprintf(currentOutputDataPosition, "%s;\n", (char*)&sc);
-                }
-            }
-            // Push the returned results, if any, back onto the stack.
-            stack[sl] = *(unsigned long long int*)res;
-            ++sl;
-        }
-        ++strpos;
-    }
-    // If there is only one value in the stack
-    // That value is the result of the calculation.
-    if (sl == 1) {
-        printf("#include \"stdio.h\"\n");
-        printf("int main() {\n");
-        for (const char* input_ = input; *input_; ++input_) {
-            if (*input_ >= 'a' && *input_ <= 'z') {
-                printf("int %c = %d;\n", *input_, input_ - input);
-            }
-        }
-        sc = stack[sl - 1];
-        sl--;
-        printf("\n%s\nprintf(\"%%d\\n\", %s);\n", outputData, (char*)&sc);
+        printf("\n%s\nprintf(\"Result: is %%d.\", %s);\n", outputData, (char*)&sc); 
         printf("(void)getchar();\n");
         printf("\nreturn 0;\n");
         printf("}\n");
@@ -517,48 +432,13 @@ void genCModelOfRPN(const char* input) {
     printf("#include \"ComputeByStack.h\"\n");
     printf("\n");
     printf("int main() {\n");
-    printf("// Compute implementation in files: \"MyStack.h\", \"MyStack.hpp\", \"ComputeByStack.h\" and \"ComputeByStack.hpp\"");
+    printf("// Compute implementation in files: \"MyStack.h\", \"MyStack.hpp\", \"ComputeByStack.h\" and \"ComputeByStack.hpp\"\n");
+    printf("MyStack<Element> operandsStack;\n");
     for (const char* input_ = input; *input_; ++input_) {
         if (*input_ >= 'a' && *input_ <= 'z') {
             printf("int %c = %d;\n", *input_, input_ - input);
         }
     }
-
-
-printf(
-"    for (unsigned int index = 0; elements[index].type != VARIABLE || elements[index].data.variablePtr != NULL; ++index) {\n"
-"        if (elements[index].type == VARIABLE || elements[index].type == VALUE) {\n"
-"            operandsStack.push(elements[index]);\n"
-"        }\n"
-"        else if (elements[index].type == OPERATION) {\n"
-"            switch (elements[index].data.operation) {\n"
-"            case '=':\n"
-"                assign(operandsStack, assignFunction);\n"
-"                break;\n"
-"            case '-':\n"
-"                binary(operandsStack, subFunction);\n"
-"                break;\n"
-"            case '+':\n"
-"                binary(operandsStack, sumFunction);\n"
-"                break;\n"
-"            case '/':\n"
-"                binary(operandsStack, divFunction);\n"
-"                break;\n"
-"            case '*':\n"
-"                binary(operandsStack, mulFunction);\n"
-"                break;\n"
-"            case '%':\n"
-"                binary(operandsStack, modFunction);\n"
-"                break;\n"
-"            case '!':\n"
-"                unary(operandsStack, notFunction);\n"
-"                break;\n"
-"            default:\n"
-"                break;\n"
-"            }\n"
-"        }\n"
-"    }\n"
-);
 
     printf("    Element elements[] = {\n");
 for (const char* input_ = input; *input_; ++input_) {
@@ -597,7 +477,7 @@ printf(
     "            case '*':\n"
     "                binary(operandsStack, mulFunction);\n"
     "                break;\n"
-    "            case '%':\n"
+    "            case '%%':\n"
     "                binary(operandsStack, modFunction);\n"
     "                break;\n"
     "            case '!':\n"
@@ -611,13 +491,15 @@ printf(
 );
 
 
-printf("    printf(\"Result: is %%d.\", operandsStack.top());\n");
+printf("    printf(\"Result: is %%d.\", operandsStack.top().data.value\);\n");
+printf("    (void)getchar();\n");
+printf("\n");
 printf("    return 0;\n");
 printf("}\n");
 
 }
 
-int main_() {
+int oldMain() {
     // functions: A() B(a) C(a, b), D(a, b, c) ...
     // identifiers: 0 1 2 3 ... and a b c d e ...
     // operators: = - + / * % !
@@ -646,6 +528,7 @@ int main() {
     printf("// input: %s\n", input);
     if (shunting_yard(input, output)) {
         printf("// output: %s\n", output);
+        printf("\n");
         printf("#define USE_C_MODEL_OF_SSA\n");
         printf("#ifdef USE_C_MODEL_OF_SSA\n");
         if (!genCModelOfSSA(output))
