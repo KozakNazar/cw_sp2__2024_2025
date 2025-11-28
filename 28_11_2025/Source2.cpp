@@ -431,7 +431,6 @@ void genCModelOfRPN(const char* input) {
     printf("#include \"MyStack.h\"\n");
     printf("#include \"ComputeByStack.h\"\n");
     printf("\n");
-    printf("int main() {\n");
     printf("// Compute implementation in files: \"MyStack.h\", \"MyStack.hpp\", \"ComputeByStack.h\" and \"ComputeByStack.hpp\"\n");
     printf("MyStack<Element> operandsStack;\n");
     for (const char* input_ = input; *input_; ++input_) {
@@ -446,7 +445,7 @@ for (const char* input_ = input; *input_; ++input_) {
         printf("        {VARIABLE, &%c},\n", *input_);
     }
     else     if (*input_ >= '0' && *input_ <= '9') {
-        printf("        {VALUE, &%c},\n", *input_);
+        printf("        {VALUE, %c},\n", *input_);
     }
     else     if (*input_ == '=' || *input_ == '+' || *input_ == '-' || *input_ == '*' || *input_ == '/' || *input_ == '%' || *input_ == '!') {
         printf("        {OPERATION, \'%c\'},\n", *input_);
@@ -454,7 +453,8 @@ for (const char* input_ = input; *input_; ++input_) {
 }
 printf("        {VARIABLE, NULL}\n");
 printf("    };\n");
-
+printf("\n");
+printf("int main() {\n");
 printf(
     "    for (unsigned int index = 0; elements[index].type != VARIABLE || elements[index].data.variablePtr != NULL; ++index) {\n"
     "        if (elements[index].type == VARIABLE || elements[index].type == VALUE) {\n"
