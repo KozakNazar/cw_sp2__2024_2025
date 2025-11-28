@@ -11,10 +11,10 @@ union ElementData {
     int value;
     char operation;
 
-    ElementData(int* ptr) : variablePtr(ptr) {}
-    ElementData(int val) : value(val) {}
-    ElementData(char op) : operation(op) {}
-    ElementData() : value(0) {}
+    ElementData(int* ptr);
+    ElementData(int val);
+    ElementData(char op);
+    ElementData();
 };
 
 struct Element {

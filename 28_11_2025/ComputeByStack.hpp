@@ -3,6 +3,11 @@
 #include "MyStack.h"
 #include "ComputeByStack.h"
 
+ElementData::ElementData(int* ptr) : variablePtr(ptr) {}
+ElementData::ElementData(int val)  : value(val) {}
+ElementData::ElementData(char op)  : operation(op) {}
+ElementData::ElementData()         : value(0) {}
+
 int assignFunction(int* arg1, int arg2) {
     return *arg1 = arg2;
 }
