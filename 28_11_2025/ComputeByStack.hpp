@@ -9,10 +9,10 @@ int assignFunction(int* arg1, int arg2) {
 
 void assign(MyStack<Element>& operandsStack, int(*assignFunctionWithReturn)(int*, int)) {
     int* arg1 = NULL, arg2 = 0;
-    if (operandsStack.top().data.value == VARIABLE) {
+    if (operandsStack.top().type == VARIABLE) {
         arg2 = *operandsStack.top().data.variablePtr;
     }
-    else if (operandsStack.top().data.value == VALUE) {
+    else if (operandsStack.top().type == VALUE) {
         arg2 = operandsStack.top().data.value;
     }
     else {
@@ -21,7 +21,7 @@ void assign(MyStack<Element>& operandsStack, int(*assignFunctionWithReturn)(int*
     }
     operandsStack.pop();
 
-    if (operandsStack.top().data.value == VARIABLE)
+    if (operandsStack.top().type == VARIABLE)
         arg1 = operandsStack.top().data.variablePtr;
     else {
         printf("error");
@@ -57,11 +57,11 @@ int modFunction(int arg1, int arg2) {
 
 void binary(MyStack<Element>& operandsStack, int(*binaryFunction)(int, int)) {
     int arg1 = 0, arg2 = 0;
-    if (operandsStack.top().data.value == VARIABLE) {
-        arg2 = operandsStack.top().data.value;
-    }
-    else if (operandsStack.top().data.value == VALUE) {
+    if (operandsStack.top().type == VARIABLE) {
         arg2 = *operandsStack.top().data.variablePtr;
+    }
+    else if (operandsStack.top().type == VALUE) {
+        arg2 = operandsStack.top().data.value;
     }
     else {
         printf("error");
@@ -69,11 +69,11 @@ void binary(MyStack<Element>& operandsStack, int(*binaryFunction)(int, int)) {
     }
     operandsStack.pop();
 
-    if (operandsStack.top().data.value == VARIABLE) {
-        arg1 = operandsStack.top().data.value;
-    }
-    else if (operandsStack.top().data.value == VALUE) {
+    if (operandsStack.top().type == VARIABLE) {
         arg1 = *operandsStack.top().data.variablePtr;
+    }
+    else if (operandsStack.top().type == VALUE) {
+        arg1 = operandsStack.top().data.value;
     }
     else {
         printf("error");
@@ -93,11 +93,11 @@ int notFunction(int arg) {
 
 void unary(MyStack<Element>& operandsStack, int(*unaryFunction)(int)) {
     int arg = 0;
-    if (operandsStack.top().data.value == VARIABLE) {
-        arg = operandsStack.top().data.value;
-    }
-    else if (operandsStack.top().data.value == VALUE) {
+    if (operandsStack.top().type == VARIABLE) {
         arg = *operandsStack.top().data.variablePtr;
+    }
+    else if (operandsStack.top().type == VALUE) {
+        arg = operandsStack.top().data.value;
     }
     else {
         printf("error");
