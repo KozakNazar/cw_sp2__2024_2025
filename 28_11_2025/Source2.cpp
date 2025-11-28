@@ -405,7 +405,6 @@ bool genCModelOfSSA(const char* input) {
     // If there is only one value in the stack
     // That value is the result of the calculation.
     if (sl == 1) {
-        printf("#define _CRT_SECURE_NO_WARNINGS\n");
         printf("#include \"stdio.h\"\n");
         printf("int main() {\n");
         for (const char * input_ = input; *input_; ++input_) {
@@ -491,7 +490,6 @@ bool OLD__genCModelOfSSA(const char* input) {
     // If there is only one value in the stack
     // That value is the result of the calculation.
     if (sl == 1) {
-        printf("#define _CRT_SECURE_NO_WARNINGS\n");
         printf("#include \"stdio.h\"\n");
         printf("int main() {\n");
         for (const char* input_ = input; *input_; ++input_) {
@@ -513,70 +511,54 @@ bool OLD__genCModelOfSSA(const char* input) {
 }
 
 void genCModelOfRPN(const char* input) {
-    printf("#define _CRT_SECURE_NO_WARNINGS\n");
     printf("#include \"stdio.h\"\n");
-
-char* a123qqwe = (char*)
-"// compute implementation in file 123.h"
-        ;
-
-char * a123 = (char*)
-"typedef struct {"
-"    union {"
-"        int* variable;"
-"        int value;"
-"        char operation;"
-"    } element;"
-"    enum {"
-"        VARIABLE,"
-"        VALUE,"
-"        OPERATION"
-"    } element_type;"
-"} Element;"
-;
-
-char* a12345 = (char*)
-"for (unsigned int index = 0; elements[index].type != VARIABLE && elements[index].data.variablePtr == NULL; ++index) {"
-"    if (elements[index].type == VARIABLE || elements[index].type == VALUE) {"
-"        operandsStack.push(elements[index]);"
-"    }"
-"    else if (elements[index].type == OPERATION) {"
-"        switch (elements[index].data.operation) {"
-"        case '=':"
-"            assign(operandsStack, assignFunction);"
-"            break;"
-"        case '-':"
-"            binary(operandsStack, subFunction);"
-"            break;"
-"        case '+':"
-"            binary(operandsStack, sumFunction);"
-"            break;"
-"        case '/':"
-"            binary(operandsStack, divFunction);"
-"            break;"
-"        case '*':"
-"            binary(operandsStack, mulFunction);"
-"            break;"
-"        case '%':"
-"            binary(operandsStack, modFunction);"
-"            break;"
-"        case '!':"
-"            unary(operandsStack, notFunction);"
-"            break;"
-"        default:"
-"            break;"
-"        }"
-"    }"
-"}"
-;
-
-for (const char* input_ = input; *input_; ++input_) {
-    if (*input_ >= 'a' && *input_ <= 'z') {
-        printf("int %c = %d;\n", *input_, input_ - input);
+    printf("#include \"stdlib.h\"\n");
+    printf("#include \"MyStack.h\"\n");
+    printf("#include \"ComputeByStack.h\"\n");
+    printf("\n");
+    printf("int main() {\n");
+    printf("// Compute implementation in files: \"MyStack.h\", \"MyStack.hpp\", \"ComputeByStack.h\" and \"ComputeByStack.hpp\"");
+    for (const char* input_ = input; *input_; ++input_) {
+        if (*input_ >= 'a' && *input_ <= 'z') {
+            printf("int %c = %d;\n", *input_, input_ - input);
+        }
     }
-}
 
 
+printf(
+"    for (unsigned int index = 0; elements[index].type != VARIABLE || elements[index].data.variablePtr != NULL; ++index) {\n"
+"        if (elements[index].type == VARIABLE || elements[index].type == VALUE) {\n"
+"            operandsStack.push(elements[index]);\n"
+"        }\n"
+"        else if (elements[index].type == OPERATION) {\n"
+"            switch (elements[index].data.operation) {\n"
+"            case '=':\n"
+"                assign(operandsStack, assignFunction);\n"
+"                break;\n"
+"            case '-':\n"
+"                binary(operandsStack, subFunction);\n"
+"                break;\n"
+"            case '+':\n"
+"                binary(operandsStack, sumFunction);\n"
+"                break;\n"
+"            case '/':\n"
+"                binary(operandsStack, divFunction);\n"
+"                break;\n"
+"            case '*':\n"
+"                binary(operandsStack, mulFunction);\n"
+"                break;\n"
+"            case '%':\n"
+"                binary(operandsStack, modFunction);\n"
+"                break;\n"
+"            case '!':\n"
+"                unary(operandsStack, notFunction);\n"
+"                break;\n"
+"            default:\n"
+"                break;\n"
+"            }\n"
+"        }\n"
+"    }\n"
+);
 
     printf("    Element elements[] = {\n");
 for (const char* input_ = input; *input_; ++input_) {
@@ -591,7 +573,47 @@ for (const char* input_ = input; *input_; ++input_) {
     }
 }
 printf("        {VARIABLE, NULL}\n");
-printf("    }\n");
+printf("    };\n");
+
+printf(
+    "    for (unsigned int index = 0; elements[index].type != VARIABLE || elements[index].data.variablePtr != NULL; ++index) {\n"
+    "        if (elements[index].type == VARIABLE || elements[index].type == VALUE) {\n"
+    "            operandsStack.push(elements[index]);\n"
+    "        }\n"
+    "        else if (elements[index].type == OPERATION) {\n"
+    "            switch (elements[index].data.operation) {\n"
+    "            case '=':\n"
+    "                assign(operandsStack, assignFunction);\n"
+    "                break;\n"
+    "            case '-':\n"
+    "                binary(operandsStack, subFunction);\n"
+    "                break;\n"
+    "            case '+':\n"
+    "                binary(operandsStack, sumFunction);\n"
+    "                break;\n"
+    "            case '/':\n"
+    "                binary(operandsStack, divFunction);\n"
+    "                break;\n"
+    "            case '*':\n"
+    "                binary(operandsStack, mulFunction);\n"
+    "                break;\n"
+    "            case '%':\n"
+    "                binary(operandsStack, modFunction);\n"
+    "                break;\n"
+    "            case '!':\n"
+    "                unary(operandsStack, notFunction);\n"
+    "                break;\n"
+    "            default:\n"
+    "                break;\n"
+    "            }\n"
+    "        }\n"
+    "    }\n"
+);
+
+
+printf("    printf(\"Result: is %%d.\", operandsStack.top());\n");
+printf("    return 0;\n");
+printf("}\n");
 
 }
 
@@ -619,12 +641,18 @@ int main() {
     //const char* input = "x = 1 + 2 * ((3 * 4) + (1/5))"; 
     const char* input = "x = a + b * (c * d + e/f)";
     char output[128];
-    printf("input: %s\n", input);
+    printf("#define _CRT_SECURE_NO_WARNINGS\n");
+
+    printf("// input: %s\n", input);
     if (shunting_yard(input, output)) {
-        printf("output: %s\n", output);
+        printf("// output: %s\n", output);
+        printf("#define USE_C_MODEL_OF_SSA\n");
+        printf("#ifdef USE_C_MODEL_OF_SSA\n");
         if (!genCModelOfSSA(output))
-            printf("\nInvalid input\n");
+            printf("\n// Invalid input\n");
+        printf("#else\n");
         genCModelOfRPN(output);
+        printf("#endif\n");
     }
     return 0;
 }
