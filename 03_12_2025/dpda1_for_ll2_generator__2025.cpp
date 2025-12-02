@@ -619,9 +619,9 @@ void addAnigilateInstructions(/*no args*/) {
 //#define TERMINAL_AND_NONTERMINAL_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + 190)
 #define NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
 #define NONTERMINAL_LEXEM_MAX_ID 252
-//#define  253
+//#define ... 253
 #define DEAD_STATE_ID 254
-//#define ...                    255
+#define FREE_STATE_ID 255
 
 
 //#define EMPTY_LEXEM_ID 255
@@ -699,16 +699,17 @@ void addNonTerminalInterpretationInstructions(DPDA1Program* dpdaProgramPtr, Gram
 void initBuild_AllStatesToDeadState__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
 	// MIN_TERMIN
 	// All Symbol
-	char emptyStringCode = getLexemId((char*)"");
-	char deadStateCode = getLexemId((char*)"DEAD_STATE");
+	//char emptyStringCode = getLexemId((char*)"");
+	//char deadStateCode = getLexemId((char*)"DEAD_STATE");
 	for (char toptapeAndStackCode = 255; toptapeAndStackCode++;) {
+		if (toptapeAndStackCode == DEAD_STATE_ID) {
+			continue;
+		}
 #define ROW_INDEX toptapeAndStackCode
 #define COLUMN_INDEX toptapeAndStackCode
 		
 		unsigned char tapeCode = 0; do {
-			if (dpda1Program[toptapeAndStackCode][tapeCode].tapeAction == deadStateCode) {
-				continue;
-			}
+
 			if (dpda1Program[toptapeAndStackCode][toptapeAndStackCode].tapeAction == -1) { // ... // ????
 				printf("Error: no support model\r\n");
 				exit(0);
@@ -726,9 +727,9 @@ void initBuild_AllStatesToDeadState__DPDA1forLL2(Grammar& grammar, DPDA1Program&
 
 			dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0; // NEW 08.2025
 
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = deadStateCode;
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = DEAD_STATE_ID;
 			for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
-				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = emptyStringCode; // (!)
+				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
 			}
 
 //			? dpda1IndexingForSecondElement;
@@ -739,10 +740,36 @@ void initBuild_AllStatesToDeadState__DPDA1forLL2(Grammar& grammar, DPDA1Program&
 	}
 }
 
-// set -1 
+// set FREE_STATE_ID // -1
+void dpda1forLL2SetInitState(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+	for (char toptapeAndStackCode = 255; toptapeAndStackCode++;) {
+		if (toptapeAndStackCode == DEAD_STATE_ID) {
+			continue;
+		}
+#define ROW_INDEX toptapeAndStackCode
+#define COLUMN_INDEX toptapeAndStackCode
 
-// used
-void buildDeadState__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+		unsigned char tapeCode = 0; do {
+
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAction = PUSH; // no POP prev state (used for detect error) // NEW 08.2025
+
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].tapeAction = NO_SCROLL; // !
+
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0;
+
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = FREE_STATE_ID;
+			for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
+				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+			}		
+		} while (++tapeCode);
+#undef ROW_INDEX
+#undef COLUMN_INDEX
+	}
+}
+
+
+// used --> not used
+void buildDeadState__DPDA1forLL2__OLD(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
 	// MIN_TERMIN
 	// All Symbol
 	//  for (char toptapeAndStackCode = 255; false && toptapeAndStackCode++;) {
@@ -783,11 +810,11 @@ void buildDeadState__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, D
 
 		// + дерево виводу
 		
-		char emptyStringCode = getLexemId((char*)"");
-		char deadStateCode = getLexemId((char*)"DEAD_STATE");
+		//char emptyStringCode = getLexemId((char*)"");
+		//char deadStateCode = getLexemId((char*)"DEAD_STATE");
 		unsigned char tapeCode = 0; do {
 #define ROW_INDEX tapeCode
-#define COLUMN_INDEX deadStateCode			
+#define COLUMN_INDEX DEAD_STATE_ID			
 				// tape
 				dpda1Program[ROW_INDEX][COLUMN_INDEX].tapeAction = SCROLL_TO_RIGHT;
 
@@ -795,7 +822,7 @@ void buildDeadState__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, D
 				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAction = NOTHING;
 				dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0; // not useed for dead state
 				for (unsigned int rTokekIndex = 0; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) { // not useed for dead state
-					dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = emptyStringCode; // (!)
+					dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
 				}
 #undef ROW_INDEX
 #undef COLUMN_INDEX
@@ -832,6 +859,7 @@ void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Pr
 	}
 }
 
+/*
 // tape scroll
 void preBildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
 	// set -1
@@ -880,6 +908,7 @@ void buildDPDA1forLL2_(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexi
 
 
 }
+*/
 
 // used
 //?// two table //+//
@@ -1181,8 +1210,8 @@ void terminalAndNonTerminalIdsInit(Grammar & grammar, struct LexemInfo* lexemInf
 
 
 
-	terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // lastNonUsedid++;
-	//terminalAndNonTerminalLexemIds[] = UNKNOWN_ELEMENT_ID; // no exist
+	terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // no exist in code, but exit as abstract zero lenght element // lastNonUsedid++;
+	//terminalAndNonTerminalLexemIds[] = UNKNOWN_ELEMENT_ID; // no exist in code and no exit as abstract element
 
 //#define EMPTY_TOKEN_LEXEM_ID 0
 //#define UNKNOWN_ELEMENT_ID 1 // (EMPTY_TOKEN_LEXEM_ID + 1)
@@ -1193,12 +1222,13 @@ void terminalAndNonTerminalIdsInit(Grammar & grammar, struct LexemInfo* lexemInf
 //	char emptyElementCode = getLexemId((char*)"");
 //	char deadStateCode = getLexemId((char*)"DEAD_STATE");
 
-	/* EMPTY_TOKEN_LEXEM_ID */terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // lastNonUsedid++;
+	/* EMPTY_TOKEN_LEXEM_ID */terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // lastNonUsedid++; // !!!!!!!!!!!!!!!!
 
 	int lastNonUsedid = NONTERMINAL_LEXEM_MIN_ID;
 	lastNonUsedid = nonTerminalIdsInit(grammar, lastNonUsedid);
 
-	terminalAndNonTerminalLexemIds["DEAD_STATE"] = DEAD_STATE_ID;  ;
+	// terminalAndNonTerminalLexemIds["DEAD_STATE"] = DEAD_STATE_ID; // NOT INIT
+	//                                                FREE_STATE_ID;
 
 	if (lastNonUsedid);
 
@@ -1226,9 +1256,9 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexin
 
 
 	// dead state
-	buildDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
+	//buildDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
 	//return;
-	// set -1 // to dead state
+	// set 255 (-1) // to dead state
 	initBuild_AllStatesToDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
 	return;
 
