@@ -618,17 +618,28 @@ void addAnigilateInstructions(/*no args*/) {
 //#define TERMINAL_AND_NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
 //#define TERMINAL_AND_NONTERMINAL_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + 190)
 #define NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
-#define NONTERMINAL_LEXEM_MAX_ID 251
+#define NONTERMINAL_LEXEM_MAX_ID 250
 #define IDENT_METETERMINAL_LEXEM_STR "ident_terminal"
-#define IDENT_METETERMINAL_LEXEM_ID 252
+#define IDENT_METETERMINAL_LEXEM_ID 251
 #define UNSIGNED_VALUE_METATERMINAL_LEXEM_STR "unsigned_value_terminal"
-#define UNSIGNED_VALUE_METATERMINAL_LEXEM_ID 253
-#define DEAD_STATE_ID 254
+#define UNSIGNED_VALUE_METATERMINAL_LEXEM_ID 252
+#define DEAD_STATE_ID 253
+//#define BUILD_C2P_AST_TYPE_BY_DPDA1
+#ifndef BUILD_C2P_AST_TYPE_BY_DPDA1
+#define	BUILD_P2C_AST_TYPE_BY_DPDA1 // TODO: no default
+#endif
+#define	POP_STACK_IN_F_OUT_STATE_ID 254
 #define FREE_STATE_ID 255
 
 
 //terminalAndNonTerminalLexemIds["ident_terminal"] = IDENT_METATERMINL_TOKEN_LEXEM_ID;
 //terminalAndNonTerminalLexemIds["unsigned_value_terminal"] = EMPTY_TOKEN_LEXEM_ID;
+
+//#define BUILD_C2P_AST_TYPE_BY_DPDA1
+//#ifndef BUILD_C2P_AST_TYPE_BY_DPDA1
+//	#define	POP_STACK_IN_F_OUT_STATE
+
+
 
 
 //#define EMPTY_LEXEM_ID 255
@@ -817,6 +828,7 @@ void buildDeadState__DPDA1forLL2__OLD(Grammar& grammar, DPDA1Program& dpda1Progr
 // used
 // tape scroll
 void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+	// ALL CODE FOR IDENT AND UNSIGNED VALUE
 	// MIN_TERMIN
 	// All Symbol -> only non-terminal
 	char emptyStringCode = getLexemId((char*)"");
@@ -899,18 +911,21 @@ void buildDPDA1forLL2_(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexi
 //?// two table //+//
 // STACK_POP_AND_MULTIPLIPUSH
 void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
-	char emptyElementCode = getLexemId((char*)"");
-	char deadStateCode = getLexemId((char*)"DEAD_STATE");
+    // POP_STACK_IN_F_OUT_STATE_ID no impl.
+	// ALL CODE FOR IDENT AND UNSIGNED VALUE
 
-//#define BUILD_C2P_AST_TYPE_BY_DPDA1
-#ifndef BUILD_C2P_AST_TYPE_BY_DPDA1
-#define	BUILD_P2C_AST_TYPE_BY_DPDA1 // TODO: no default
-#endif
-//#if !defined(BUILD_AST_BY_DPDA1) || defined(BUILD_P2C_AST_TYPE_BY_DPDA1)
+	//char emptyElementCode = getLexemId((char*)"");
+	//char deadStateCode = getLexemId((char*)"DEAD_STATE");
 
-#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
-	char popStackInFoutStateCode = getLexemId((char*)"POP_STACK_IN_F_OUT_STATE");
-#endif
+////#define BUILD_C2P_AST_TYPE_BY_DPDA1
+//#ifndef BUILD_C2P_AST_TYPE_BY_DPDA1
+//#define	BUILD_P2C_AST_TYPE_BY_DPDA1 // TODO: no default
+//#endif
+////#if !defined(BUILD_AST_BY_DPDA1) || defined(BUILD_P2C_AST_TYPE_BY_DPDA1)
+
+//#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
+//	char popStackInFoutStateCode = getLexemId((char*)"POP_STACK_IN_F_OUT_STATE"); // POP_STACK_IN_F_OUT_STATE_ID
+//#endif
 	for (MarkedRule* multiRule = grammar.multiRules; multiRule->firstMarksType; ++multiRule) {
 		char* currSteckElement = multiRule->rule.lhs;
 		char columnIndex = getLexemId(multiRule->rule.lhs);
@@ -979,11 +994,11 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 					        = getLexemId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
 #ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
 						else if (popStackInFoutStateCodeMarker) {
-							dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = popStackInFoutStateCode;
+							dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = POP_STACK_IN_F_OUT_STATE_ID;
 							popStackInFoutStateCodeMarker = false;
 						}
 #endif
-						else dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = emptyElementCode;
+						else dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
 
 #ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
 					if (popStackInFoutStateCodeMarker) {
@@ -1067,11 +1082,11 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 							}
 						}
 
-						// add "to dead" state
+						// add "to dead" state // --> ...
 						if (needStateToDeadState) {
-							dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantAddonIndex][0/*rhsVariantIndex*/] = deadStateCode;
+							dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantAddonIndex][0/*rhsVariantIndex*/] = DEAD_STATE_ID;
 							for (int rhsElementIndex = 1; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
-								dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantAddonIndex][rhsElementIndex] = emptyElementCode;
+								dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantAddonIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
 						}
 					}
 				}
@@ -1232,7 +1247,7 @@ void terminalAndNonTerminalIdsInit(Grammar & grammar, struct LexemInfo* lexemInf
 
 	if (lastNonUsedid);
 
-	if (false) terminalAndNonTerminalIdsInitPart2(lexemInfoTable, lastNonUsedid); // TERMINAL INIT AFTER SCAN SOURSE
+	if (false) terminalAndNonTerminalIdsInitPart2(lexemInfoTable, lastNonUsedid); // TERMINAL INIT AFTER SCAN SOURCE
 }
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1256,15 +1271,15 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexin
 
 
 	// dead state
-	//buildDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
+	//buildDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement); // TERMINAL INIT AFTER SCAN SOURCE
 	//return;
 	// set 255 (-1) // to dead state
 	setAllStatesToDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
 
-	return;
-
 	// 123
 	buildRulePartForDPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
+
+	return;
 
 	//
 	// 123
