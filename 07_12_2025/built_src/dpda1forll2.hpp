@@ -178,4 +178,5 @@ char tryToAcceptDPDA(DPDA1Program * dpdaProgram, DPDA1IndexingForSecondElement* 
 }
 #ifdef SET_STACK_123
 #pragma warning(pop)
+
 #endif
