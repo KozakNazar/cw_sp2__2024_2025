@@ -24,7 +24,7 @@ typedef enum {
 
 typedef enum {
 	NOTHING, // STACK_NOTHING
-	PUSH,    // STACK_PUSH
+	PUSH,    // STACK_PUSH // REMOVE ???
 	POP,     // STACK_POP
 	STACK_POP_AND_MULTIPLIPUSH
 } StackAction;
@@ -48,7 +48,7 @@ typedef struct {
 typedef PDAInstruction DPDA1Program[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
 
 //#define EMPTY_PDA_INSTRUCTION { NO_SCROLL, {PUSH, {123, 123, 4, 0}}}
-#define PDA_DEAD_STATE_INSTRUCTION { 0, NO_SCROLL, {NOTHING, {-1, -1, -1, -1}}}
+#define PDA_DEAD_STATE_INSTRUCTION { 0, NO_SCROLL, {NOTHING, {-1, -1, -1, -1}}} // -1 => ?
 
 typedef char DPDA1IndexingForSecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
 DPDA1IndexingForSecondElement dpdaIndexingForSecondElement;
