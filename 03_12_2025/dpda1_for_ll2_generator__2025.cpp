@@ -619,7 +619,9 @@ void addAnigilateInstructions(/*no args*/) {
 //#define TERMINAL_AND_NONTERMINAL_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + 190)
 #define NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
 #define NONTERMINAL_LEXEM_MAX_ID 251
+#define IDENT_METETERMINAL_LEXEM_STR "ident_terminal"
 #define IDENT_METETERMINAL_LEXEM_ID 252
+#define UNSIGNED_VALUE_METATERMINAL_LEXEM_STR "unsigned_value_terminal"
 #define UNSIGNED_VALUE_METATERMINAL_LEXEM_ID 253
 #define DEAD_STATE_ID 254
 #define FREE_STATE_ID 255
@@ -1209,10 +1211,12 @@ void terminalAndNonTerminalIdsInit(Grammar & grammar, struct LexemInfo* lexemInf
 //	char emptyElementCode = getLexemId((char*)"");
 //	char deadStateCode = getLexemId((char*)"DEAD_STATE");
 
-	/* EMPTY_TOKEN_LEXEM_ID */terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // lastNonUsedid++; // !!!!!!!!!!!!!!!!
+	/* EMPTY_TOKEN_LEXEM_ID *///terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // lastNonUsedid++; // !!!!!!!!!!!!!!!!
 
-	terminalAndNonTerminalLexemIds["ident_terminal"] = IDENT_METETERMINAL_LEXEM_ID;
-	terminalAndNonTerminalLexemIds["unsigned_value_terminal"] = UNSIGNED_VALUE_METATERMINAL_LEXEM_ID;
+	
+
+	terminalAndNonTerminalLexemIds[IDENT_METETERMINAL_LEXEM_STR] = IDENT_METETERMINAL_LEXEM_ID;
+	terminalAndNonTerminalLexemIds[UNSIGNED_VALUE_METATERMINAL_LEXEM_STR] = UNSIGNED_VALUE_METATERMINAL_LEXEM_ID;
 
 	int lastNonUsedid = NONTERMINAL_LEXEM_MIN_ID;
 	lastNonUsedid = nonTerminalIdsInit(grammar, lastNonUsedid);
@@ -1244,10 +1248,10 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexin
 	terminalAndNonTerminalIdsInit(grammar, lexemInfoTable/*, int lastNonUsedid !!!!!!!!!!! */);
 
 	//for (const auto& [key, value] : terminalAndNonTerminalLexemIds) { // Using Structured Bindings (C++17 and later)
-	//	std::cout << "Key: " << key << ", Value: " << value << std::endl;
+	//	std::cout << "Key: \"" << key << "\", Value: " << value << std::endl;
 	//}
 	for (const auto& pair : terminalAndNonTerminalLexemIds) { // Using a Range-Based For Loop (C++11 and later)
-		std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
+		std::cout << "Key: \"" << pair.first << "\", Value: " << pair.second << std::endl;
 	}
 
 
@@ -1256,6 +1260,7 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexin
 	//return;
 	// set 255 (-1) // to dead state
 	setAllStatesToDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
+
 	return;
 
 	// 123
