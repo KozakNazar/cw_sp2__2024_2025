@@ -618,10 +618,15 @@ void addAnigilateInstructions(/*no args*/) {
 //#define TERMINAL_AND_NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
 //#define TERMINAL_AND_NONTERMINAL_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + 190)
 #define NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
-#define NONTERMINAL_LEXEM_MAX_ID 252
-//#define ... 253
+#define NONTERMINAL_LEXEM_MAX_ID 251
+#define IDENT_METETERMINAL_LEXEM_ID 252
+#define UNSIGNED_VALUE_METATERMINAL_LEXEM_ID 253
 #define DEAD_STATE_ID 254
 #define FREE_STATE_ID 255
+
+
+//terminalAndNonTerminalLexemIds["ident_terminal"] = IDENT_METATERMINL_TOKEN_LEXEM_ID;
+//terminalAndNonTerminalLexemIds["unsigned_value_terminal"] = EMPTY_TOKEN_LEXEM_ID;
 
 
 //#define EMPTY_LEXEM_ID 255
@@ -694,78 +699,56 @@ void addNonTerminalInterpretationInstructions(DPDA1Program* dpdaProgramPtr, Gram
 
 //char getLexemId(char * lexemStr);
 
-// used
-// init f
-void initBuild_AllStatesToDeadState__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
-	// MIN_TERMIN
-	// All Symbol
-	//char emptyStringCode = getLexemId((char*)"");
-	//char deadStateCode = getLexemId((char*)"DEAD_STATE");
-	for (char toptapeAndStackCode = 255; toptapeAndStackCode++;) {
-		if (toptapeAndStackCode == DEAD_STATE_ID) {
-			continue;
-		}
-#define ROW_INDEX toptapeAndStackCode
-#define COLUMN_INDEX toptapeAndStackCode
-		
-		unsigned char tapeCode = 0; do {
-
-			if (dpda1Program[toptapeAndStackCode][toptapeAndStackCode].tapeAction == -1) { // ... // ????
-				printf("Error: no support model\r\n");
-				exit(0);
-			}
-
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAction = PUSH; // no POP prev state (used for detect error) // NEW 08.2025
-
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].tapeAction = SCROLL_TO_RIGHT;
-
-//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = POP; // (2)
-//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = PUSH; // (!)
-//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = PUSH; // (!)
-
-			//dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantAddonIndex][rTokekIndex] = emptyElementCode;
-
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0; // NEW 08.2025
-
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = DEAD_STATE_ID;
-			for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
-				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
-			}
-
-//			? dpda1IndexingForSecondElement;
-//			dpda1IndexingForSecondElement[][] = 0; // NOT USE // 08.2025
-		} while (++tapeCode);
-#undef ROW_INDEX
-#undef COLUMN_INDEX
-	}
-}
 
 // set FREE_STATE_ID // -1
 void dpda1forLL2SetInitState(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
 	for (char toptapeAndStackCode = 255; toptapeAndStackCode++;) {
-		if (toptapeAndStackCode == DEAD_STATE_ID) {
-			continue;
-		}
-#define ROW_INDEX toptapeAndStackCode
-#define COLUMN_INDEX toptapeAndStackCode
-
 		unsigned char tapeCode = 0; do {
-
+#define ROW_INDEX tapeCode
+#define COLUMN_INDEX toptapeAndStackCode
 			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAction = PUSH; // no POP prev state (used for detect error) // NEW 08.2025
-
 			dpda1Program[ROW_INDEX][COLUMN_INDEX].tapeAction = NO_SCROLL; // !
-
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0;
-
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
 			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = FREE_STATE_ID;
 			for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
 				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
-			}		
-		} while (++tapeCode);
+			}
 #undef ROW_INDEX
 #undef COLUMN_INDEX
+		} while (++tapeCode);
 	}
 }
+
+
+// used
+// init f
+void setAllStatesToDeadState__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+	for (char toptapeAndStackCode = 255; toptapeAndStackCode++;) {	
+		unsigned char tapeCode = 0; do {
+#define ROW_INDEX tapeCode
+#define COLUMN_INDEX toptapeAndStackCode
+			//if (dpda1Program[toptapeAndStackCode][toptapeAndStackCode].tapeAction == FREE_STATE_ID) { // ... // ????
+			//	printf("Error: no support model\r\n");
+			//	exit(0);
+			//}
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAction = PUSH; // no POP prev state (used for detect error) // NEW 08.2025
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].tapeAction = SCROLL_TO_RIGHT;
+//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = POP; // (2)
+//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = PUSH; // (!)
+//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = PUSH; // (!)
+			//dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantAddonIndex][rTokekIndex] = emptyElementCode;
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = DEAD_STATE_ID;
+			for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
+				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+			}
+#undef ROW_INDEX
+#undef COLUMN_INDEX
+		} while (++tapeCode);
+	}
+}
+
+
 
 
 // used --> not used
@@ -1117,33 +1100,33 @@ int nonTerminalIdsInit(Grammar & grammar, int lastNonUsedid) {
 
 		for (int firstMarksIndex = 0; multiRule->firstMarks[firstMarksIndex][0] != '\0'; ++firstMarksIndex) {
 			if (terminalAndNonTerminalLexemIds.find(multiRule->firstMarks[firstMarksIndex]) == terminalAndNonTerminalLexemIds.end()) {
-				if (std::regex_match(std::string(multiRule->rule.lhs), std::regex(keywords_re))) {
-					terminalAndNonTerminalLexemIds[multiRule->rule.lhs] = getKeyWordId(keywords_, multiRule->rule.lhs, KEYWORD_LEXEM_MIN_ID);
+				if (std::regex_match(std::string(multiRule->firstMarks[firstMarksIndex]), std::regex(keywords_re))) {
+					terminalAndNonTerminalLexemIds[multiRule->firstMarks[firstMarksIndex]] = getKeyWordId(keywords_, multiRule->firstMarks[firstMarksIndex], KEYWORD_LEXEM_MIN_ID);
 				}
 				else {
-					terminalAndNonTerminalLexemIds[multiRule->rule.lhs] = lastNonUsedid++;
+					terminalAndNonTerminalLexemIds[multiRule->firstMarks[firstMarksIndex]] = lastNonUsedid++;
 				}
 			}
 
 			for (int rhsVariantIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex) {
 				for (int secondMarksIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex][0] != '\0'; ++secondMarksIndex) {
 					if (terminalAndNonTerminalLexemIds.find(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]) == terminalAndNonTerminalLexemIds.end()) {
-						if (std::regex_match(std::string(multiRule->rule.lhs), std::regex(keywords_re))) {
-							terminalAndNonTerminalLexemIds[multiRule->rule.lhs] = getKeyWordId(keywords_, multiRule->rule.lhs, KEYWORD_LEXEM_MIN_ID);
+						if (std::regex_match(std::string(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]), std::regex(keywords_re))) {
+							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]] = getKeyWordId(keywords_, multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex], KEYWORD_LEXEM_MIN_ID);
 						}
 						else {
-							terminalAndNonTerminalLexemIds[multiRule->rule.lhs] = lastNonUsedid++;
+							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]] = lastNonUsedid++;
 						}
 					}
 				}
 
 				for (int rhsElementIndex = 0; multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex][0] != '\0'; ++rhsElementIndex) {
 					if (terminalAndNonTerminalLexemIds.find(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]) == terminalAndNonTerminalLexemIds.end()) {
-						if (std::regex_match(std::string(multiRule->rule.lhs), std::regex(keywords_re))) {
-							terminalAndNonTerminalLexemIds[multiRule->rule.lhs] = getKeyWordId(keywords_, multiRule->rule.lhs, KEYWORD_LEXEM_MIN_ID);
+						if (std::regex_match(std::string(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]), std::regex(keywords_re))) {
+							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]] = getKeyWordId(keywords_, multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex], KEYWORD_LEXEM_MIN_ID);
 						}
 						else {
-							terminalAndNonTerminalLexemIds[multiRule->rule.lhs] = lastNonUsedid++;
+							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]] = lastNonUsedid++;
 						}
 					}
 				}
@@ -1210,6 +1193,10 @@ void terminalAndNonTerminalIdsInit(Grammar & grammar, struct LexemInfo* lexemInf
 
 
 
+	
+		
+		;
+
 	terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // no exist in code, but exit as abstract zero lenght element // lastNonUsedid++;
 	//terminalAndNonTerminalLexemIds[] = UNKNOWN_ELEMENT_ID; // no exist in code and no exit as abstract element
 
@@ -1224,8 +1211,17 @@ void terminalAndNonTerminalIdsInit(Grammar & grammar, struct LexemInfo* lexemInf
 
 	/* EMPTY_TOKEN_LEXEM_ID */terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // lastNonUsedid++; // !!!!!!!!!!!!!!!!
 
+	terminalAndNonTerminalLexemIds["ident_terminal"] = IDENT_METETERMINAL_LEXEM_ID;
+	terminalAndNonTerminalLexemIds["unsigned_value_terminal"] = UNSIGNED_VALUE_METATERMINAL_LEXEM_ID;
+
 	int lastNonUsedid = NONTERMINAL_LEXEM_MIN_ID;
 	lastNonUsedid = nonTerminalIdsInit(grammar, lastNonUsedid);
+
+//  !
+//	if (lastNonUsedid > NONTERMINAL_LEXEM_MAX_ID) {
+//		printf("Error: maximum number of lexems exceeded.\n");
+//		exit(0);
+//	}
 
 	// terminalAndNonTerminalLexemIds["DEAD_STATE"] = DEAD_STATE_ID; // NOT INIT
 	//                                                FREE_STATE_ID;
@@ -1259,7 +1255,7 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexin
 	//buildDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
 	//return;
 	// set 255 (-1) // to dead state
-	initBuild_AllStatesToDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
+	setAllStatesToDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement);
 	return;
 
 	// 123
