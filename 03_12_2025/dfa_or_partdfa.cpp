@@ -1,9 +1,17 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define WIN32_LEAN_AND_MEAN
+/*********************************************************
+* N.Kozak // Lviv'2025 //                                *
+*                              file: dfa_or_partdfa.cpp  *
+*                                            (part impl) *
+**********************************************************/
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <iomanip>
 #include <sstream>
+//#include <filesystem> C++17
 
 #include "built_src/dfa.hpp"
 #include "built_src/matcher_by_dfa.hpp"
@@ -12,317 +20,19 @@
 #include "built_src/file3.hpp"
 #include "built_src/file4.hpp"
 
-#define PART_DFA_MODE
-
-//#define table transitionTable1
-#if 0
-#define SYMBOL_NUMBER 256
-#define MAX_STATES 1024
-
-int table_OLD[SYMBOL_NUMBER][MAX_STATES] = {
-    {6,6,6,6,6,5},
-    {3,5,5,5,5,5},
-    {3,5,5,5,5,5},
-    {3,5,5,5,5,5},
-};
-
-#define Q000 0
-#define Q001 1
-#define Q002 2
-#define Q003 3
-#define Q004 4
-#define Q005 5
-#define Q006 6
-#define Q007 7
-#define Q008 8
-
-int table____[SYMBOL_NUMBER][MAX_STATES] = {
-    //           Q000   Q001   Q002   Q003   Q004   Q005   Q006   Q007   Q008  
-    /* \x00 */ { Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x01 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x02 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x03 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x04 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x05 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x06 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x07 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x08 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x09 */ { Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x0A */ { Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x0B */ { Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x0C */ { Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x0D */ { Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x0E */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x0F */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x10 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x11 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x12 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x13 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x14 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x15 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x16 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x17 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x18 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x19 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x1A */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x1B */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x1C */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x1D */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x1E */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x1F */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  ' ' */ { Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '!' */ { Q003,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '"' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '#' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '$' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '%' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '&' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  ''' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '(' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  ')' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '*' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '+' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  ',' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '-' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '.' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '/' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '0' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '1' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '2' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '3' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '4' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '5' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '6' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '7' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '8' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '9' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  ':' */ { Q001,  Q008,  Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  ';' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '<' */ { Q004,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '=' */ { Q002,  Q007,  Q007,  Q007,  Q007,  Q007,  Q008,  Q008,  Q008 },
-    /*  '>' */ { Q005,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '?' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '@' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  'A' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'B' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'C' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'D' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'E' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'F' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'G' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'H' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'I' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'J' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'K' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'L' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'M' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'N' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'O' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'P' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'Q' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'R' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'S' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'T' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'U' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'V' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'W' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'X' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'Y' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'Z' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '[' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '\' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  ']' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '^' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '_' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '`' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  'a' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'b' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'c' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'd' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'e' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'f' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'g' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'h' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'i' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'j' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'k' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'l' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'm' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'n' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'o' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'p' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'q' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'r' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  's' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  't' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'u' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'v' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'w' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'x' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'y' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  'z' */ { Q006,  Q008,  Q008,  Q008,  Q008,  Q008,  Q006,  Q008,  Q008 },
-    /*  '{' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '|' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '}' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /*  '~' */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x7F */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x80 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x81 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x82 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x83 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x84 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x85 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x86 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x87 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x88 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x89 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x8A */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x8B */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x8C */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x8D */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x8E */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x8F */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x90 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x91 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x92 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x93 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x94 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x95 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x96 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x97 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x98 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x99 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x9A */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x9B */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x9C */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x9D */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x9E */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \x9F */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xA0 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xA1 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xA2 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xA3 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xA4 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xA5 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xA6 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xA7 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xA8 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xA9 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xAA */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xAB */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xAC */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xAD */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xAE */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xAF */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xB0 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xB1 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xB2 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xB3 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xB4 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xB5 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xB6 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xB7 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xB8 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xB9 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xBA */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xBB */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xBC */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xBD */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xBE */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xBF */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xC0 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xC1 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xC2 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xC3 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xC4 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xC5 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xC6 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xC7 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xC8 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xC9 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xCA */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xCB */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xCC */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xCD */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xCE */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xCF */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xD0 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xD1 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xD2 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xD3 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xD4 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xD5 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xD6 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xD7 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xD8 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xD9 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xDA */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xDB */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xDC */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xDD */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xDE */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xDF */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xE0 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xE1 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xE2 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xE3 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xE4 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xE5 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xE6 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xE7 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xE8 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xE9 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xEA */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xEB */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xEC */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xED */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xEE */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xEF */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xF0 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xF1 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xF2 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xF3 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xF4 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xF5 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xF6 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xF7 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xF8 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xF9 */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xFA */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xFB */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xFC */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xFD */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xFE */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 },
-    /* \xFF */ { Q007,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008,  Q008 }
-};
-
-#endif
-
-
-void f1(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTableFinitStates[MAX_FINIT_STATES], std::string outFileNameWithoutExtension) {
+int buildFSM(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTableFinitStates[MAX_FINIT_STATES], std::string outFileNameWithoutExtension, bool partDFA = true) {
     unsigned int startStateIndex = 0;
-
-    //std::vector<std::string> states = { // OLD
-    //    "Q000","Q001","Q002","Q003","Q004","Q005","Q008"
-    //};
-#define MAX_FINIT_STATES 1024
-    //int transitionTable1FinitStates[MAX_FINIT_STATES] = { 1, 6, 7 };
-
-
-    //int maxSymbolIndex = 0; // 4; // !
-    int maxStateIndex = 0; // 6; // !
+    int maxStateIndex = 0;
     for (int iIndex = 0; iIndex < SYMBOL_NUMBER; ++iIndex)
         for (int jIndex = 0; jIndex < MAX_STATES; ++jIndex)
             if (transitionTable[iIndex][jIndex] > maxStateIndex) // Warning: no suppord zero row!
                 maxStateIndex = transitionTable[iIndex][jIndex];
     int deadStateIndex = maxStateIndex; // Warning: conventionality (умовність)!
-
-#ifdef PART_DFA_MODE
-    --maxStateIndex;
-#endif
+    if(partDFA)   
+        --maxStateIndex;
 
     std::ofstream ofs(outFileNameWithoutExtension + ".dot");
-    if (!ofs) return; // error!
+    if (!ofs) return -1; // error!
 
     ofs << "digraph FSM {\n";
     ofs << "  rankdir=LR;\n\n";
@@ -338,13 +48,10 @@ void f1(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTableFinit
     }
     ofs << "  node [shape=circle];\n\n";
 
-    // Звичайні стани
+    // all states
     for (int stateIndex = 0; stateIndex <= maxStateIndex; ++stateIndex) {
         ofs << "  \"q" << stateIndex << "\";\n";
     }
-    //for (auto& s : states) {
-    //    ofs << "  \"" << s << "\";\n";
-    //}
     ofs << "\n";
 
     struct Edge { int from, to; std::string label; };
@@ -359,10 +66,9 @@ void f1(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTableFinit
     for (int sym = 0; sym < SYMBOL_NUMBER; ++sym) {
         for (int from = 0; from <= maxStateIndex; ++from) {
             int to = transitionTable[sym][from];
-#ifdef PART_DFA_MODE
-            if (to == deadStateIndex)
+
+            if (partDFA && to == deadStateIndex)
                 continue;
-#endif
 
             int idx = find_edge(from, to);
 
@@ -391,20 +97,26 @@ void f1(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTableFinit
     ofs << "}\n";
     ofs.close();
 
-    //    system(".\Graphviz-14.0.5-win32\bin\dot -Tvsdx automaton.dot -o automaton.vsdx");
-
-    //return 0;
+    if (partDFA) {
+        system(("Graphviz-14.0.5-win32\\bin\\dot -Tsvg " + outFileNameWithoutExtension + ".dot -o " + outFileNameWithoutExtension + ".svg").c_str());
+        system(("Graphviz-14.0.5-win32\\bin\\dot -Tpdf " + outFileNameWithoutExtension + ".dot -o " + outFileNameWithoutExtension + ".pdf").c_str());
+    }
+    else {
+        system("mkdir full_dfa >nul 2>&1"); // by command // std::filesystem::create_directories("full_dfa"); // C++17
+        system(("Graphviz-14.0.5-win32\\bin\\dot -Tsvg " + outFileNameWithoutExtension + ".dot -o full_dfa\\" + outFileNameWithoutExtension + ".svg").c_str());
+        system(("Graphviz-14.0.5-win32\\bin\\dot -Tpdf " + outFileNameWithoutExtension + ".dot -o full_dfa\\" + outFileNameWithoutExtension + ".pdf").c_str());
+    }
 }
 
 int main() {
-    f1(transitionTable1, transitionTable1FinitStates, "fsm1");  
-    f1(transitionTable2, transitionTable2FinitStates, "fsm2");  
-    f1(transitionTable3, transitionTable3FinitStates, "fsm3");
-    f1(transitionTable4, transitionTable4FinitStates, "fsm4");
-
-    return 0;
-
-//    system(".\Graphviz-14.0.5-win32\bin\dot -Tvsdx automaton.dot -o automaton.vsdx");
+    buildFSM(transitionTable1, transitionTable1FinitStates, "fsm1__full_dfa", false);  
+    buildFSM(transitionTable1, transitionTable1FinitStates, "fsm1", true);
+    buildFSM(transitionTable2, transitionTable2FinitStates, "fsm2__full_dfa", false);
+    buildFSM(transitionTable2, transitionTable2FinitStates, "fsm2", true);
+    buildFSM(transitionTable3, transitionTable3FinitStates, "fsm3__full_dfa", false);
+    buildFSM(transitionTable3, transitionTable3FinitStates, "fsm3", true);
+    buildFSM(transitionTable4, transitionTable4FinitStates, "fsm4__full_dfa", false);
+    buildFSM(transitionTable4, transitionTable4FinitStates, "fsm4", true);
 
     return 0;
 }
