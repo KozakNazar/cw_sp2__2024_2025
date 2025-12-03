@@ -14,7 +14,7 @@
 
 #define PART_DFA_MODE
 
-#define table transitionTable1
+//#define table transitionTable1
 #if 0
 #define SYMBOL_NUMBER 256
 #define MAX_STATES 1024
@@ -306,15 +306,15 @@ void f1(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTableFinit
     //    "Q000","Q001","Q002","Q003","Q004","Q005","Q008"
     //};
 #define MAX_FINIT_STATES 1024
-    int transitionTable1FinitStates[MAX_FINIT_STATES] = { 1, 6, 7 };
+    //int transitionTable1FinitStates[MAX_FINIT_STATES] = { 1, 6, 7 };
 
 
     //int maxSymbolIndex = 0; // 4; // !
     int maxStateIndex = 0; // 6; // !
     for (int iIndex = 0; iIndex < SYMBOL_NUMBER; ++iIndex)
         for (int jIndex = 0; jIndex < MAX_STATES; ++jIndex)
-            if (table[iIndex][jIndex] > maxStateIndex) // Warning: no suppord zero row!
-                maxStateIndex = table[iIndex][jIndex];
+            if (transitionTable[iIndex][jIndex] > maxStateIndex) // Warning: no suppord zero row!
+                maxStateIndex = transitionTable[iIndex][jIndex];
     int deadStateIndex = maxStateIndex; // Warning: conventionality (умовність)!
 
 #ifdef PART_DFA_MODE
@@ -333,8 +333,8 @@ void f1(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTableFinit
 
     // --- 2. dinite states
     ofs << "  node [shape=doublecircle];\n";
-    for (unsigned int stateIndex = 0; !stateIndex/* q0 can be final */ || transitionTable1FinitStates[stateIndex]; ++stateIndex) {
-        ofs << "  \"q" << transitionTable1FinitStates[stateIndex] << "\";\n";
+    for (unsigned int stateIndex = 0; !stateIndex/* q0 can be final */ || transitionTableFinitStates[stateIndex]; ++stateIndex) {
+        ofs << "  \"q" << transitionTableFinitStates[stateIndex] << "\";\n";
     }
     ofs << "  node [shape=circle];\n\n";
 
@@ -356,9 +356,9 @@ void f1(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTableFinit
         return -1;
     };
 
-    for (int sym = 0; sym <= MAX_STATES; ++sym) {
-        for (int from = 0; from < maxStateIndex; ++from) {
-            int to = table[sym][from];
+    for (int sym = 0; sym < SYMBOL_NUMBER; ++sym) {
+        for (int from = 0; from <= maxStateIndex; ++from) {
+            int to = transitionTable[sym][from];
 #ifdef PART_DFA_MODE
             if (to == deadStateIndex)
                 continue;
@@ -397,108 +397,12 @@ void f1(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTableFinit
 }
 
 int main() {
-
-    (void)f1(transitionTable1, transitionTable1FinitStates, "fsm");
+    f1(transitionTable1, transitionTable1FinitStates, "fsm1");  
+    f1(transitionTable2, transitionTable2FinitStates, "fsm2");  
+    f1(transitionTable3, transitionTable3FinitStates, "fsm3");
+    f1(transitionTable4, transitionTable4FinitStates, "fsm4");
 
     return 0;
-
-    unsigned int startStateIndex = 0;
-
-    //std::vector<std::string> states = { // OLD
-    //    "Q000","Q001","Q002","Q003","Q004","Q005","Q008"
-    //};
-#define MAX_FINIT_STATES 1024
-    int transitionTable1FinitStates[MAX_FINIT_STATES] = { 1, 6, 7 };
-
-
-    int maxSymbolIndex = 0; // 4; // !
-    int maxStateIndex = 0; // 6; // !
-    //int maxStateIndex = 0;
-    for (int iIndex = 0; iIndex < SYMBOL_NUMBER; ++iIndex) {
-        for (int jIndex = 0; jIndex < MAX_STATES; ++jIndex) {
-            if (table[iIndex][jIndex]) // Warning: no suppord zero row!
-                maxSymbolIndex = iIndex; // REMOVE !!!
-//            if (table[iIndex][jIndex]) // Warning: no suppord zero collumn!
-//                FROM_STATES = jIndex;
-            if (table[iIndex][jIndex] > maxStateIndex)
-                maxStateIndex = table[iIndex][jIndex];
-        }
-    }
-    int deadStateIndex = maxStateIndex; // Warning: conventionality (умовність)!
-
-#ifdef PART_DFA_MODE
-    --maxStateIndex;
-#endif
-
-    std::ofstream ofs("fsm.dot");
-    if (!ofs) return 1;
-
-    ofs << "digraph FSM {\n";
-    ofs << "  rankdir=LR;\n\n";
-
-    // --- 1. start state
-    ofs << "  start [shape=point];\n";
-    ofs << "  start -> \"q" << startStateIndex << "\";\n\n";
-
-    // --- 2. dinite states
-    ofs << "  node [shape=doublecircle];\n";
-    for (unsigned int stateIndex = 0; !stateIndex/* q0 can be final */ || transitionTable1FinitStates[stateIndex]; ++stateIndex) {
-        ofs << "  \"q" << transitionTable1FinitStates[stateIndex] << "\";\n";
-    }
-    ofs << "  node [shape=circle];\n\n";
-
-    // Звичайні стани
-    for (int stateIndex = 0; stateIndex <= maxStateIndex; ++stateIndex) {
-        ofs << "  \"q" << stateIndex << "\";\n";
-    }
-    //for (auto& s : states) {
-    //    ofs << "  \"" << s << "\";\n";
-    //}
-    ofs << "\n";
-
-    struct Edge { int from, to; std::string label; };
-    std::vector<Edge> edges;
-
-    auto find_edge = [&](int u, int v) -> int {
-        for (size_t i = 0; i < edges.size(); ++i)
-            if (edges[i].from == u && edges[i].to == v) return i;
-        return -1;
-    };
-
-    for (int sym = 0; sym <= maxSymbolIndex; ++sym) {
-        for (int from = 0; from < maxStateIndex; ++from) {
-            int to = table[sym][from];     
-#ifdef PART_DFA_MODE
-            if (to == deadStateIndex)
-                continue;
-#endif
-
-            int idx = find_edge(from, to);
-
-            std::ostringstream lbl;
-            if (sym >= 32 && sym <= 126) {
-                if (sym == '\"')
-                    lbl << "'\\" << (char)sym << "'";
-                else
-                    lbl << "'" << (char)sym << "'";
-            }
-            else
-                lbl << "0x" << std::uppercase << std::hex
-                << std::setw(2) << std::setfill('0') << sym;
-
-            if (idx >= 0)
-                edges[idx].label += "," + lbl.str();
-            else
-                edges.push_back({ from, to, lbl.str() });
-        }
-    }
-
-    for (auto& e : edges) {
-        ofs << "  \"q" << e.from << "\" -> \"q" << e.to << "\" [label=\"" << e.label << "\"];\n";
-    }
-
-    ofs << "}\n";
-    ofs.close();
 
 //    system(".\Graphviz-14.0.5-win32\bin\dot -Tvsdx automaton.dot -o automaton.vsdx");
 
