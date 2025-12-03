@@ -27,7 +27,7 @@ int buildFSM(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTable
         for (int jIndex = 0; jIndex < MAX_STATES; ++jIndex)
             if (transitionTable[iIndex][jIndex] > maxStateIndex) // Warning: no suppord zero row!
                 maxStateIndex = transitionTable[iIndex][jIndex];
-    int deadStateIndex = maxStateIndex; // Warning: conventionality (ГіГ¬Г®ГўГ­ВіГ±ГІГј)!
+    int deadStateIndex = maxStateIndex; // Warning: conventionality (умовність)!
     if(partDFA)   
         --maxStateIndex;
 
@@ -144,5 +144,4 @@ int main() {
         std::cout << "\r[      +       ]................ complete                      ";
 
     return returnValue;
-
 }
