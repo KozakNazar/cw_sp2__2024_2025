@@ -31,7 +31,15 @@ int buildFSM(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTable
     if(partDFA)   
         --maxStateIndex;
 
-    std::ofstream ofs(outFileNameWithoutExtension + ".dot");
+    std::string ofsStr;
+    if (partDFA) {
+        ofsStr = (outFileNameWithoutExtension + ".dot");
+    }
+    else {
+        system("mkdir full_dfa >nul 2>&1"); // by command // std::filesystem::create_directories("full_dfa"); // C++17
+        ofsStr = "full_dfa\\" + outFileNameWithoutExtension + ".dot";
+    }
+    std::ofstream ofs(ofsStr);
     if (!ofs) return -1; // error!
 
     ofs << "digraph FSM {\n";
@@ -97,26 +105,43 @@ int buildFSM(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTable
     ofs << "}\n";
     ofs.close();
 
+    int returnValue = 0;
+
     if (partDFA) {
-        system(("Graphviz-14.0.5-win32\\bin\\dot -Tsvg " + outFileNameWithoutExtension + ".dot -o " + outFileNameWithoutExtension + ".svg").c_str());
-        system(("Graphviz-14.0.5-win32\\bin\\dot -Tpdf " + outFileNameWithoutExtension + ".dot -o " + outFileNameWithoutExtension + ".pdf").c_str());
+        returnValue |= system(("Graphviz-14.0.5-win32\\bin\\dot -Tsvg " + outFileNameWithoutExtension + ".dot -o " + outFileNameWithoutExtension + ".svg  >nul 2>&1").c_str());
+        returnValue |= system(("Graphviz-14.0.5-win32\\bin\\dot -Tpdf " + outFileNameWithoutExtension + ".dot -o " + outFileNameWithoutExtension + ".pdf  >nul 2>&1").c_str());
     }
     else {
-        system("mkdir full_dfa >nul 2>&1"); // by command // std::filesystem::create_directories("full_dfa"); // C++17
-        system(("Graphviz-14.0.5-win32\\bin\\dot -Tsvg " + outFileNameWithoutExtension + ".dot -o full_dfa\\" + outFileNameWithoutExtension + ".svg").c_str());
-        system(("Graphviz-14.0.5-win32\\bin\\dot -Tpdf " + outFileNameWithoutExtension + ".dot -o full_dfa\\" + outFileNameWithoutExtension + ".pdf").c_str());
+        returnValue |= system(("Graphviz-14.0.5-win32\\bin\\dot -Tsvg full_dfa\\" + outFileNameWithoutExtension + ".dot -o full_dfa\\" + outFileNameWithoutExtension + ".svg  >nul 2>&1").c_str());
+        returnValue |= system(("Graphviz-14.0.5-win32\\bin\\dot -Tpdf full_dfa\\" + outFileNameWithoutExtension + ".dot -o full_dfa\\" + outFileNameWithoutExtension + ".pdf  >nul 2>&1").c_str());
     }
+
+    return returnValue;
 }
 
 int main() {
-    buildFSM(transitionTable1, transitionTable1FinitStates, "fsm1__full_dfa", false);  
-    buildFSM(transitionTable1, transitionTable1FinitStates, "fsm1", true);
-    buildFSM(transitionTable2, transitionTable2FinitStates, "fsm2__full_dfa", false);
-    buildFSM(transitionTable2, transitionTable2FinitStates, "fsm2", true);
-    buildFSM(transitionTable3, transitionTable3FinitStates, "fsm3__full_dfa", false);
-    buildFSM(transitionTable3, transitionTable3FinitStates, "fsm3", true);
-    buildFSM(transitionTable4, transitionTable4FinitStates, "fsm4__full_dfa", false);
-    buildFSM(transitionTable4, transitionTable4FinitStates, "fsm4", true);
+    int returnValue = 0;
 
-    return 0;
+    std::cout << "\r[fsm1__full_dfa]................ please wait\r[fsm1__full_df";
+    returnValue |= buildFSM(transitionTable1, transitionTable1FinitStates, "fsm1__full_dfa", false);
+    std::cout << "\r[fsm1          ]................ please wait\r[fsm1         ";
+    returnValue |= buildFSM(transitionTable1, transitionTable1FinitStates, "fsm1", true);
+    std::cout << "\r[fsm2__full_dfa]................ please wait\r[fsm2__full_df";
+    returnValue |= buildFSM(transitionTable2, transitionTable2FinitStates, "fsm2__full_dfa", false);
+    std::cout << "\r[fsm2          ]................ please wait\r[fsm2         ";
+    returnValue |= buildFSM(transitionTable2, transitionTable2FinitStates, "fsm2", true);
+    std::cout << "\r[fsm3__full_dfa]................ please wait\r[fsm3__full_df";
+    returnValue |= buildFSM(transitionTable3, transitionTable3FinitStates, "fsm3__full_dfa", false);
+    std::cout << "\r[fsm3          ]................ please wait\r[fsm3         ";
+    returnValue |= buildFSM(transitionTable3, transitionTable3FinitStates, "fsm3", true);
+    std::cout << "\r[fsm4__full_dfa]................ please wait\r[fsm4__full_df";
+    returnValue |= buildFSM(transitionTable4, transitionTable4FinitStates, "fsm4__full_dfa", false);
+    std::cout << "\r[fsm4          ]................ please wait\r[fsm4         ";
+    returnValue |= buildFSM(transitionTable4, transitionTable4FinitStates, "fsm4", true);
+    if (returnValue)
+        std::cout << "\r[      -       ]................ some problems...              ";
+    else
+        std::cout << "\r[      +       ]................ complete                      ";
+
+    return returnValue;
 }
