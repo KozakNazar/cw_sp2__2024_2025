@@ -804,7 +804,7 @@ void buildDeadState__DPDA1forLL2__OLD(Grammar& grammar, DPDA1Program& dpda1Progr
 
 
 
-		// + Ã¤Ã¥Ã°Ã¥Ã¢Ã® Ã¢Ã¨Ã¢Ã®Ã¤Ã³
+		// + äåðåâî âèâîäó
 		
 		//char emptyStringCode = getLexemId((char*)"");
 		//char deadStateCode = getLexemId((char*)"DEAD_STATE");
@@ -823,37 +823,6 @@ void buildDeadState__DPDA1forLL2__OLD(Grammar& grammar, DPDA1Program& dpda1Progr
 #undef ROW_INDEX
 #undef COLUMN_INDEX
 		} while (++tapeCode);
-}
-
-// used
-// tape scroll
-void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
-	// ALL CODE FOR IDENT AND UNSIGNED VALUE
-	// MIN_TERMIN
-	// All Symbol -> only non-terminal
-	char emptyStringCode = getLexemId((char*)"");
-	for (char tapeAndTopStackCode = 255; tapeAndTopStackCode++;) {
-#define ROW_INDEX tapeAndTopStackCode
-#define COLUMN_INDEX tapeAndTopStackCode
-		for (char tapeCode = 255; tapeCode++;) {
-			//if (dpda1Program[toptapeAndStackCode][toptapeAndStackCode].tapeAction == -1) { // ?
-			//	printf("Error: no support model\r\n");
-			//	exit(0);
-			//}
-
-			// tape
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].tapeAction = SCROLL_TO_RIGHT; // SHIFT
-
-			// stack
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAction = POP; // (2)
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0; // not useed for accept state (? dpda1IndexingForSecondElement; ==> ignore => mask 0)
-			for (unsigned int rTokekIndex = 0; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) { // not useed for dead state
-				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = emptyStringCode; // (!)
-			}		
-		}
-#undef ROW_INDEX
-#undef COLUMN_INDEX
-	}
 }
 
 /*
@@ -906,6 +875,163 @@ void buildDPDA1forLL2_(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexi
 
 }
 */
+
+
+
+int nonTerminalIdsInit(Grammar& grammar, int lastNonUsedid) {
+	char* keywords_re = (char*)KEYWORDS_RE;
+	char keywords_[sizeof(KEYWORDS_RE)] = { '\0' };
+	prepareKeyWordIdGetter(keywords_, keywords_re);
+
+	for (MarkedRule* multiRule = grammar.multiRules; multiRule->firstMarksType; ++multiRule) {
+		if (terminalAndNonTerminalLexemIds.find(multiRule->rule.lhs) == terminalAndNonTerminalLexemIds.end()) {
+			if (std::regex_match(std::string(multiRule->rule.lhs), std::regex(keywords_re))) {
+				terminalAndNonTerminalLexemIds[multiRule->rule.lhs] = getKeyWordId(keywords_, multiRule->rule.lhs, KEYWORD_LEXEM_MIN_ID);
+			}
+			else {
+				terminalAndNonTerminalLexemIds[multiRule->rule.lhs] = lastNonUsedid++;
+			}
+		}
+
+		for (int firstMarksIndex = 0; multiRule->firstMarks[firstMarksIndex][0] != '\0'; ++firstMarksIndex) {
+			if (terminalAndNonTerminalLexemIds.find(multiRule->firstMarks[firstMarksIndex]) == terminalAndNonTerminalLexemIds.end()) {
+				if (std::regex_match(std::string(multiRule->firstMarks[firstMarksIndex]), std::regex(keywords_re))) {
+					terminalAndNonTerminalLexemIds[multiRule->firstMarks[firstMarksIndex]] = getKeyWordId(keywords_, multiRule->firstMarks[firstMarksIndex], KEYWORD_LEXEM_MIN_ID);
+				}
+				else {
+					terminalAndNonTerminalLexemIds[multiRule->firstMarks[firstMarksIndex]] = lastNonUsedid++;
+				}
+			}
+
+			for (int rhsVariantIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex) {
+				for (int secondMarksIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex][0] != '\0'; ++secondMarksIndex) {
+					if (terminalAndNonTerminalLexemIds.find(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]) == terminalAndNonTerminalLexemIds.end()) {
+						if (std::regex_match(std::string(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]), std::regex(keywords_re))) {
+							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]] = getKeyWordId(keywords_, multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex], KEYWORD_LEXEM_MIN_ID);
+						}
+						else {
+							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]] = lastNonUsedid++;
+						}
+					}
+				}
+
+				for (int rhsElementIndex = 0; multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex][0] != '\0'; ++rhsElementIndex) {
+					if (terminalAndNonTerminalLexemIds.find(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]) == terminalAndNonTerminalLexemIds.end()) {
+						if (std::regex_match(std::string(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]), std::regex(keywords_re))) {
+							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]] = getKeyWordId(keywords_, multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex], KEYWORD_LEXEM_MIN_ID);
+						}
+						else {
+							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]] = lastNonUsedid++;
+						}
+					}
+				}
+
+			}
+		}
+	}
+
+	if (lastNonUsedid > NONTERMINAL_LEXEM_MAX_ID) {
+		printf("Error: maximum number of lexems exceeded.\n");
+		exit(0);
+	}
+
+	return lastNonUsedid;
+}
+
+void terminalAndNonTerminalIdsInitPart2(struct LexemInfo* lexemInfoTable, int lastNonUsedid) {
+	if (lexemInfoTable == NULL) {
+		printf("Error\n");
+		exit(0);
+	}
+
+	if (true) {
+		printf("Error\n");
+		exit(0);
+	}
+
+	for (; lexemInfoTable->lexemStr[0] != '\0'; ++lexemInfoTable) {
+		if (terminalAndNonTerminalLexemIds.find(lexemInfoTable->lexemStr) == terminalAndNonTerminalLexemIds.end()) {
+			terminalAndNonTerminalLexemIds[lexemInfoTable->lexemStr] = lastNonUsedid++;
+		}
+	}
+}
+
+
+void terminalAndNonTerminalIdsInit(Grammar& grammar, struct LexemInfo* lexemInfoTable/*, int lastNonUsedid !!!!!!!!!!! */) {
+	if (lexemInfoTable == NULL) {
+		printf("Error\n");
+		exit(0);
+	}
+
+
+	/*
+
+	#define KEYWORD_LEXEM_MIN_ID (UNKNOWN_ELEMENT_ID + 1)
+	#define KEYWORD_LEXEM_MAX_ID (KEYWORD_LEXEM_MIN_ID + MAX_KEYWORD_COUNT)
+
+	#define IDENTIFIER_LEXEM_MIN_ID (KEYWORD_LEXEM_MAX_ID + 1)
+	#define IDENTIFIER_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + MAX_VARIABLES_COUNT)
+
+	#define LITERAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
+	#define LITERAL_LEXEM_MAX_ID (LITERAL_LEXEM_MIN_ID + MAX_LITERAL_COUNT)
+
+	// SPLIT TERMINAL AND NONTERMINAL // V
+	//#define TERMINAL_AND_NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
+	//#define TERMINAL_AND_NONTERMINAL_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + 190)
+	#define NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
+	#define NONTERMINAL_LEXEM_MAX_ID 252
+	//#define  253
+	#define DEAD_STATE_ID 254
+	//#define ...                    255
+
+	*/
+
+
+
+
+
+	;
+
+	terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // no exist in code, but exit as abstract zero lenght element // lastNonUsedid++;
+	//terminalAndNonTerminalLexemIds[] = UNKNOWN_ELEMENT_ID; // no exist in code and no exit as abstract element
+
+//#define EMPTY_TOKEN_LEXEM_ID 0
+//#define UNKNOWN_ELEMENT_ID 1 // (EMPTY_TOKEN_LEXEM_ID + 1)
+
+//EMPTY_TOKEN_LEXEM_ID
+//UNKNOWN_ELEMENT_ID (EMPTY_TOKEN_LEXEM_ID + 1)
+
+//	char emptyElementCode = getLexemId((char*)"");
+//	char deadStateCode = getLexemId((char*)"DEAD_STATE");
+
+	/* EMPTY_TOKEN_LEXEM_ID *///terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // lastNonUsedid++; // !!!!!!!!!!!!!!!!
+
+
+
+	terminalAndNonTerminalLexemIds[IDENT_METETERMINAL_LEXEM_STR] = IDENT_METETERMINAL_LEXEM_ID;
+	terminalAndNonTerminalLexemIds[UNSIGNED_VALUE_METATERMINAL_LEXEM_STR] = UNSIGNED_VALUE_METATERMINAL_LEXEM_ID;
+
+	int lastNonUsedid = NONTERMINAL_LEXEM_MIN_ID;
+	lastNonUsedid = nonTerminalIdsInit(grammar, lastNonUsedid);
+
+	//  !
+	//	if (lastNonUsedid > NONTERMINAL_LEXEM_MAX_ID) {
+	//		printf("Error: maximum number of lexems exceeded.\n");
+	//		exit(0);
+	//	}
+
+		// terminalAndNonTerminalLexemIds["DEAD_STATE"] = DEAD_STATE_ID; // NOT INIT
+		//                                                FREE_STATE_ID;
+
+	if (lastNonUsedid);
+
+	if (false) terminalAndNonTerminalIdsInitPart2(lexemInfoTable, lastNonUsedid); // TERMINAL INIT AFTER SCAN SOURCE
+}
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//char getLexemTId(char* lexemStr) { // getLexemId
+//	return 0;
+//}
 
 // used
 //?// two table //+//
@@ -1100,160 +1226,39 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
     }
 }
 
-int nonTerminalIdsInit(Grammar & grammar, int lastNonUsedid) {
-	char* keywords_re = (char*)KEYWORDS_RE;
-	char keywords_[sizeof(KEYWORDS_RE)] = { '\0' };
-	prepareKeyWordIdGetter(keywords_, keywords_re);
+// used
+// tape scroll
+void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+    // ALL IDENT <-to-> ALL IDENT
+	// ALL UNSIGNED VALUE <-to-> ALL UNSIGNED VALUE
 
-	for (MarkedRule* multiRule = grammar.multiRules; multiRule->firstMarksType; ++multiRule) {
-		if (terminalAndNonTerminalLexemIds.find(multiRule->rule.lhs) == terminalAndNonTerminalLexemIds.end()) {
-			if (std::regex_match(std::string(multiRule->rule.lhs), std::regex(keywords_re))) {
-				terminalAndNonTerminalLexemIds[multiRule->rule.lhs] = getKeyWordId(keywords_, multiRule->rule.lhs, KEYWORD_LEXEM_MIN_ID);
-			}
-			else {
-				terminalAndNonTerminalLexemIds[multiRule->rule.lhs] = lastNonUsedid++;
-			}
-		}
+	// ALL CODE FOR IDENT AND UNSIGNED VALUE
+	// MIN_TERMIN
+	// All Symbol -> only non-terminal
+	char emptyStringCode = getLexemId((char*)"");
+	for (char tapeAndTopStackCode = 255; tapeAndTopStackCode++;) {
+#define ROW_INDEX tapeAndTopStackCode
+#define COLUMN_INDEX tapeAndTopStackCode
+		for (char tapeCode = 255; tapeCode++;) {
+			//if (dpda1Program[toptapeAndStackCode][toptapeAndStackCode].tapeAction == -1) { // ?
+			//	printf("Error: no support model\r\n");
+			//	exit(0);
+			//}
 
-		for (int firstMarksIndex = 0; multiRule->firstMarks[firstMarksIndex][0] != '\0'; ++firstMarksIndex) {
-			if (terminalAndNonTerminalLexemIds.find(multiRule->firstMarks[firstMarksIndex]) == terminalAndNonTerminalLexemIds.end()) {
-				if (std::regex_match(std::string(multiRule->firstMarks[firstMarksIndex]), std::regex(keywords_re))) {
-					terminalAndNonTerminalLexemIds[multiRule->firstMarks[firstMarksIndex]] = getKeyWordId(keywords_, multiRule->firstMarks[firstMarksIndex], KEYWORD_LEXEM_MIN_ID);
-				}
-				else {
-					terminalAndNonTerminalLexemIds[multiRule->firstMarks[firstMarksIndex]] = lastNonUsedid++;
-				}
-			}
+			// tape
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].tapeAction = SCROLL_TO_RIGHT; // SHIFT
 
-			for (int rhsVariantIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex) {
-				for (int secondMarksIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex][0] != '\0'; ++secondMarksIndex) {
-					if (terminalAndNonTerminalLexemIds.find(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]) == terminalAndNonTerminalLexemIds.end()) {
-						if (std::regex_match(std::string(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]), std::regex(keywords_re))) {
-							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]] = getKeyWordId(keywords_, multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex], KEYWORD_LEXEM_MIN_ID);
-						}
-						else {
-							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex]] = lastNonUsedid++;
-						}
-					}
-				}
-
-				for (int rhsElementIndex = 0; multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex][0] != '\0'; ++rhsElementIndex) {
-					if (terminalAndNonTerminalLexemIds.find(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]) == terminalAndNonTerminalLexemIds.end()) {
-						if (std::regex_match(std::string(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]), std::regex(keywords_re))) {
-							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]] = getKeyWordId(keywords_, multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex], KEYWORD_LEXEM_MIN_ID);
-						}
-						else {
-							terminalAndNonTerminalLexemIds[multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]] = lastNonUsedid++;
-						}
-					}
-				}
-
+			// stack
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAction = POP; // (2)
+			dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0; // not useed for accept state (? dpda1IndexingForSecondElement; ==> ignore => mask 0)
+			for (unsigned int rTokekIndex = 0; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) { // not useed for dead state
+				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = emptyStringCode; // (!)
 			}
 		}
-	}
-
-	if (lastNonUsedid > NONTERMINAL_LEXEM_MAX_ID) {
-		printf("Error: maximum number of lexems exceeded.\n");
-		exit(0);
-	}
-
-	return lastNonUsedid;
-}
-
-void terminalAndNonTerminalIdsInitPart2(struct LexemInfo* lexemInfoTable, int lastNonUsedid) {
-	if (lexemInfoTable == NULL) {
-		printf("Error\n");
-		exit(0);
-	}
-
-	if (true) {
-		printf("Error\n");
-		exit(0);
-	}
-
-	for (; lexemInfoTable->lexemStr[0] != '\0'; ++lexemInfoTable) {
-		if (terminalAndNonTerminalLexemIds.find(lexemInfoTable->lexemStr) == terminalAndNonTerminalLexemIds.end()) {
-			terminalAndNonTerminalLexemIds[lexemInfoTable->lexemStr] = lastNonUsedid++;
-		}
+#undef ROW_INDEX
+#undef COLUMN_INDEX
 	}
 }
-
-
-void terminalAndNonTerminalIdsInit(Grammar & grammar, struct LexemInfo* lexemInfoTable/*, int lastNonUsedid !!!!!!!!!!! */) {
-	if (lexemInfoTable == NULL) {
-		printf("Error\n");
-		exit(0);
-	}
-
-
-/*
-
-#define KEYWORD_LEXEM_MIN_ID (UNKNOWN_ELEMENT_ID + 1)
-#define KEYWORD_LEXEM_MAX_ID (KEYWORD_LEXEM_MIN_ID + MAX_KEYWORD_COUNT)
-
-#define IDENTIFIER_LEXEM_MIN_ID (KEYWORD_LEXEM_MAX_ID + 1)
-#define IDENTIFIER_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + MAX_VARIABLES_COUNT)
-
-#define LITERAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
-#define LITERAL_LEXEM_MAX_ID (LITERAL_LEXEM_MIN_ID + MAX_LITERAL_COUNT)
-
-// SPLIT TERMINAL AND NONTERMINAL // V
-//#define TERMINAL_AND_NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
-//#define TERMINAL_AND_NONTERMINAL_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + 190)
-#define NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
-#define NONTERMINAL_LEXEM_MAX_ID 252
-//#define  253
-#define DEAD_STATE_ID 254
-//#define ...                    255
-
-*/
-
-
-
-	
-		
-		;
-
-	terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // no exist in code, but exit as abstract zero lenght element // lastNonUsedid++;
-	//terminalAndNonTerminalLexemIds[] = UNKNOWN_ELEMENT_ID; // no exist in code and no exit as abstract element
-
-//#define EMPTY_TOKEN_LEXEM_ID 0
-//#define UNKNOWN_ELEMENT_ID 1 // (EMPTY_TOKEN_LEXEM_ID + 1)
-
-//EMPTY_TOKEN_LEXEM_ID
-//UNKNOWN_ELEMENT_ID (EMPTY_TOKEN_LEXEM_ID + 1)
-
-//	char emptyElementCode = getLexemId((char*)"");
-//	char deadStateCode = getLexemId((char*)"DEAD_STATE");
-
-	/* EMPTY_TOKEN_LEXEM_ID *///terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // lastNonUsedid++; // !!!!!!!!!!!!!!!!
-
-	
-
-	terminalAndNonTerminalLexemIds[IDENT_METETERMINAL_LEXEM_STR] = IDENT_METETERMINAL_LEXEM_ID;
-	terminalAndNonTerminalLexemIds[UNSIGNED_VALUE_METATERMINAL_LEXEM_STR] = UNSIGNED_VALUE_METATERMINAL_LEXEM_ID;
-
-	int lastNonUsedid = NONTERMINAL_LEXEM_MIN_ID;
-	lastNonUsedid = nonTerminalIdsInit(grammar, lastNonUsedid);
-
-//  !
-//	if (lastNonUsedid > NONTERMINAL_LEXEM_MAX_ID) {
-//		printf("Error: maximum number of lexems exceeded.\n");
-//		exit(0);
-//	}
-
-	// terminalAndNonTerminalLexemIds["DEAD_STATE"] = DEAD_STATE_ID; // NOT INIT
-	//                                                FREE_STATE_ID;
-
-	if (lastNonUsedid);
-
-	if (false) terminalAndNonTerminalIdsInitPart2(lexemInfoTable, lastNonUsedid); // TERMINAL INIT AFTER SCAN SOURCE
-}
-
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//char getLexemTId(char* lexemStr) { // getLexemId
-//	return 0;
-//}
 
 #define REMOVE___OR_NOT struct LexemInfo* lexemInfoTable
 
