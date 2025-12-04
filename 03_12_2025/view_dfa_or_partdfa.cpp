@@ -1,10 +1,10 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define WIN32_LEAN_AND_MEAN
-/*********************************************************
-* N.Kozak // Lviv'2025 //                                *
-*                              file: dfa_or_partdfa.cpp  *
-*                                            (part impl) *
-**********************************************************/
+/**************************************************************
+* N.Kozak // Lviv'2025 //                                     *
+*                              file: view_dfa_or_partdfa.cpp  *
+*                                                 (part impl) *
+***************************************************************/
 #include <iostream>
 #include <fstream>
 #include <vector>
