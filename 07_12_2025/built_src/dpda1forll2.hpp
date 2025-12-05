@@ -50,7 +50,7 @@ typedef PDAInstruction DPDA1Program[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
 //#define EMPTY_PDA_INSTRUCTION { NO_SCROLL, {PUSH, {123, 123, 4, 0}}}
 #define PDA_DEAD_STATE_INSTRUCTION { 0, NO_SCROLL, {NOTHING, {-1, -1, -1, -1}}} // -1 => ?
 
-typedef char DPDA1IndexingForSecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
+typedef unsigned char DPDA1IndexingForSecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
 DPDA1IndexingForSecondElement dpdaIndexingForSecondElement;
 
 // TODO: USE MEMSET !
@@ -178,5 +178,4 @@ char tryToAcceptDPDA(DPDA1Program * dpdaProgram, DPDA1IndexingForSecondElement* 
 }
 #ifdef SET_STACK_123
 #pragma warning(pop)
-
 #endif
