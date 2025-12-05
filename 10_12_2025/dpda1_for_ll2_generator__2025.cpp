@@ -1182,14 +1182,14 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 							//char* currSecondMark = multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex];
 //							char rowIndexForSecondTable = getLexemTId(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS]);
 
-							if (dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndex] != 255
-								&& dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndex] != rhsVariantIndex) {
-								printf("No support model or model consider error.\r\n");
-								exit(0);
-								if (dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndex] != 255
-									&& dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndex] != rhsVariantIndex) {
+							if (dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndex]) {
+								if (dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndex] != rhsVariantIndex) {
 									printf("No support model or model consider error.\r\n");
 									exit(0);
+								}
+								else {
+									printf("Warning: multi-indexing.\r\n");
+
 								}
 							}	
 
