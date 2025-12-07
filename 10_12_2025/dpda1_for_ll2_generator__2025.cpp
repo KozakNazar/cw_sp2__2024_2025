@@ -1057,108 +1057,121 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 	for (MarkedRule* multiRule = grammar.multiRules; multiRule->firstMarksType; ++multiRule) {
 		char columnIndex = getLexemId(multiRule->rule.lhs); // char* currSteckElement = multiRule->rule.lhs;
 
-//		multiRule->firstMarksType;
+		unsigned char columnIndexFirstIndex = columnIndex;
+		unsigned char columnIndexLastIndex = columnIndex;
+		if (columnIndex == IDENT_METETERMINAL_LEXEM_ID) { // THIS SHOULD NEVER HAPPEN !
+			columnIndexFirstIndex = IDENTIFIER_LEXEM_MIN_ID;
+			columnIndexLastIndex = IDENTIFIER_LEXEM_MAX_ID;
 
-		// firstMarkCode = 0 ==> ""
-		unsigned char firstMarkCode = 0; do {
-			//const char * firstMarkStr = getLexemStrById(firstMarkCode);
-			//unsigned long long int lexemTypeByFirstMarkCode = getLexemTypeById(firstMarkCode);
+		}
+		else if (columnIndex == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID) { // THIS SHOULD NEVER HAPPEN !
+			columnIndexFirstIndex = LITERAL_LEXEM_MIN_ID;
+			columnIndexLastIndex = LITERAL_LEXEM_MAX_ID;
+		}
+		for (unsigned char columnIndexSelector = columnIndexFirstIndex; columnIndexSelector <= columnIndexLastIndex; ++columnIndexSelector) {
 
-//			if (lexemTypeByFirstMarkCode == IDENTIFIER_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "ident_terminal")
-//				|| lexemTypeByFirstMarkCode == VALUE_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "unsigned_value_terminal")
-//				|| firstMarkCode == getLexemId(multiRule->firstMarks[firstMarksIndex])) {
-//				if (multiRule->firstMarksType == LA_NOT) {
-//					continue;
-//				}
-//			}
-//			else {
-//				if (multiRule->firstMarksType == LA_IS) {
-//					continue;
-//				}
-//			}
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-			for (int firstMarksIndex = 0; multiRule->firstMarks[firstMarksIndex][0] != '\0'; ++firstMarksIndex) {
-				if (/*lexemTypeByFirstMarkCode == IDENTIFIER_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "ident_terminal")
-					|| lexemTypeByFirstMarkCode == VALUE_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "unsigned_value_terminal")
-					||*/firstMarkCode == getLexemId(multiRule->firstMarks[firstMarksIndex])) {
-					if (multiRule->firstMarksType == LA_NOT) {
-						continue;
+			//		multiRule->firstMarksType;
+
+					// firstMarkCode = 0 ==> ""
+			unsigned char firstMarkCode = 0; do {
+				//const char * firstMarkStr = getLexemStrById(firstMarkCode);
+				//unsigned long long int lexemTypeByFirstMarkCode = getLexemTypeById(firstMarkCode);
+
+	//			if (lexemTypeByFirstMarkCode == IDENTIFIER_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "ident_terminal")
+	//				|| lexemTypeByFirstMarkCode == VALUE_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "unsigned_value_terminal")
+	//				|| firstMarkCode == getLexemId(multiRule->firstMarks[firstMarksIndex])) {
+	//				if (multiRule->firstMarksType == LA_NOT) {
+	//					continue;
+	//				}
+	//			}
+	//			else {
+	//				if (multiRule->firstMarksType == LA_IS) {
+	//					continue;
+	//				}
+	//			}
+	//
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+				for (int firstMarksIndex = 0; multiRule->firstMarks[firstMarksIndex][0] != '\0'; ++firstMarksIndex) {
+					if (/*lexemTypeByFirstMarkCode == IDENTIFIER_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "ident_terminal")
+						|| lexemTypeByFirstMarkCode == VALUE_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "unsigned_value_terminal")
+						||*/firstMarkCode == getLexemId(multiRule->firstMarks[firstMarksIndex])) {
+						if (multiRule->firstMarksType == LA_NOT) {
+							continue;
+						}
 					}
-				}
-				else {
-					if (multiRule->firstMarksType == LA_IS) {
-						continue;
+					else {
+						if (multiRule->firstMarksType == LA_IS) {
+							continue;
+						}
 					}
-				}
 
-				unsigned char firstMarkCodeFirstCode = firstMarkCode;
-				unsigned char firstMarkCodeLastCode = firstMarkCode;
-				if (firstMarkCode == IDENT_METETERMINAL_LEXEM_ID) {
-					firstMarkCodeFirstCode = IDENTIFIER_LEXEM_MIN_ID;
-					firstMarkCodeLastCode = IDENTIFIER_LEXEM_MAX_ID;
+					unsigned char firstMarkCodeFirstCode = firstMarkCode;
+					unsigned char firstMarkCodeLastCode = firstMarkCode;
+					if (firstMarkCode == IDENT_METETERMINAL_LEXEM_ID) {
+						firstMarkCodeFirstCode = IDENTIFIER_LEXEM_MIN_ID;
+						firstMarkCodeLastCode = IDENTIFIER_LEXEM_MAX_ID;
 
-				}
-				else if (firstMarkCode == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID) {
-					firstMarkCodeFirstCode = LITERAL_LEXEM_MIN_ID;
-					firstMarkCodeLastCode = LITERAL_LEXEM_MAX_ID;
-				}
-				for (unsigned char firstMarkCodeSelector = firstMarkCodeFirstCode; firstMarkCodeSelector <= firstMarkCodeLastCode; ++firstMarkCodeSelector) {
+					}
+					else if (firstMarkCode == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID) {
+						firstMarkCodeFirstCode = LITERAL_LEXEM_MIN_ID;
+						firstMarkCodeLastCode = LITERAL_LEXEM_MAX_ID;
+					}
+					for (unsigned char firstMarkCodeSelector = firstMarkCodeFirstCode; firstMarkCodeSelector <= firstMarkCodeLastCode; ++firstMarkCodeSelector) {
 #define ROW_INDEX firstMarkCodeSelector // firstMarksIndex
 
-					// not init or not to dead state
-					if (//dpda1Program[ROW_INDEX][columnIndex].tapeAction != -1
-						dpda1Program[ROW_INDEX][columnIndex].tapeAction != SCROLL_TO_RIGHT
-						||
-						dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAction != PUSH
-						||
-						dpda1Program[ROW_INDEX][columnIndex].rhsVariantAddonIndexMask != 0
-						||
-						dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[0][0] != DEAD_STATE_ID
-						||
-						dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[0][1] != EMPTY_TOKEN_LEXEM_ID
-						) { // ?
-						printf("No support model\r\n.");
-						exit(0);
-					}
-
-					dpda1Program[ROW_INDEX][columnIndex].tapeAction = NO_SCROLL;
-					dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAction = PUSH;
-					for (int rhsVariantIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex) {
-						//if (multiRule->rule.rhss[rhsVariantIndex].secondMarks[0][0] == '\0') {
-						//    return multiRule->rule.rhss + rhsVariantIndex;
-						//}
-	//#ifdef BUILD_AST_BY_DPDA1
-	//					dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAction = STACK_POP_AND_MULTIPLIPUSH; // NEW 08.2025
-	//#else
-						dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAction = STACK_POP_AND_MULTIPLIPUSH; // NEW 08.2025
-	//#endif
-
-#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
-						bool popStackInFoutStateCodeMarker = true;
-#endif
-						for (int rhsElementIndex = 0; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
-							if (rhsElementIndex < multiRule->rule.rhss[rhsVariantIndex].rhs_count) dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex]
-								//= getLexemTId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
-								= getLexemId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
-#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
-							else if (popStackInFoutStateCodeMarker) {
-								dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = POP_STACK_IN_F_OUT_STATE_ID;
-								popStackInFoutStateCodeMarker = false;
-							}
-#endif
-							else dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
-
-#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
-						if (popStackInFoutStateCodeMarker) {
-							//
-							printf("Error: overflow of rhss size\r\n");
+						// not init or not to dead state
+						if (//dpda1Program[ROW_INDEX][columnIndexSelector].tapeAction != -1
+							dpda1Program[ROW_INDEX][columnIndexSelector].tapeAction != SCROLL_TO_RIGHT
+							||
+							dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAction != PUSH
+							||
+							dpda1Program[ROW_INDEX][columnIndexSelector].rhsVariantAddonIndexMask != 0
+							||
+							dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAddon[0][0] != DEAD_STATE_ID
+							||
+							dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAddon[0][1] != EMPTY_TOKEN_LEXEM_ID
+							) { // ?
+							printf("No support model\r\n.");
 							exit(0);
 						}
+
+						dpda1Program[ROW_INDEX][columnIndexSelector].tapeAction = NO_SCROLL;
+						dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAction = PUSH;
+						for (int rhsVariantIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex) {
+							//if (multiRule->rule.rhss[rhsVariantIndex].secondMarks[0][0] == '\0') {
+							//    return multiRule->rule.rhss + rhsVariantIndex;
+							//}
+		//#ifdef BUILD_AST_BY_DPDA1
+		//					dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAction = STACK_POP_AND_MULTIPLIPUSH; // NEW 08.2025
+		//#else
+							dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAction = STACK_POP_AND_MULTIPLIPUSH; // NEW 08.2025
+		//#endif
+
+#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
+							bool popStackInFoutStateCodeMarker = true;
+#endif
+							for (int rhsElementIndex = 0; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
+								if (rhsElementIndex < multiRule->rule.rhss[rhsVariantIndex].rhs_count) dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex]
+									//= getLexemTId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
+									= getLexemId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
+#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
+								else if (popStackInFoutStateCodeMarker) {
+									dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = POP_STACK_IN_F_OUT_STATE_ID;
+									popStackInFoutStateCodeMarker = false;
+								}
+#endif
+								else dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
+
+#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
+							if (popStackInFoutStateCodeMarker) {
+								//
+								printf("Error: overflow of rhss size\r\n");
+								exit(0);
+							}
 #endif
 
-						//#if !defined(BUILD_AST_BY_DPDA1) || defined(BUILD_P2C_AST_TYPE_BY_DPDA1)
+							//#if !defined(BUILD_AST_BY_DPDA1) || defined(BUILD_P2C_AST_TYPE_BY_DPDA1)
 #ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
 					//char popStackInFoutStateCode = getLexemId((char*)"POP_STACK_IN_F_OUT_STATE");
 #endif
@@ -1166,7 +1179,7 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 
 //#ifdef BUILD_AST_BY_DPDA1
 //					lastRHSElementIndex
-//					//dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAction = STACK_POP_AND_MULTIPLIPUSH; // NEW 08.2025
+//					//dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAction = STACK_POP_AND_MULTIPLIPUSH; // NEW 08.2025
 //#else
 
 
@@ -1174,103 +1187,105 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 
 					//for (char secondMarkCode = 255; secondMarkCode++;) {
 					//    // TODO: set 255 to start
-					//	dpda1IndexingForSecondElement[secondMarkCode][columnIndex] = 255; // = ~0;
+					//	dpda1IndexingForSecondElement[secondMarkCode][columnIndexSelector] = 255; // = ~0;
 					//}
 
 					// char value = rhsVariantIndex; // no used
 
-						unsigned char secondMarkCode = 0; do {
-							//char columnIndex = getLexemTId(multiRule->firstMarks);
-							//const char* secondMarkStr = getLexemStr(secondMarkCode, lexemStr);
-							//unsigned long long int lexemTypeBySecondMarkCode = getLexemTypeById(secondMarkCode);
-	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-							for (int secondMarksIndexForCurrentRHS = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS][0] != '\0'; ++secondMarksIndexForCurrentRHS) {
-								char secondMarkCodeForCurrentRHS = getLexemId(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS]);
-								if (/*lexemTypeBySecondMarkCode == IDENTIFIER_LEXEME_TYPE && !strcmp(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS], "ident_terminal")
-									|| lexemTypeBySecondMarkCode == VALUE_LEXEME_TYPE && !strcmp(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS], "unsigned_value_terminal")
-									||*/secondMarkCode == secondMarkCodeForCurrentRHS) {
-									if (multiRule->rule.rhss[rhsVariantIndex].secondMarksType == LA_NOT) {
-										continue;
+							unsigned char secondMarkCode = 0; do {
+								//char columnIndex = getLexemTId(multiRule->firstMarks);
+								//const char* secondMarkStr = getLexemStr(secondMarkCode, lexemStr);
+								//unsigned long long int lexemTypeBySecondMarkCode = getLexemTypeById(secondMarkCode);
+		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+								for (int secondMarksIndexForCurrentRHS = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS][0] != '\0'; ++secondMarksIndexForCurrentRHS) {
+									char secondMarkCodeForCurrentRHS = getLexemId(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS]);
+									if (/*lexemTypeBySecondMarkCode == IDENTIFIER_LEXEME_TYPE && !strcmp(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS], "ident_terminal")
+										|| lexemTypeBySecondMarkCode == VALUE_LEXEME_TYPE && !strcmp(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS], "unsigned_value_terminal")
+										||*/secondMarkCode == secondMarkCodeForCurrentRHS) {
+										if (multiRule->rule.rhss[rhsVariantIndex].secondMarksType == LA_NOT) {
+											continue;
+										}
 									}
-								}
-								else {
-									if (multiRule->rule.rhss[rhsVariantIndex].secondMarksType == LA_IS) {
-										continue;
+									else {
+										if (multiRule->rule.rhss[rhsVariantIndex].secondMarksType == LA_IS) {
+											continue;
+										}
 									}
-								}
 
 #define	ROW_INDEX_FOR_SECOND_TABLE secondMarkCode
 
-								//char* currSecondMark = multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex];
-	//							char rowIndexForSecondTable = getLexemTId(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS]);
+									//char* currSecondMark = multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex];
+		//							char rowIndexForSecondTable = getLexemTId(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS]);
 
-								if (dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndex] != ~0) {
-									if (dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndex] != rhsVariantIndex) {
-										printf("No support model or model consider error.\r\n");
-										exit(0);
+									if (dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndexSelector] != ~0) {
+										if (dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndexSelector] != rhsVariantIndex) {
+											printf("No support model or model consider error.\r\n");
+											exit(0);
+										}
+										else {
+											printf("Warning: multi-indexing.\r\n");
+
+										}
 									}
-									else {
-										printf("Warning: multi-indexing.\r\n");
+
+									unsigned char secondMarkCodeFirstCode = secondMarkCode;
+									unsigned char secondMarkCodeLastCode = secondMarkCode;
+									if (secondMarkCode == IDENT_METETERMINAL_LEXEM_ID) {
+										secondMarkCodeFirstCode = IDENTIFIER_LEXEM_MIN_ID;
+										secondMarkCodeLastCode = IDENTIFIER_LEXEM_MAX_ID;
 
 									}
-								}
-
-								unsigned char secondMarkCodeFirstCode = secondMarkCode;
-								unsigned char secondMarkCodeLastCode = secondMarkCode;
-								if (secondMarkCode == IDENT_METETERMINAL_LEXEM_ID) {
-									secondMarkCodeFirstCode = IDENTIFIER_LEXEM_MIN_ID;
-									secondMarkCodeLastCode = IDENTIFIER_LEXEM_MAX_ID;
-
-								}
-								else if (secondMarkCode == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID) {
-									secondMarkCodeFirstCode = LITERAL_LEXEM_MIN_ID;
-									secondMarkCodeLastCode = LITERAL_LEXEM_MAX_ID;
-								}
-								for (unsigned char secondMarkCodeSelector = secondMarkCodeFirstCode; secondMarkCodeSelector <= secondMarkCodeLastCode; ++secondMarkCodeSelector) {
+									else if (secondMarkCode == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID) {
+										secondMarkCodeFirstCode = LITERAL_LEXEM_MIN_ID;
+										secondMarkCodeLastCode = LITERAL_LEXEM_MAX_ID;
+									}
+									for (unsigned char secondMarkCodeSelector = secondMarkCodeFirstCode; secondMarkCodeSelector <= secondMarkCodeLastCode; ++secondMarkCodeSelector) {
 #undef ROW_INDEX_FOR_SECOND_TABLE
 #define	ROW_INDEX_FOR_SECOND_TABLE secondMarkCodeSelector
-									//dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndex] = rhsVariantIndex;
-									dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndex] = rhsVariantIndex;						
-								}
+										//dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndexSelector] = rhsVariantIndex;
+										dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndexSelector] = rhsVariantIndex;
+									}
 
 #undef ROW_INDEX_FOR_SECOND_TABLE
-							}
-							// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-							// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-							// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-						} while (++secondMarkCode);
-
-						int rhsVariantAddonIndex = rhsVariantIndex + 1;
-						if (!multiRule->rule.rhss[rhsVariantAddonIndex].secondMarksType) {
-							bool needStateToDeadState = false;
-
-							// scan
-							unsigned char secondMarkCode = 0; do {
-								//const char* secondMarkStr = getLexemStr(secondMarkCode);
-								if (dpda1IndexingForSecondElement[secondMarkCode][columnIndex] == 255) { // !!.
-									needStateToDeadState = true;
-									dpda1IndexingForSecondElement[secondMarkCode][columnIndex] = rhsVariantAddonIndex;
 								}
+								// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+								// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+								// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 							} while (++secondMarkCode);
 
-							// add "to dead" state // --> ...
-							if (needStateToDeadState) {
-								dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantAddonIndex][0/*rhsVariantIndex*/] = DEAD_STATE_ID;
-								for (int rhsElementIndex = 1; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
-									dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantAddonIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
+							int rhsVariantAddonIndex = rhsVariantIndex + 1;
+							if (!multiRule->rule.rhss[rhsVariantAddonIndex].secondMarksType) {
+								bool needStateToDeadState = false;
+
+								// scan
+								unsigned char secondMarkCode = 0; do {
+									//const char* secondMarkStr = getLexemStr(secondMarkCode);
+									if (dpda1IndexingForSecondElement[secondMarkCode][columnIndexSelector] == 255) { // !!.
+										needStateToDeadState = true;
+										dpda1IndexingForSecondElement[secondMarkCode][columnIndexSelector] = rhsVariantAddonIndex;
+									}
+								} while (++secondMarkCode);
+
+								// add "to dead" state // --> ...
+								if (needStateToDeadState) {
+									dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAddon[rhsVariantAddonIndex][0/*rhsVariantIndex*/] = DEAD_STATE_ID;
+									for (int rhsElementIndex = 1; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
+										dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAddon[rhsVariantAddonIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
+								}
 							}
 						}
+#undef ROW_INDEX						
+#undef COLUMN_INDEX // +
+						//#undef ROW_INDEX_FOR_SECOND_TABLE
 					}
-#undef ROW_INDEX
-					//#undef ROW_INDEX_FOR_SECOND_TABLE
 				}
-			}
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-		} while (++firstMarkCode);
-    }
+				////////////////////////////////////////////////////////////////////////////////////////////////////////
+				////////////////////////////////////////////////////////////////////////////////////////////////////////
+				////////////////////////////////////////////////////////////////////////////////////////////////////////
+			} while (++firstMarkCode);
+		}
+	}
 }
 
 // used
