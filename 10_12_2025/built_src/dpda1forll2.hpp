@@ -9,6 +9,11 @@
 #define LL2_SYMBOL_NUMBER 256 // dup
 #define LL2_MAX_STATES /*LL2_SYMBOL_NUMBER*/ 256 // 1024 // dup
 
+//#define BUILD_C2P_AST_TYPE_BY_DPDA1
+#ifndef BUILD_C2P_AST_TYPE_BY_DPDA1
+#define	BUILD_P2C_AST_TYPE_BY_DPDA1 // TODO: no default
+#endif
+
 //#define NO_ACTION 0xFFFF
 
 //#define NO_RULE {NO_ACTION, NO_ACTION, NO_ACTION}
@@ -84,6 +89,10 @@ typedef struct StructDPDA1{
 } DPDA1;
 
 void runner3(DPDA1 * dpda1){
+#ifdef	BUILD_P2C_AST_TYPE_BY_DPDA1 // TODO: no default
+	printf("Don't use BUILD_P2C_AST_TYPE_BY_DPDA1, use BUILD_2C2P_AST_TYPE_BY_DPDA1!\r\n");
+	exit(0);
+#endif
 	for (; *dpda1->data != '\0'; ++dpda1->data){
 		//StackAction *stackAction = (*dpda1->dpdaProgram)[*dpda1->data][*dpda1->stack_top].stackUpdate.stackAction;
 		StackUpdate * stackUpdate = &(*dpda1->dpdaProgram)[*dpda1->data][*dpda1->stack_above_top + SAVE_OFFSET - 1].stackUpdate;
