@@ -1132,7 +1132,8 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 
 						dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].tapeAction = NO_SCROLL;
 						dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAction = PUSH;
-						for (int rhsVariantIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex) {
+						int rhsVariantAddonIndex = 1;
+						for (int rhsVariantIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex, ++rhsVariantAddonIndex) {
 							//if (multiRule->rule.rhss[rhsVariantIndex].secondMarks[0][0] == '\0') {
 							//    return multiRule->rule.rhss + rhsVariantIndex;
 							//}
@@ -1247,9 +1248,10 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 								// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 								// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 							} while (++secondMarkCode);
-
-							int rhsVariantAddonIndex = rhsVariantIndex + 1;
-							if (!multiRule->rule.rhss[rhsVariantAddonIndex].secondMarksType) {
+#if 0
+							 // } !
+							/*int */rhsVariantAddonIndex = rhsVariantIndex + 1; // REMOVE
+							if ( false && !multiRule->rule.rhss[rhsVariantAddonIndex].secondMarksType) {
 								bool needStateToDeadState = false;
 
 								// scan
@@ -1267,6 +1269,32 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 									for (int rhsElementIndex = 1; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
 										dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAddon[rhsVariantAddonIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
 								}
+							}
+#endif
+						}
+						//
+						if (multiRule->rule.rhss[0].secondMarksType) { // + if second mark used, first rhs variant type will be set
+							if (multiRule->rule.rhss[rhsVariantAddonIndex].secondMarksType) {
+								printf("No support model or model consider error.\r\n");
+								exit(0);
+							}
+						//
+							bool needStateToDeadState = false;
+
+							// scan
+							unsigned char secondMarkCode = 0; do {
+								//const char* secondMarkStr = getLexemStr(secondMarkCode);
+								if (dpda1IndexingForSecondElement[secondMarkCode][stackTopElementCodeSelector] == 255) { // !!.
+									needStateToDeadState = true;
+									dpda1IndexingForSecondElement[secondMarkCode][stackTopElementCodeSelector] = rhsVariantAddonIndex;
+								}
+							} while (++secondMarkCode);
+
+							// add "to dead" state // --> ...
+							if (needStateToDeadState) {
+								dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAddon[rhsVariantAddonIndex][0/*rhsVariantIndex*/] = DEAD_STATE_ID;
+								for (int rhsElementIndex = 1; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
+									dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAddon[rhsVariantAddonIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
 							}
 						}
 //#undef ROW_INDEX						
