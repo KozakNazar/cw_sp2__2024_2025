@@ -91,6 +91,7 @@ typedef struct StructDPDA1{
 void runner3(DPDA1 * dpda1){
 #ifdef	BUILD_P2C_AST_TYPE_BY_DPDA1 // TODO: no default
 	printf("Don't use BUILD_P2C_AST_TYPE_BY_DPDA1, use BUILD_2C2P_AST_TYPE_BY_DPDA1!\r\n");
+	printf("TODO: need to use an additional stack of parent elements!\r\n");
 	exit(0);
 #endif
 	for (; *dpda1->data != '\0'; ++dpda1->data){
