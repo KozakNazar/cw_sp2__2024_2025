@@ -31,7 +31,7 @@ typedef enum {
 	NOTHING, // STACK_NOTHING
 	PUSH,    // STACK_PUSH // REMOVE ???
 	POP,     // STACK_POP
-	STACK_POP_AND_MULTIPLIPUSH
+	POP_AND_MULTIPLIPUSH
 } StackAction;
 
 #define MAX_RHSCONTEINER_COUNT 3 // syntax.h
