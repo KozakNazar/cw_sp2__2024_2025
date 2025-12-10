@@ -129,6 +129,52 @@ unsigned char errorMessagesPtrToLastBytePtr[8 * 1024 * 1024] = { '\0' };
 #define MAX_VARIABLES_COUNT 32
 #define MAX_LITERAL_COUNT 32
 
+//std::map<std::string, std::pair<unsigned long long int, std::stack<unsigned long long int>>> labelInfoTable__;
+
+//#define MAX_KEYWORD_COUNT 64
+//#define MAX_VARIABLES_COUNT 32
+//#define MAX_LITERAL_COUNT 32
+
+//#define EMPTY_TOKEN_LEXEM_ID 0; // lastNonUsedid++;
+
+//#define UNKNOWN_ELEMENT_ID (EMPTY_TOKEN_LEXEM_ID + 1) // 1 // 127 // for TYPE!
+
+#define KEYWORD_LEXEM_MIN_ID (UNKNOWN_ELEMENT_ID + 1)
+#define KEYWORD_LEXEM_MAX_ID (KEYWORD_LEXEM_MIN_ID + MAX_KEYWORD_COUNT)
+
+#define IDENT_METETERMINAL_LEXEM_STR "ident_terminal"
+#define IDENT_METETERMINAL_LEXEM_ID (KEYWORD_LEXEM_MAX_ID + 1)
+#define IDENTIFIER_LEXEM_MIN_ID (IDENT_METETERMINAL_LEXEM_ID + 1)
+#define IDENTIFIER_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + MAX_VARIABLES_COUNT)
+
+#define UNSIGNED_VALUE_METATERMINAL_LEXEM_STR "unsigned_value_terminal"
+#define UNSIGNED_VALUE_METATERMINAL_LEXEM_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
+#define LITERAL_LEXEM_MIN_ID (UNSIGNED_VALUE_METATERMINAL_LEXEM_ID + 1)
+#define LITERAL_LEXEM_MAX_ID (LITERAL_LEXEM_MIN_ID + MAX_LITERAL_COUNT)
+
+// SPLIT TERMINAL AND NONTERMINAL // V
+//#define TERMINAL_AND_NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
+//#define TERMINAL_AND_NONTERMINAL_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + 190)
+#define NONTERMINAL_LEXEM_MIN_ID (LITERAL_LEXEM_MAX_ID + 1)
+#define NONTERMINAL_LEXEM_MAX_ID 250
+
+#define DEAD_STATE_ID 253
+#define	POP_STACK_IN_F_OUT_STATE_ID 254
+#define FREE_STATE_ID 255
+
+
+//terminalAndNonTerminalLexemIds["ident_terminal"] = IDENT_METATERMINL_TOKEN_LEXEM_ID;
+//terminalAndNonTerminalLexemIds["unsigned_value_terminal"] = EMPTY_TOKEN_LEXEM_ID;
+
+//#define BUILD_C2P_AST_TYPE_BY_DPDA1
+//#ifndef BUILD_C2P_AST_TYPE_BY_DPDA1
+//	#define	POP_STACK_IN_F_OUT_STATE
+// 
+//#define EMPTY_LEXEM_ID 255
+
+
+
+
 
 
 #define UNEXPEXTED_LEXEME_TYPE  UNKNOWN_ELEMENT_ID // 127
@@ -295,7 +341,7 @@ void printLexemesToFile(struct LexemInfo* lexemInfoTable, char printBadLexeme, c
 }
 
 // get identifier id
-unsigned int getIdentifierId(char(*identifierIdsTable)[MAX_LEXEM_SIZE], char* str) {
+unsigned int getIdentifierId(char(*identifierIdsTable)[MAX_LEXEM_SIZE], char* str, unsigned int baseId) {
 	unsigned int index = 0;
 	for (; identifierIdsTable[index][0] != '\0'; ++index) {
 		if (!strncmp(identifierIdsTable[index], str, MAX_LEXEM_SIZE)) {
@@ -304,7 +350,7 @@ unsigned int getIdentifierId(char(*identifierIdsTable)[MAX_LEXEM_SIZE], char* st
 	}
 	strncpy(identifierIdsTable[index], str, MAX_LEXEM_SIZE);
 	identifierIdsTable[index + 1][0] = '\0'; // not necessarily for zero-init identifierIdsTable
-	return index;
+	return baseId + index;
 }
 
 // try to get identifier
@@ -313,7 +359,7 @@ unsigned int tryToGetIdentifier(struct LexemInfo* lexemInfoInTable, char(*identi
 	//char identifiers_re[] = "_[A-Z][A-Z][A-Z][A-Z][A-Z][A-Z][A-Z]";
 
 	if (std::regex_match(std::string(lexemInfoInTable->lexemStr), std::regex(identifiers_re))) {
-		lexemInfoInTable->lexemId = getIdentifierId(identifierIdsTable, lexemInfoInTable->lexemStr);
+		lexemInfoInTable->lexemId = getIdentifierId(identifierIdsTable, lexemInfoInTable->lexemStr, IDENTIFIER_LEXEM_MIN_ID);
 		lexemInfoInTable->tokenType = IDENTIFIER_LEXEME_TYPE;
 		return SUCCESS_STATE;
 	}
@@ -328,7 +374,7 @@ unsigned int tryToGetUnsignedValue(struct LexemInfo* lexemInfoInTable) {
 
 	if (std::regex_match(std::string(lexemInfoInTable->lexemStr), std::regex(unsignedvalues_re))) {
 		lexemInfoInTable->ifvalue = atoi(lastLexemInfoInTable->lexemStr);
-		lexemInfoInTable->lexemId = MAX_VARIABLES_COUNT + MAX_KEYWORD_COUNT;
+		lexemInfoInTable->lexemId = LITERAL_LEXEM_MIN_ID /*+ ?*/;
 		lexemInfoInTable->tokenType = VALUE_LEXEME_TYPE;
 		return SUCCESS_STATE;
 	}
@@ -390,8 +436,19 @@ void prepareKeyWordIdGetter(char* keywords_, char* keywords_re) {
 	if (keywords_ == NULL || keywords_re == NULL) {
 		return;
 	}
-
-	for (char* keywords_re_ = keywords_re, *keywords__ = keywords_; (*keywords_re_ != '\0') ? 1 : (*keywords__ = '\0', 0); (*keywords_re_ != '\\' || (keywords_re_[1] != '+' && keywords_re_[1] != '*' && keywords_re_[1] != '|')) ? *keywords__++ = *keywords_re_ : 0, ++keywords_re_);
+//#define KEYWORDS_RE       ";|:=|=:|\\+|-|\\*|,|==|!=|:|\\[|\\]|\\(|\\)|\\{|\\}|NAME|DATA|BODY|END|BREAK|CONTINUE|GET|PUT|IF|ELSE|FOR|TO|DOWNTO|DO|WHILE|REPEAT|UNTIL|GOTO|DIV|MOD|<=|>=|NOT|AND|OR|INTEGER16"
+	for (char* keywords_re_ = keywords_re, *keywords__ = keywords_; (*keywords_re_ != '\0') ? 1 : (*keywords__ = '\0', 0); (*keywords_re_ != '\\' || (
+		keywords_re_[1] != '+' && 
+		keywords_re_[1] != '*' && 
+		keywords_re_[1] != '|' &&
+		keywords_re_[1] != '[' &&
+		keywords_re_[1] != ']' &&
+		keywords_re_[1] != '(' &&
+		keywords_re_[1] != ')' &&
+		keywords_re_[1] != '{' &&
+		keywords_re_[1] != '}'
+		)) ? *keywords__++ = *keywords_re_ : 0, ++keywords_re_);
+	while (*keywords_=='|'? *keywords_ = 31 : 0, *keywords_++ != '\0');
 }
 
 unsigned int getKeyWordId(char* keywords_, char* lexemStr, unsigned int baseId) {
@@ -403,10 +460,16 @@ unsigned int getKeyWordId(char* keywords_, char* lexemStr, unsigned int baseId) 
 	if (!lexemStrLen) {
 		return ~0;
 	}
+	lexemInKeywords_ = strstr(lexemInKeywords_, lexemStr);
+	//for (; lexemInKeywords_ = strstr(lexemInKeywords_, lexemStr), lexemInKeywords_ != NULL && lexemInKeywords_[lexemStrLen] != '|' && lexemInKeywords_[lexemStrLen] != '\0'; ++lexemInKeywords_);
 
-	for (; lexemInKeywords_ = strstr(lexemInKeywords_, lexemStr), lexemInKeywords_ != NULL && lexemInKeywords_[lexemStrLen] != '|' && lexemInKeywords_[lexemStrLen] != '\0'; ++lexemInKeywords_);
+	//return lexemInKeywords_ - keywords_ + baseId;
 
-	return lexemInKeywords_ - keywords_ + baseId;
+	unsigned int id = 0;
+	for (; keywords_ < lexemInKeywords_; ++keywords_)
+		if (*keywords_ == 31) ++id;
+
+	return id + baseId;
 }
 
 // try to get KeyWord
@@ -418,7 +481,7 @@ char tryToGetKeyWord(struct LexemInfo* lexemInfoInTable) {
 	prepareKeyWordIdGetter(keywords_, keywords_re);
 
 	if (std::regex_match(std::string(lexemInfoInTable->lexemStr), std::regex(keywords_re))) {
-		lexemInfoInTable->lexemId = getKeyWordId(keywords_, lexemInfoInTable->lexemStr, MAX_VARIABLES_COUNT);
+		lexemInfoInTable->lexemId = getKeyWordId(keywords_, lexemInfoInTable->lexemStr, KEYWORD_LEXEM_MIN_ID);
 		lexemInfoInTable->tokenType = KEYWORD_LEXEME_TYPE;
 		return SUCCESS_STATE;
 	}
@@ -589,51 +652,7 @@ DPDA1Program dpdaProgram123;
 //#include <utility>
 #include <stack>
 
-//std::map<std::string, std::pair<unsigned long long int, std::stack<unsigned long long int>>> labelInfoTable__;
 
-//#define MAX_KEYWORD_COUNT 64
-//#define MAX_VARIABLES_COUNT 32
-//#define MAX_LITERAL_COUNT 32
-
-//#define EMPTY_TOKEN_LEXEM_ID 0; // lastNonUsedid++;
-
-//#define UNKNOWN_ELEMENT_ID (EMPTY_TOKEN_LEXEM_ID + 1) // 1 // 127 // for TYPE!
-
-#define KEYWORD_LEXEM_MIN_ID (UNKNOWN_ELEMENT_ID + 1)
-#define KEYWORD_LEXEM_MAX_ID (KEYWORD_LEXEM_MIN_ID + MAX_KEYWORD_COUNT)
-
-#define IDENTIFIER_LEXEM_MIN_ID (KEYWORD_LEXEM_MAX_ID + 1)
-#define IDENTIFIER_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + MAX_VARIABLES_COUNT)
-#define IDENT_METETERMINAL_LEXEM_STR "ident_terminal"
-#define IDENT_METETERMINAL_LEXEM_ID IDENTIFIER_LEXEM_MAX_ID
-
-#define LITERAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
-#define LITERAL_LEXEM_MAX_ID (LITERAL_LEXEM_MIN_ID + MAX_LITERAL_COUNT)
-#define UNSIGNED_VALUE_METATERMINAL_LEXEM_STR "unsigned_value_terminal"
-#define UNSIGNED_VALUE_METATERMINAL_LEXEM_ID LITERAL_LEXEM_MAX_ID
-
-// SPLIT TERMINAL AND NONTERMINAL // V
-//#define TERMINAL_AND_NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
-//#define TERMINAL_AND_NONTERMINAL_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + 190)
-#define NONTERMINAL_LEXEM_MIN_ID (LITERAL_LEXEM_MAX_ID + 1)
-#define NONTERMINAL_LEXEM_MAX_ID 250
-
-#define DEAD_STATE_ID 253
-#define	POP_STACK_IN_F_OUT_STATE_ID 254
-#define FREE_STATE_ID 255
-
-
-//terminalAndNonTerminalLexemIds["ident_terminal"] = IDENT_METATERMINL_TOKEN_LEXEM_ID;
-//terminalAndNonTerminalLexemIds["unsigned_value_terminal"] = EMPTY_TOKEN_LEXEM_ID;
-
-//#define BUILD_C2P_AST_TYPE_BY_DPDA1
-//#ifndef BUILD_C2P_AST_TYPE_BY_DPDA1
-//	#define	POP_STACK_IN_F_OUT_STATE
-
-
-
-
-//#define EMPTY_LEXEM_ID 255
 
 std::map<std::string, int> terminalAndNonTerminalLexemIds;
 
@@ -748,7 +767,7 @@ void buildDeadState__DPDA1forLL2__OLD(Grammar& grammar, DPDA1Program& dpda1Progr
 
 
 
-		// + Ã¤Ã¥Ã°Ã¥Ã¢Ã® Ã¢Ã¨Ã¢Ã®Ã¤Ã³
+		// + äåðåâî âèâîäó
 		
 		//char emptyStringCode = getLexemId((char*)"");
 		//char deadStateCode = getLexemId((char*)"DEAD_STATE");
@@ -902,55 +921,55 @@ void terminalAndNonTerminalIdsInitPart2(struct LexemInfo* lexemInfoTable, int la
 
 // set FREE_STATE_ID // -1
 void dpda1forLL2SetInitStateAndInitIndexing__DELETE(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
-	for (char toptapeAndStackCode = 255; toptapeAndStackCode++;) {
-		unsigned char tapeCode = 0; do {
-#define ROW_INDEX tapeCode
-#define COLUMN_INDEX toptapeAndStackCode
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAction = PUSH; // no POP prev state (used for detect error) // NEW 08.2025
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].tapeAction = NO_SCROLL; // !
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = FREE_STATE_ID;
+	unsigned char tapeCode = 0; do {
+		unsigned char topStackCode = 0; do {
+//#define ROW_INDEX tapeCode
+//#define COLUMN_INDEX toptapeAndStackCode
+			dpda1Program[tapeCode][topStackCode].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH; // no POP prev state (used for detect error) // NEW 08.2025
+			dpda1Program[tapeCode][topStackCode].tapeAction = NO_SCROLL; // !
+			dpda1Program[tapeCode][topStackCode].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
+			dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = FREE_STATE_ID;
 			for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
-				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+				dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
 			}
 
 			// TODO: set 255 to start				
-			dpda1IndexingForSecondElement[ROW_INDEX][COLUMN_INDEX] = ~0;
-#undef ROW_INDEX
-#undef COLUMN_INDEX
-		} while (++tapeCode);
-	}
+			dpda1IndexingForSecondElement[tapeCode][topStackCode] = ~0;
+//#undef ROW_INDEX
+//#undef COLUMN_INDEX
+		} while (++topStackCode);
+	} while (++tapeCode);
 }
 
 // used
 // init f
 void setAllStatesToDeadStateAndInitIndexing(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
-	for (char toptapeAndStackCode = 255; toptapeAndStackCode++;) {
-		unsigned char tapeCode = 0; do {
-#define ROW_INDEX tapeCode
-#define COLUMN_INDEX toptapeAndStackCode
+	unsigned char tapeCode = 0; do {	
+		unsigned char topStackCode = 0; do {
+//#define ROW_INDEX tapeCode
+//#define COLUMN_INDEX topStackCode
 			//if (dpda1Program[toptapeAndStackCode][toptapeAndStackCode].tapeAction == FREE_STATE_ID) { // ... // ????
 			//	printf("Error: no support model\r\n");
 			//	exit(0);
 			//}
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAction = PUSH; // no POP prev state (used for detect error) // NEW 08.2025
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].tapeAction = SCROLL_TO_RIGHT;
+			dpda1Program[tapeCode][topStackCode].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH; // no POP prev state (used for detect error) // NEW 08.2025
+			dpda1Program[tapeCode][topStackCode].tapeAction = SCROLL_TO_RIGHT;
 			//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = POP; // (2)
 			//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = PUSH; // (!)
 			//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = PUSH; // (!)
 						//dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantAddonIndex][rTokekIndex] = emptyElementCode;
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
-			dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = DEAD_STATE_ID;
+			dpda1Program[tapeCode][topStackCode].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
+			dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = DEAD_STATE_ID;
 			for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
-				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+				dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
 			}
 				
 			// TODO: set 255 to start				
-			dpda1IndexingForSecondElement[ROW_INDEX][COLUMN_INDEX] = ~0;
-#undef ROW_INDEX
-#undef COLUMN_INDEX
-		} while (++tapeCode);
-	}
+			dpda1IndexingForSecondElement[tapeCode][topStackCode] = ~0;
+//#undef ROW_INDEX
+//#undef COLUMN_INDEX
+		} while (++topStackCode);
+	} while (++tapeCode);
 }
 
 void terminalAndNonTerminalIdsInit(Grammar& grammar, struct LexemInfo* lexemInfoTable/*, int lastNonUsedid !!!!!!!!!!! */) {
@@ -1049,20 +1068,20 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 //	char popStackInFoutStateCode = getLexemId((char*)"POP_STACK_IN_F_OUT_STATE"); // POP_STACK_IN_F_OUT_STATE_ID
 //#endif
 	for (MarkedRule* multiRule = grammar.multiRules; multiRule->firstMarksType; ++multiRule) {
-		char stackTopElementCode = getLexemId(multiRule->rule.lhs); // char* currSteckElement = multiRule->rule.lhs;
+		unsigned char stackTopElementFirstCode = getLexemId(multiRule->rule.lhs); // char* currSteckElement = multiRule->rule.lhs;
 
-		unsigned char stackTopElementFirstCode = stackTopElementCode;
-		unsigned char stackTopElementLastCode = stackTopElementCode;
-		if (stackTopElementCode == IDENT_METETERMINAL_LEXEM_ID) { // THIS SHOULD NEVER HAPPEN !
-			stackTopElementFirstCode = IDENTIFIER_LEXEM_MIN_ID;
+		//unsigned char stackTopElementFirstCode = stackTopElementCode__;
+		unsigned char stackTopElementLastCode = stackTopElementFirstCode;
+		if (stackTopElementFirstCode == IDENT_METETERMINAL_LEXEM_ID) { // THIS SHOULD NEVER HAPPEN !
+			//stackTopElementFirstCode = IDENT_METETERMINAL_LEXEM_ID;
 			stackTopElementLastCode = IDENTIFIER_LEXEM_MAX_ID;
 
 		}
-		else if (stackTopElementCode == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID) { // THIS SHOULD NEVER HAPPEN !
-			stackTopElementFirstCode = LITERAL_LEXEM_MIN_ID;
+		else if (stackTopElementFirstCode == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID) { // THIS SHOULD NEVER HAPPEN !
+			//stackTopElementFirstCode = UNSIGNED_VALUE_METATERMINAL_LEXEM_ID;
 			stackTopElementLastCode = LITERAL_LEXEM_MAX_ID;
 		}
-		for (unsigned char stackTopElementCodeSelector = stackTopElementFirstCode; stackTopElementCodeSelector <= stackTopElementLastCode; ++stackTopElementCodeSelector) {
+		for (unsigned char stackTopElementCode = stackTopElementFirstCode; stackTopElementCode <= stackTopElementLastCode; ++stackTopElementCode) {
 
 			//		multiRule->firstMarksType;
 
@@ -1087,76 +1106,118 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 				for (int firstMarksIndex = 0; multiRule->firstMarks[firstMarksIndex][0] != '\0'; ++firstMarksIndex) {
-					if (/*lexemTypeByFirstMarkCode == IDENTIFIER_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "ident_terminal")
-						|| lexemTypeByFirstMarkCode == VALUE_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "unsigned_value_terminal")
-						||*/firstMarkCode == getLexemId(multiRule->firstMarks[firstMarksIndex])) {
-						if (multiRule->firstMarksType == LA_NOT) {
-							continue;
-						}
-					}
-					else {
-						if (multiRule->firstMarksType == LA_IS) {
-							continue;
-						}
+					unsigned char firstMarkCodeByRule = getLexemId(multiRule->firstMarks[firstMarksIndex]);						
+					if (multiRule->firstMarksType == LA_NOT
+							&& (
+								firstMarkCode == firstMarkCodeByRule
+								||
+								firstMarkCodeByRule == IDENT_METETERMINAL_LEXEM_ID
+								&&
+								firstMarkCode >= IDENT_METETERMINAL_LEXEM_ID
+								&&
+								firstMarkCode <= IDENTIFIER_LEXEM_MAX_ID
+								||
+								firstMarkCodeByRule == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID
+								&&
+								firstMarkCode >= UNSIGNED_VALUE_METATERMINAL_LEXEM_ID
+								&&
+								firstMarkCode <= LITERAL_LEXEM_MAX_ID
+								)
+							) {
+							continue;						
+					}										
+					else if (multiRule->firstMarksType == LA_IS
+							&& (
+								firstMarkCode != firstMarkCodeByRule
+								||
+								firstMarkCodeByRule == IDENT_METETERMINAL_LEXEM_ID
+								&&
+								firstMarkCode < IDENT_METETERMINAL_LEXEM_ID
+								&&
+								firstMarkCode > IDENTIFIER_LEXEM_MAX_ID
+								||
+								firstMarkCodeByRule == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID
+								&&
+								firstMarkCode < UNSIGNED_VALUE_METATERMINAL_LEXEM_ID
+								&&
+								firstMarkCode > LITERAL_LEXEM_MAX_ID
+								)
+							) {
+							continue;	
 					}
 
-					unsigned char firstMarkCodeFirstCode = firstMarkCode;
-					unsigned char firstMarkCodeLastCode = firstMarkCode;
-					if (firstMarkCode == IDENT_METETERMINAL_LEXEM_ID) {
-						firstMarkCodeFirstCode = IDENTIFIER_LEXEM_MIN_ID;
-						firstMarkCodeLastCode = IDENTIFIER_LEXEM_MAX_ID;
 
-					}
-					else if (firstMarkCode == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID) {
-						firstMarkCodeFirstCode = LITERAL_LEXEM_MIN_ID;
-						firstMarkCodeLastCode = LITERAL_LEXEM_MAX_ID;
-					}
-					for (unsigned char firstMarkCodeSelector = firstMarkCodeFirstCode; firstMarkCodeSelector <= firstMarkCodeLastCode; ++firstMarkCodeSelector) {
+
+					////if (/*lexemTypeByFirstMarkCode == IDENTIFIER_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "ident_terminal")
+					////	|| lexemTypeByFirstMarkCode == VALUE_LEXEME_TYPE && !strcmp(multiRule->firstMarks[firstMarksIndex], "unsigned_value_terminal")
+					////	||*/firstMarkCode == getLexemId(multiRule->firstMarks[firstMarksIndex])) {
+					////	if (multiRule->firstMarksType == LA_NOT) {
+					////		continue;
+					////	}
+					////}
+					////else {
+					////	if (multiRule->firstMarksType == LA_IS) {
+					////		continue;
+					////	}
+					////}
+					////
+					////unsigned char firstMarkCodeFirstCode = firstMarkCode;
+					////unsigned char firstMarkCodeLastCode = firstMarkCode;
+					////if (firstMarkCode == IDENT_METETERMINAL_LEXEM_ID) {
+					////	firstMarkCodeFirstCode = IDENT_METETERMINAL_LEXEM_ID;
+					////	firstMarkCodeLastCode = IDENTIFIER_LEXEM_MAX_ID;
+					////
+					////}
+					////else if (firstMarkCode == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID) {
+					////	firstMarkCodeFirstCode = UNSIGNED_VALUE_METATERMINAL_LEXEM_ID;
+					////	firstMarkCodeLastCode = LITERAL_LEXEM_MAX_ID;
+					////}
+					//for (unsigned char firstMarkCodeSelector = firstMarkCodeFirstCode; firstMarkCodeSelector <= firstMarkCodeLastCode; ++firstMarkCodeSelector) {
 //#define ROW_INDEX firstMarkCodeSelector // firstMarksIndex
 
 						// not init or not to dead state
 						if (//dpda1Program[ROW_INDEX][columnIndexSelector].tapeAction != -1
-							dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].tapeAction != SCROLL_TO_RIGHT
+							dpda1Program[firstMarkCode][stackTopElementCode].tapeAction != SCROLL_TO_RIGHT
 							||
-							dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAction != PUSH
+							dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAction != POP_AND_MULTIPLIPUSH
 							||
-							dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].rhsVariantAddonIndexMask != 0
+							dpda1Program[firstMarkCode][stackTopElementCode].rhsVariantAddonIndexMask != 0
 							||
-							dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAddon[0][0] != DEAD_STATE_ID
+							dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[0][0] != DEAD_STATE_ID
 							||
-							dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAddon[0][1] != EMPTY_TOKEN_LEXEM_ID
+							dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[0][1] != EMPTY_TOKEN_LEXEM_ID
 							) { // ?
-							printf("No support model\r\n.");
+							printf("ERROR: no support model\r\n.");
 							exit(0);
 						}
 
-						dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].tapeAction = NO_SCROLL;
-						dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAction = PUSH;
+						dpda1Program[firstMarkCode][stackTopElementCode].tapeAction = NO_SCROLL;
+						dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAction = PUSH;
 						int rhsVariantAddonIndex = 1;
 						for (int rhsVariantIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex, ++rhsVariantAddonIndex) {
 							//if (multiRule->rule.rhss[rhsVariantIndex].secondMarks[0][0] == '\0') {
 							//    return multiRule->rule.rhss + rhsVariantIndex;
 							//}
 		//#ifdef BUILD_AST_BY_DPDA1
-		//					dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAction = STACK_POP_AND_MULTIPLIPUSH; // NEW 08.2025
+		//					dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAction = STACK_POP_AND_MULTIPLIPUSH; // NEW 08.2025
 		//#else
-							dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAction = STACK_POP_AND_MULTIPLIPUSH; // NEW 08.2025
+							dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH; // NEW 08.2025
 		//#endif
 
 #ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
 							bool popStackInFoutStateCodeMarker = true;
 #endif
 							for (int rhsElementIndex = 0; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
-								if (rhsElementIndex < multiRule->rule.rhss[rhsVariantIndex].rhs_count) dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex]
+								if (rhsElementIndex < multiRule->rule.rhss[rhsVariantIndex].rhs_count) dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex]
 									//= getLexemTId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
 									= getLexemId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
 #ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
 								else if (popStackInFoutStateCodeMarker) {
-									dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = POP_STACK_IN_F_OUT_STATE_ID;
+									dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = POP_STACK_IN_F_OUT_STATE_ID;
 									popStackInFoutStateCodeMarker = false;
 								}
 #endif
-								else dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
+								else dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
 
 #ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
 							if (popStackInFoutStateCodeMarker) {
@@ -1194,53 +1255,95 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 								for (int secondMarksIndexForCurrentRHS = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS][0] != '\0'; ++secondMarksIndexForCurrentRHS) {
-									char secondMarkCodeForCurrentRHS = getLexemId(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS]);
-									if (/*lexemTypeBySecondMarkCode == IDENTIFIER_LEXEME_TYPE && !strcmp(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS], "ident_terminal")
-										|| lexemTypeBySecondMarkCode == VALUE_LEXEME_TYPE && !strcmp(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS], "unsigned_value_terminal")
-										||*/secondMarkCode == secondMarkCodeForCurrentRHS) {
-										if (multiRule->rule.rhss[rhsVariantIndex].secondMarksType == LA_NOT) {
-											continue;
-										}
+									////char secondMarkCodeForCurrentRHS = getLexemId(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS]);
+									////if (/*lexemTypeBySecondMarkCode == IDENTIFIER_LEXEME_TYPE && !strcmp(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS], "ident_terminal")
+									////	|| lexemTypeBySecondMarkCode == VALUE_LEXEME_TYPE && !strcmp(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS], "unsigned_value_terminal")
+									////	||*/secondMarkCode == secondMarkCodeForCurrentRHS) {
+									////	if (multiRule->rule.rhss[rhsVariantIndex].secondMarksType == LA_NOT) {
+									////		continue;
+									////	}
+									////}
+									////else {
+									////	if (multiRule->rule.rhss[rhsVariantIndex].secondMarksType == LA_IS) {
+									////		continue;
+									////	}
+									////}
+
+									unsigned char secondMarkCodeForCurrentRHS = getLexemId(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS]);
+									if (multiRule->rule.rhss[rhsVariantIndex].secondMarksType == LA_NOT
+										&& (
+											secondMarkCode == secondMarkCodeForCurrentRHS
+											||
+											secondMarkCodeForCurrentRHS == IDENT_METETERMINAL_LEXEM_ID
+											&&
+											secondMarkCode >= IDENT_METETERMINAL_LEXEM_ID
+											&&
+											secondMarkCode <= IDENTIFIER_LEXEM_MAX_ID
+											||
+											secondMarkCodeForCurrentRHS == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID
+											&&
+											secondMarkCode >= UNSIGNED_VALUE_METATERMINAL_LEXEM_ID
+											&&
+											secondMarkCode <= LITERAL_LEXEM_MAX_ID
+											)
+										) {
+										continue;
 									}
-									else {
-										if (multiRule->rule.rhss[rhsVariantIndex].secondMarksType == LA_IS) {
-											continue;
-										}
+									else if (multiRule->rule.rhss[rhsVariantIndex].secondMarksType == LA_IS
+										&& (
+											secondMarkCode != secondMarkCodeForCurrentRHS
+											||
+											secondMarkCodeForCurrentRHS == IDENT_METETERMINAL_LEXEM_ID
+											&&
+											secondMarkCode < IDENT_METETERMINAL_LEXEM_ID
+											&&
+											secondMarkCode > IDENTIFIER_LEXEM_MAX_ID
+											||
+											secondMarkCodeForCurrentRHS == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID
+											&&
+											secondMarkCode < UNSIGNED_VALUE_METATERMINAL_LEXEM_ID
+											&&
+											secondMarkCode > LITERAL_LEXEM_MAX_ID
+											)
+										) {
+										continue;
 									}
+
+
 
 //#define ROW_INDEX_FOR_SECOND_TABLE secondMarkCode
 
 									//char* currSecondMark = multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndex];
 		//							char rowIndexForSecondTable = getLexemTId(multiRule->rule.rhss[rhsVariantIndex].secondMarks[secondMarksIndexForCurrentRHS]);
 
-									if (dpda1IndexingForSecondElement[secondMarkCode][stackTopElementCodeSelector] != ~0) {
-										if (dpda1IndexingForSecondElement[secondMarkCode][stackTopElementCodeSelector] != rhsVariantIndex) {
-											printf("No support model or model consider error.\r\n");
+									if (dpda1IndexingForSecondElement[secondMarkCode][stackTopElementCode] != ~0) {
+										if (dpda1IndexingForSecondElement[secondMarkCode][stackTopElementCode] != rhsVariantIndex) {
+											printf("ERROR: no support model or model consider error.\r\n");
 											exit(0);
 										}
 										else {
-											printf("Warning: multi-indexing.\r\n");
+											printf("WARNING: multi-indexing.\r\n");
 
 										}
 									}
 
-									unsigned char secondMarkCodeFirstCode = secondMarkCode;
-									unsigned char secondMarkCodeLastCode = secondMarkCode;
-									if (secondMarkCode == IDENT_METETERMINAL_LEXEM_ID) {
-										secondMarkCodeFirstCode = IDENTIFIER_LEXEM_MIN_ID;
-										secondMarkCodeLastCode = IDENTIFIER_LEXEM_MAX_ID;
-
-									}
-									else if (secondMarkCode == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID) {
-										secondMarkCodeFirstCode = LITERAL_LEXEM_MIN_ID;
-										secondMarkCodeLastCode = LITERAL_LEXEM_MAX_ID;
-									}
-									for (unsigned char secondMarkCodeSelector = secondMarkCodeFirstCode; secondMarkCodeSelector <= secondMarkCodeLastCode; ++secondMarkCodeSelector) {
+									////unsigned char secondMarkCodeFirstCode = secondMarkCode;
+									////unsigned char secondMarkCodeLastCode = secondMarkCode;
+									////if (secondMarkCode == IDENT_METETERMINAL_LEXEM_ID) {
+									////	secondMarkCodeFirstCode = IDENT_METETERMINAL_LEXEM_ID;
+									////	secondMarkCodeLastCode = IDENTIFIER_LEXEM_MAX_ID;
+									////
+									////}
+									////else if (secondMarkCode == UNSIGNED_VALUE_METATERMINAL_LEXEM_ID) {
+									////	secondMarkCodeFirstCode = UNSIGNED_VALUE_METATERMINAL_LEXEM_ID;
+									////	secondMarkCodeLastCode = LITERAL_LEXEM_MAX_ID;
+									////}
+									//for (unsigned char secondMarkCodeSelector = secondMarkCodeFirstCode; secondMarkCodeSelector <= secondMarkCodeLastCode; ++secondMarkCodeSelector) {
 //#undef ROW_INDEX_FOR_SECOND_TABLE
 //#define ROW_INDEX_FOR_SECOND_TABLE secondMarkCodeSelector
 										//dpda1IndexingForSecondElement[ROW_INDEX_FOR_SECOND_TABLE][columnIndexSelector] = rhsVariantIndex;
-										dpda1IndexingForSecondElement[secondMarkCodeSelector][stackTopElementCodeSelector] = rhsVariantIndex;
-									}
+										dpda1IndexingForSecondElement[secondMarkCode][stackTopElementCode] = rhsVariantIndex;
+									//}
 
 //#undef ROW_INDEX_FOR_SECOND_TABLE
 								}
@@ -1278,29 +1381,36 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 								printf("No support model or model consider error.\r\n");
 								exit(0);
 							}
-						//
+
+							dpda1Program[firstMarkCode][stackTopElementCode].rhsVariantAddonIndexMask = ~0;
+		
+							//
 							bool needStateToDeadState = false;
 
 							// scan
 							unsigned char secondMarkCode = 0; do {
 								//const char* secondMarkStr = getLexemStr(secondMarkCode);
-								if (dpda1IndexingForSecondElement[secondMarkCode][stackTopElementCodeSelector] == 255) { // !!.
+								if (dpda1IndexingForSecondElement[secondMarkCode][stackTopElementCode] == 255) { // !!.
 									needStateToDeadState = true;
-									dpda1IndexingForSecondElement[secondMarkCode][stackTopElementCodeSelector] = rhsVariantAddonIndex;
+									dpda1IndexingForSecondElement[secondMarkCode][stackTopElementCode] = rhsVariantAddonIndex;
 								}
 							} while (++secondMarkCode);
 
-							// add "to dead" state // --> ...
+							// add "to dead"-state // --> ...
 							if (needStateToDeadState) {
-								dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAddon[rhsVariantAddonIndex][0/*rhsVariantIndex*/] = DEAD_STATE_ID;
+								dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantAddonIndex][0/*rhsVariantIndex*/] = DEAD_STATE_ID;
 								for (int rhsElementIndex = 1; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
-									dpda1Program[firstMarkCodeSelector][stackTopElementCodeSelector].stackUpdate.stackAddon[rhsVariantAddonIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
+									dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantAddonIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
 							}
+						}
+						else {						
+							//
+							dpda1Program[firstMarkCode][stackTopElementCode].rhsVariantAddonIndexMask = 0; // not useed for accept state (? dpda1IndexingForSecondElement; ==> ignore => mask 0)
 						}
 //#undef ROW_INDEX						
 //#undef COLUMN_INDEX // +
 						//#undef ROW_INDEX_FOR_SECOND_TABLE
-					}
+					//}
 				}
 				////////////////////////////////////////////////////////////////////////////////////////////////////////
 				////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1308,6 +1418,15 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 			} while (++firstMarkCode);
 		}
 	}
+
+	// set default 0-index for non-setted elements
+	unsigned char secondMarkCode = 0; do {
+		unsigned char topStackCode = 0; do {
+			if (dpda1IndexingForSecondElement[secondMarkCode][topStackCode] == ~0) {
+				dpda1IndexingForSecondElement[secondMarkCode][topStackCode] = 0;
+			}
+		} while (++topStackCode);
+	} while (++secondMarkCode);
 }
 
 // used
