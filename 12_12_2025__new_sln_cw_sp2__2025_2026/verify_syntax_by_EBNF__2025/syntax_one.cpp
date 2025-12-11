@@ -32,7 +32,7 @@
 #define LA_NOT 4
 
 
-#include "LexicaByRegExAndSyntaxByLL2protototype.h";
+#include "..\\variant_specification\\LexicaByRegExAndSyntaxByLL2protototype.h";
 
 //#define DECLENUM(NAME, ...) typedef enum {__VA_ARGS__, size##NAME} NAME;
 //#define DECLENUM(NAME, ...) enum NAME {__VA_ARGS__, size##NAME};
@@ -95,12 +95,8 @@ bool getIndexAfterFragmentSyntax(char* ruleName, int& lexemIndex, struct LexemIn
 #include "stdlib.h" // for exit() // TODO:...
 #include "string.h"
 
-//#define DEFAULT_INPUT_FILE "../base_test_programs_2025/file1.k03"
-// #define AST_OUTPUT_FILE "../base_test_programs_2025/ast.txt"
-//#define DEFAULT_INPUT_FILE "../other_test_programs_2025/file4.k03"
-//#define AST_OUTPUT_FILE "../base_test_programs_2025/ast.txt"
-#define DEFAULT_INPUT_FILE "file1.k03"
-#define AST_OUTPUT_FILE "ast.txt"
+#define DEFAULT_INPUT_FILE "../base_test_programs_2025/file1.k03"
+#define AST_OUTPUT_FILE "../base_test_programs_2025/ast.txt"
 
 unsigned char errorMessagesPtrToLastBytePtr[8 * 1024 * 1024] = { '\0' };
 
