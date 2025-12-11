@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <tchar.h>
 
-#define DEFAULT_INPUT_FILENAME "../test_programs/file3.exe" // TODO: move!
+#define DEFAULT_INPUT_FILENAME "../base_test_programs_2025/file3.exe" // TODO: move!
 
 int getLastValue(char * buffer, int size) {
     int returnValue = ~0;
