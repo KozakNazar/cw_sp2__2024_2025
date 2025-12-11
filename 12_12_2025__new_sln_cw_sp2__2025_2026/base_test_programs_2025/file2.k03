@@ -1,0 +1,34 @@
+NAME _PROGRAM ; 
+BODY DATA INTEGER16 _AAAAAAA , _BBBBBBB , _CCCCCCC , _MAXMAXM ;
+  GET ( _AAAAAAA )
+  GET ( _BBBBBBB )
+  GET ( _CCCCCCC )
+
+  IF _AAAAAAA >= _BBBBBBB AND _AAAAAAA >= _CCCCCCC {
+    _AAAAAAA =: _MAXMAXM
+  } ELSE IF _BBBBBBB >= _AAAAAAA AND _BBBBBBB >= _CCCCCCC {
+    _BBBBBBB =: _MAXMAXM
+  } ELSE {
+    _CCCCCCC =: _MAXMAXM
+  }
+  PUT ( _MAXMAXM )
+
+  IF ( _AAAAAAA == _BBBBBBB ) AND ( _AAAAAAA == _CCCCCCC ) AND ( _BBBBBBB == _CCCCCCC ) {
+    PUT ( 1 )
+  } ELSE {
+    PUT ( 0 )
+  }
+    
+  IF NOT ( _AAAAAAA >= 0 ) OR NOT ( _BBBBBBB >= 0 ) OR NOT ( _CCCCCCC >= 0 ) {
+    PUT ( -1 )
+  } ELSE {
+    PUT ( 0 )
+  }
+
+  IF _AAAAAAA >= ( _BBBBBBB + _CCCCCCC ) {
+    PUT ( 10 )
+  } ELSE {
+    PUT ( 0 )
+  }
+ 
+END
