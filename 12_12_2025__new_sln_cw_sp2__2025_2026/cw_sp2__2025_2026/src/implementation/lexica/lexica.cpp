@@ -166,7 +166,7 @@ void printLexemesToFile(struct LexemInfo* lexemInfoTable, char printBadLexeme, c
 }
 
 // get identifier id
-unsigned int getIdentifierId(char(*identifierIdsTable)[MAX_LEXEM_SIZE], char* str) {
+unsigned int getIdentifierId(char(*identifierIdsTable)[MAX_LEXEM_SIZE], char* str, unsigned int baseId) {
 	unsigned int index = 0;
 	for (; identifierIdsTable[index][0] != '\0'; ++index) {
 		if (!strncmp(identifierIdsTable[index], str, MAX_LEXEM_SIZE)) {
@@ -175,7 +175,7 @@ unsigned int getIdentifierId(char(*identifierIdsTable)[MAX_LEXEM_SIZE], char* st
 	}
 	strncpy(identifierIdsTable[index], str, MAX_LEXEM_SIZE);
 	identifierIdsTable[index + 1][0] = '\0'; // not necessarily for zero-init identifierIdsTable
-	return index;
+	return baseId + index;
 }
 
 // try to get identifier
@@ -185,13 +185,13 @@ unsigned int tryToGetIdentifier(struct LexemInfo* lexemInfoInTable, char(*identi
 
 #ifdef USE_DFA_TO_ACCEPT_IDENTIFIER
 	if (tryToAccept(&transitionTable3, transitionTable3FinitStates, lexemInfoInTable->lexemStr)) {
-		lexemInfoInTable->lexemId = getIdentifierId(identifierIdsTable, lexemInfoInTable->lexemStr);
+		lexemInfoInTable->lexemId = getIdentifierId(identifierIdsTable, lexemInfoInTable->lexemStr, IDENTIFIER_LEXEM_MIN_ID);
 		lexemInfoInTable->tokenType = IDENTIFIER_LEXEME_TYPE;
 		return SUCCESS_STATE;
 	}
 #else
 	if (std::regex_match(std::string(lexemInfoInTable->lexemStr), std::regex(identifiers_re))) {
-		lexemInfoInTable->lexemId = getIdentifierId(identifierIdsTable, lexemInfoInTable->lexemStr);
+		lexemInfoInTable->lexemId = getIdentifierId(identifierIdsTable, lexemInfoInTable->lexemStr, IDENTIFIER_LEXEM_MIN_ID);
 		lexemInfoInTable->tokenType = IDENTIFIER_LEXEME_TYPE;
 		return SUCCESS_STATE;
 	}
@@ -208,14 +208,14 @@ unsigned int tryToGetUnsignedValue(struct LexemInfo* lexemInfoInTable) {
 #ifdef USE_DFA_TO_ACCEPT_UNSIGNEDVALUE
 	if (tryToAccept(&transitionTable4, transitionTable4FinitStates, lexemInfoInTable->lexemStr)) {
 		lexemInfoInTable->ifvalue = atoi(lastLexemInfoInTable->lexemStr);
-		lexemInfoInTable->lexemId = MAX_VARIABLES_COUNT + MAX_KEYWORD_COUNT;
+		lexemInfoInTable->lexemId = LITERAL_LEXEM_MIN_ID /*TODO: implement id*/;
 		lexemInfoInTable->tokenType = VALUE_LEXEME_TYPE;
 		return SUCCESS_STATE;
 	}
 #else
 	if (std::regex_match(std::string(lexemInfoInTable->lexemStr), std::regex(unsignedvalues_re))) {
 		lexemInfoInTable->ifvalue = atoi(lastLexemInfoInTable->lexemStr);
-		lexemInfoInTable->lexemId = MAX_VARIABLES_COUNT + MAX_KEYWORD_COUNT;
+		lexemInfoInTable->lexemId = LITERAL_LEXEM_MIN_ID /*TODO: implement id*/;
 		lexemInfoInTable->tokenType = VALUE_LEXEME_TYPE;
 		return SUCCESS_STATE;
 	}
@@ -278,7 +278,19 @@ void prepareKeyWordIdGetter(char* keywords_, char* keywords_re) {
 		return;
 	}
 
-	for (char* keywords_re_ = keywords_re, *keywords__ = keywords_; (*keywords_re_ != '\0') ? 1 : (*keywords__ = '\0', 0); (*keywords_re_ != '\\' || (keywords_re_[1] != '+' && keywords_re_[1] != '*' && keywords_re_[1] != '|')) ? *keywords__++ = *keywords_re_ : 0, ++keywords_re_);
+	//for (char* keywords_re_ = keywords_re, *keywords__ = keywords_; (*keywords_re_ != '\0') ? 1 : (*keywords__ = '\0', 0); (*keywords_re_ != '\\' || (keywords_re_[1] != '+' && keywords_re_[1] != '*' && keywords_re_[1] != '|')) ? *keywords__++ = *keywords_re_ : 0, ++keywords_re_);
+	for (char* keywords_re_ = keywords_re, *keywords__ = keywords_; (*keywords_re_ != '\0') ? 1 : (*keywords__ = '\0', 0); (*keywords_re_ != '\\' || (
+		keywords_re_[1] != '+' &&
+		keywords_re_[1] != '*' &&
+		keywords_re_[1] != '|' &&
+		keywords_re_[1] != '[' &&
+		keywords_re_[1] != ']' &&
+		keywords_re_[1] != '(' &&
+		keywords_re_[1] != ')' &&
+		keywords_re_[1] != '{' &&
+		keywords_re_[1] != '}'
+		)) ? *keywords__++ = *keywords_re_ : 0, ++keywords_re_);
+	while (*keywords_ == '|' ? *keywords_ = 31 : 0, *keywords_++ != '\0');
 }
 
 unsigned int getKeyWordId(char* keywords_, char* lexemStr, unsigned int baseId) {
@@ -291,9 +303,17 @@ unsigned int getKeyWordId(char* keywords_, char* lexemStr, unsigned int baseId) 
 		return ~0;
 	}
 
-	for (; lexemInKeywords_ = strstr(lexemInKeywords_, lexemStr), lexemInKeywords_ != NULL && lexemInKeywords_[lexemStrLen] != '|' && lexemInKeywords_[lexemStrLen] != '\0'; ++lexemInKeywords_);
+	//for (; lexemInKeywords_ = strstr(lexemInKeywords_, lexemStr), lexemInKeywords_ != NULL && lexemInKeywords_[lexemStrLen] != '|' && lexemInKeywords_[lexemStrLen] != '\0'; ++lexemInKeywords_);
 
-	return lexemInKeywords_ - keywords_ + baseId;
+	//return lexemInKeywords_ - keywords_ + baseId;
+
+	lexemInKeywords_ = strstr(lexemInKeywords_, lexemStr);
+
+	unsigned int id = 0;
+	for (; keywords_ < lexemInKeywords_; ++keywords_)
+		if (*keywords_ == 31) ++id;
+
+	return id + baseId;
 }
 
 // try to get KeyWord
@@ -306,13 +326,13 @@ char tryToGetKeyWord(struct LexemInfo* lexemInfoInTable) {
 
 #ifdef USE_DFA_TO_ACCEPT_KEYWORD
 	if (tryToAccept(&transitionTable2, transitionTable2FinitStates, lexemInfoInTable->lexemStr)) {
-		lexemInfoInTable->lexemId = getKeyWordId(keywords_, lexemInfoInTable->lexemStr, MAX_VARIABLES_COUNT);
+		lexemInfoInTable->lexemId = getKeyWordId(keywords_, lexemInfoInTable->lexemStr, KEYWORD_LEXEM_MIN_ID);
 		lexemInfoInTable->tokenType = KEYWORD_LEXEME_TYPE;
 		return SUCCESS_STATE;
 	}
 #else
 	if (std::regex_match(std::string(lexemInfoInTable->lexemStr), std::regex(keywords_re))) {
-		lexemInfoInTable->lexemId = getKeyWordId(keywords_, lexemInfoInTable->lexemStr, MAX_VARIABLES_COUNT);
+		lexemInfoInTable->lexemId = getKeyWordId(keywords_, lexemInfoInTable->lexemStr, KEYWORD_LEXEM_MIN_ID);
 		lexemInfoInTable->tokenType = KEYWORD_LEXEME_TYPE;
 		return SUCCESS_STATE;
 	}
