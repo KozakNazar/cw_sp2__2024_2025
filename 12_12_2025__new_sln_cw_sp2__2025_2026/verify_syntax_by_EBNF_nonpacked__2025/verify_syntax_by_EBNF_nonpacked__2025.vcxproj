@@ -143,7 +143,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="main_spirit.cpp" />
+    <ClCompile Include="syntax_one.cpp" />
+    <ClCompile Include="wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\base_test_programs_2025\file1.k03" />
