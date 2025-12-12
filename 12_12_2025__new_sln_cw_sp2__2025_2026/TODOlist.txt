@@ -1,6 +1,7 @@
-(*) TODO: add C-generator by AST
-(*) TODO: add ASM-generator by AST
-(*) TODO: add exe-generator by AST
-(**)TODO: add full Rust-if support
-    TODO: gen FSM, as FSA
-    TODO: gen PDM, as PDA (DPDA)
+    TODO: implement the tasks from the document addonOfTasks.pdf.
+(*) TODO: add C-generator by AST.
+(*) TODO: add ASM-generator by AST.
+(*) TODO: add exe-generator by AST.
+(**)TODO: add full Rust-if support.
+    TODO: gen FSM, as FSA.
+    TODO: gen PDM, as PDA (DPDA).
