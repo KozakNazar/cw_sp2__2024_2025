@@ -32,7 +32,7 @@ src\implementation\generator\index_to_value.cpp                                 
 src\implementation\generator\input.cpp                                                ^
 src\implementation\generator\less.cpp                                                 ^
 src\implementation\generator\less_or_equal.cpp                                        ^
-src\implementation\generator\lrbind.cpp                                               ^
+src\implementation\generator\lrassign.cpp                                             ^
 src\implementation\generator\machinecodegen_addon.cpp                                 ^
 src\implementation\generator\machinecodegen_pattern.cpp                               ^
 src\implementation\generator\mod.cpp                                                  ^
@@ -45,7 +45,7 @@ src\implementation\generator\operand.cpp                                        
 src\implementation\generator\or.cpp                                                   ^
 src\implementation\generator\output.cpp                                               ^
 src\implementation\generator\repeat_until.cpp                                         ^
-src\implementation\generator\rlbind.cpp                                               ^
+src\implementation\generator\rlassign.cpp                                             ^
 src\implementation\generator\semicolon.cpp                                            ^
 src\implementation\generator\sub.cpp                                                  ^
 src\implementation\generator\while_block.cpp                                          ^
