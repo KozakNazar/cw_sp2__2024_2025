@@ -19,4 +19,7 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Graphviz-14.0.5-win32--link.txt" />
+  </ItemGroup>
 </Project>

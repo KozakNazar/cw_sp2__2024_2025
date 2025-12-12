@@ -6,27 +6,52 @@
 *                                                           (part impl) *
 *************************************************************************/
 #include <stdio.h>
-#include <string.h>
-
 #include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <iomanip>
+#include <sstream>
+//#include <filesystem> C++17
 
 #define USE_DFA_MINIMIZATION
 
+//#include "../built_src/dfa.hpp"
+//#include "../built_src/matcher_by_dfa.hpp"
+
+#include "../built_src/file1.hpp"
+#define PFSM1_PATH_WITHOUT_EXTENSION "../built_doc/fsm1"
+#define DFSM1_SUBFOLDER_PATH         "../built_doc/full_dfa"
+#define DFSM1_PATH_WITHOUT_EXTENSION "../built_doc/full_dfa/fsm1__full_dfa"
 #define FILE1_A "../built_src/file1.hpp"
 #define FILE1_B "../built_src/file1.txt"
 #define TABLE1 "transitionTable1"
 #define RN1 TOKENS_RN
 
+#include "../built_src/file2.hpp"
+#define PFSM2_PATH_WITHOUT_EXTENSION "../built_doc/fsm2"
+#define DFSM2_SUBFOLDER_PATH         "../built_doc/full_dfa"
+#define DFSM2_PATH_WITHOUT_EXTENSION "../built_doc/full_dfa/fsm2__full_dfa"
 #define FILE2_A "../built_src/file2.hpp"
 #define FILE2_B "../built_src/file2.txt"
 #define TABLE2 "transitionTable2"
 #define RN2 KEYWORDS_RN
 
+#include "../built_src/file3.hpp"
+#define PFSM3_PATH_WITHOUT_EXTENSION "../built_doc/fsm3"
+#define DFSM3_SUBFOLDER_PATH         "../built_doc/full_dfa"
+#define DFSM3_PATH_WITHOUT_EXTENSION "../built_doc/full_dfa/fsm3__full_dfa"
 #define FILE3_A "../built_src/file3.hpp"
 #define FILE3_B "../built_src/file3.txt"
 #define TABLE3 "transitionTable3"
 #define RN3 IDENTIFIERS_RN
 
+#include "../built_src/file4.hpp"
+#define PFSM4_PATH_WITHOUT_EXTENSION "../built_doc/fsm4"
+#define DFSM4_SUBFOLDER_PATH         "../built_doc/full_dfa"
+#define DFSM4_PATH_WITHOUT_EXTENSION "../built_doc/full_dfa/fsm4__full_dfa"
 #define FILE4_A "../built_src/file4.hpp"
 #define FILE4_B "../built_src/file4.txt"
 #define TABLE4 "transitionTable4"
@@ -655,6 +680,135 @@ void printAlternationSymbol(char * exludedSymbols) {
     }
 }
 
+int buildFSM(int transitionTable[SYMBOL_NUMBER][MAX_STATES], int transitionTableFinitStates[MAX_FINIT_STATES], std::string fsmFileNameWithoutExtension, std::string subFolder, bool genSvgAndPdf, bool partDFA = true) {
+    unsigned int startStateIndex = 0;
+    int maxStateIndex = 0;
+    for (int iIndex = 0; iIndex < SYMBOL_NUMBER; ++iIndex)
+        for (int jIndex = 0; jIndex < MAX_STATES; ++jIndex)
+            if (transitionTable[iIndex][jIndex] > maxStateIndex) // Warning: no suppord zero row!
+                maxStateIndex = transitionTable[iIndex][jIndex];
+    int deadStateIndex = maxStateIndex; // Warning: conventionality (умовність)!
+    if (partDFA)
+        --maxStateIndex;
+
+    if (!partDFA)
+        system(((std::string)"mkdir \"" + subFolder + "\" >nul 2>&1").c_str()); // by command // std::filesystem::create_directories("full_dfa"); // C++17
+    
+    std::ofstream ofs(fsmFileNameWithoutExtension + ".dot");
+    if (!ofs) return -1; // error!
+
+    ofs << "digraph FSM {\n";
+    ofs << "  rankdir=LR;\n\n";
+
+    // --- 1. start state
+    ofs << "  start [shape=point];\n";
+    ofs << "  start -> \"q" << startStateIndex << "\";\n\n";
+
+    // --- 2. dinite states
+    ofs << "  node [shape=doublecircle];\n";
+    for (unsigned int stateIndex = 0; !stateIndex/* q0 can be final */ || transitionTableFinitStates[stateIndex]; ++stateIndex) {
+        ofs << "  \"q" << transitionTableFinitStates[stateIndex] << "\";\n";
+    }
+    ofs << "  node [shape=circle];\n\n";
+
+    // all states
+    for (int stateIndex = 0; stateIndex <= maxStateIndex; ++stateIndex) {
+        ofs << "  \"q" << stateIndex << "\";\n";
+    }
+    ofs << "\n";
+
+    struct Edge { int from, to; std::string label; };
+    std::vector<Edge> edges;
+
+    auto find_edge = [&](int u, int v) -> int {
+        for (size_t i = 0; i < edges.size(); ++i)
+            if (edges[i].from == u && edges[i].to == v) return i;
+        return -1;
+    };
+
+    for (int sym = 0; sym < SYMBOL_NUMBER; ++sym) {
+        for (int from = 0; from <= maxStateIndex; ++from) {
+            int to = transitionTable[sym][from];
+
+            if (partDFA && to == deadStateIndex)
+                continue;
+
+            int idx = find_edge(from, to);
+
+            std::ostringstream lbl;
+            if (sym >= 32 && sym <= 126) {
+                if (sym == '\"')
+                    lbl << "'\\" << (char)sym << "'";
+                else
+                    lbl << "'" << (char)sym << "'";
+            }
+            else
+                lbl << "0x" << std::uppercase << std::hex
+                << std::setw(2) << std::setfill('0') << sym;
+
+            if (idx >= 0)
+                edges[idx].label += "," + lbl.str();
+            else
+                edges.push_back({ from, to, lbl.str() });
+        }
+    }
+
+    for (auto& e : edges) {
+        ofs << "  \"q" << e.from << "\" -> \"q" << e.to << "\" [label=\"" << e.label << "\"];\n";
+    }
+
+    ofs << "}\n";
+    ofs.close();
+
+    int returnValue = 0;
+ 
+    if(genSvgAndPdf){
+        returnValue |= system(("Graphviz-14.0.5-win32\\bin\\dot -Tsvg " + fsmFileNameWithoutExtension + ".dot -o " + fsmFileNameWithoutExtension + ".svg  >nul 2>&1").c_str());
+        returnValue |= system(("Graphviz-14.0.5-win32\\bin\\dot -Tpdf " + fsmFileNameWithoutExtension + ".dot -o " + fsmFileNameWithoutExtension + ".pdf  >nul 2>&1").c_str());
+    }                                                                                                                                                         
+
+    return returnValue;
+}
+
+int buildAllFSMs() {
+    bool genSvgAndPdf = !system("dir Graphviz-14.0.5-win32\\bin\\dot.exe >nul 2>&1");
+    if (!genSvgAndPdf) {
+        std::cout << "ERROR: no find Graphviz-14.0.5-win32\\bin\\dot (link for download is in Graphviz-14.0.5-win32--link.txt)." << std::endl;
+    }
+
+    int returnValue = 0;
+
+    std::cout << "\r[fsm1__full_dfa]................ please wait\r[fsm1__full_df";
+    returnValue |= buildFSM(transitionTable1, transitionTable1FinitStates, DFSM1_PATH_WITHOUT_EXTENSION, DFSM1_SUBFOLDER_PATH, genSvgAndPdf, false);
+    
+    std::cout << "\r[fsm1          ]................ please wait\r[fsm1         ";
+    returnValue |= buildFSM(transitionTable1, transitionTable1FinitStates, PFSM1_PATH_WITHOUT_EXTENSION, "", genSvgAndPdf, true);
+    
+    std::cout << "\r[fsm2__full_dfa]................ please wait\r[fsm2__full_df";
+    returnValue |= buildFSM(transitionTable2, transitionTable2FinitStates, DFSM2_PATH_WITHOUT_EXTENSION, DFSM2_SUBFOLDER_PATH, genSvgAndPdf, false);
+    
+    std::cout << "\r[fsm2          ]................ please wait\r[fsm2         ";
+    returnValue |= buildFSM(transitionTable2, transitionTable2FinitStates, PFSM2_PATH_WITHOUT_EXTENSION, "", genSvgAndPdf, true);
+    
+    std::cout << "\r[fsm3__full_dfa]................ please wait\r[fsm3__full_df";
+    returnValue |= buildFSM(transitionTable3, transitionTable3FinitStates, DFSM3_PATH_WITHOUT_EXTENSION, DFSM3_SUBFOLDER_PATH, genSvgAndPdf, false);
+    
+    std::cout << "\r[fsm3          ]................ please wait\r[fsm3         ";
+    returnValue |= buildFSM(transitionTable3, transitionTable3FinitStates, PFSM3_PATH_WITHOUT_EXTENSION, "", genSvgAndPdf, true);
+    
+    std::cout << "\r[fsm4__full_dfa]................ please wait\r[fsm4__full_df";
+    returnValue |= buildFSM(transitionTable4, transitionTable4FinitStates, DFSM4_PATH_WITHOUT_EXTENSION, DFSM4_SUBFOLDER_PATH, genSvgAndPdf, false);
+    
+    std::cout << "\r[fsm4          ]................ please wait\r[fsm4         ";
+    returnValue |= buildFSM(transitionTable4, transitionTable4FinitStates, PFSM4_PATH_WITHOUT_EXTENSION, "", genSvgAndPdf, true);
+    if (returnValue || !genSvgAndPdf)
+        std::cout << "\r[      -       ]................ some problems...              ";
+    else
+        std::cout << "\r[      +       ]................ complete                      ";
+
+    return returnValue;
+}
+
 //#define PRINT_ALTERNATION_SYMBOL
 int main() {
 #ifndef PRINT_ALTERNATION_SYMBOL
@@ -671,7 +825,7 @@ int main() {
     finit_states_count = 0;
     generatorB((char*)RN4, (char*)FILE4_A, (char*)FILE4_B, (char*)TABLE4);
 
-    return 0;
+    return buildAllFSMs();
 #else
     //";|:=|=:|\\+|-|\\*|,|==|!=|:|\\[|\\]|\\(|\\)|\\{|\\}|<=|>=|[_0-9A-Za-z]+|[^ \t\r\f\v\n]"
     //;|:=|=:|\\+|-|\\*|,|==|!=|:|\\[|\\]|\\(|\\)|\\{|\\}|<=|>=|[_0-9A-Za-z]+|[^ \t\r\f\v\n]
@@ -684,5 +838,6 @@ int main() {
         " \t\r\f\v\n"   
     );
     (void)getchar();
+    return 0;
 #endif
 }

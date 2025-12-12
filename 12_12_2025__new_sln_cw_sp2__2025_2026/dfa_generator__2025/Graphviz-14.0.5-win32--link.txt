@@ -1,0 +1,1 @@
+https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/14.0.5/windows_10_cmake_Release_Graphviz-14.0.5-win32.zip

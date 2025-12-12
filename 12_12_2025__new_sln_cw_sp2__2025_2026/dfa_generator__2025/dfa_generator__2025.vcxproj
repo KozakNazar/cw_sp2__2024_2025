@@ -141,6 +141,9 @@
   <ItemGroup>
     <ClCompile Include="dfa_generator___part_impl.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Graphviz-14.0.5-win32--link.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
