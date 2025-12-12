@@ -163,7 +163,7 @@
     <ClCompile Include="src\implementation\generator\input.cpp" />
     <ClCompile Include="src\implementation\generator\less.cpp" />
     <ClCompile Include="src\implementation\generator\less_or_equal.cpp" />
-    <ClCompile Include="src\implementation\generator\lrbind.cpp" />
+    <ClCompile Include="src\implementation\generator\lrassign.cpp" />
     <ClCompile Include="src\implementation\generator\machinecodegen_addon.cpp" />
     <ClCompile Include="src\implementation\generator\machinecodegen_pattern.cpp" />
     <ClCompile Include="src\implementation\generator\mod.cpp" />
@@ -176,7 +176,7 @@
     <ClCompile Include="src\implementation\generator\or.cpp" />
     <ClCompile Include="src\implementation\generator\output.cpp" />
     <ClCompile Include="src\implementation\generator\repeat_until.cpp" />
-    <ClCompile Include="src\implementation\generator\rlbind.cpp" />
+    <ClCompile Include="src\implementation\generator\rlassign.cpp" />
     <ClCompile Include="src\implementation\generator\semicolon.cpp" />
     <ClCompile Include="src\implementation\generator\sub.cpp" />
     <ClCompile Include="src\implementation\generator\while_block.cpp" />
@@ -215,7 +215,7 @@
     <ClInclude Include="src\include\generator\input.h" />
     <ClInclude Include="src\include\generator\less.h" />
     <ClInclude Include="src\include\generator\less_or_equal.h" />
-    <ClInclude Include="src\include\generator\lrbind.h" />
+    <ClInclude Include="src\include\generator\lrassign.h" />
     <ClInclude Include="src\include\generator\mod.h" />
     <ClInclude Include="src\include\generator\mul.h" />
     <ClInclude Include="src\include\generator\not.h" />
@@ -225,7 +225,7 @@
     <ClInclude Include="src\include\generator\or.h" />
     <ClInclude Include="src\include\generator\output.h" />
     <ClInclude Include="src\include\generator\repeat_until.h" />
-    <ClInclude Include="src\include\generator\rlbind.h" />
+    <ClInclude Include="src\include\generator\rlassign.h" />
     <ClInclude Include="src\include\generator\semicolon.h" />
     <ClInclude Include="src\include\generator\sub.h" />
     <ClInclude Include="src\include\generator\while_block.h" />

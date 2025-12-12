@@ -66,7 +66,7 @@
     <ClCompile Include="src\implementation\generator\less_or_equal.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\implementation\generator\lrbind.cpp">
+    <ClCompile Include="src\implementation\generator\lrassign.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\implementation\generator\machinecodegen_addon.cpp">
@@ -105,7 +105,7 @@
     <ClCompile Include="src\implementation\generator\repeat_until.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\implementation\generator\rlbind.cpp">
+    <ClCompile Include="src\implementation\generator\rlassign.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\implementation\generator\semicolon.cpp">
@@ -208,7 +208,7 @@
     <ClInclude Include="src\include\generator\less_or_equal.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\generator\lrbind.h">
+    <ClInclude Include="src\include\generator\lrassign.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\include\generator\mod.h">
@@ -238,7 +238,7 @@
     <ClInclude Include="src\include\generator\repeat_until.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\generator\rlbind.h">
+    <ClInclude Include="src\include\generator\rlassign.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\include\generator\semicolon.h">
