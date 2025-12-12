@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <tchar.h>
 
-#define DEFAULT_INPUT_FILENAME "../base_test_programs_2025/file3.exe" // TODO: move!
+#define DEFAULT_INPUT_FILENAME "../base_test_programs_2025/file0.exe" // TODO: move!
 
 int getLastValue(char * buffer, int size) {
     int returnValue = ~0;
@@ -44,7 +44,7 @@ void ErrorExit(const char* msg) {
 
 int main() {
     char *param1 = "input_filename", *param2 = "output_filename", *param3 = "-d";
-    int arg1 = 1, arg2 = 1, arg3 = 1;
+    int arg1 = 1, arg2 = 10, arg3 = 100;
     //int result = 0;
     char cmdArgs[256];
 
