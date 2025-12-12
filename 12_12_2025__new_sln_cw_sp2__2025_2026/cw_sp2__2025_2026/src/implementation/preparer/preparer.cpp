@@ -81,10 +81,10 @@ int precedenceLevel(char* lexemStr) {
 		return PRECEDENCE_MAX_LEVEL - 8;
 	}
 
-	else if (!strncmp(lexemStr, tokenStruct[MULTI_TOKEN_RLBIND][0], MAX_LEXEM_SIZE)) {
+	else if (!strncmp(lexemStr, tokenStruct[MULTI_TOKEN_RLASSIGN][0], MAX_LEXEM_SIZE)) {
 		return 2;
 	}
-	else if (!strncmp(lexemStr, tokenStruct[MULTI_TOKEN_LRBIND][0], MAX_LEXEM_SIZE)) {
+	else if (!strncmp(lexemStr, tokenStruct[MULTI_TOKEN_LRASSIGN][0], MAX_LEXEM_SIZE)) {
 		return 2;
 	}
 
@@ -152,11 +152,11 @@ bool isLeftAssociative(char* lexemStr) {
 	else if (!strncmp(lexemStr, tokenStruct[MULTI_TOKEN_GREATER_OR_EQUAL][0], MAX_LEXEM_SIZE)) {
 		return true;
 	}
-	else if (!strncmp(lexemStr, tokenStruct[MULTI_TOKEN_LRBIND][0], MAX_LEXEM_SIZE)) { // ! TODO: ...
+	else if (!strncmp(lexemStr, tokenStruct[MULTI_TOKEN_LRASSIGN][0], MAX_LEXEM_SIZE)) { // ! TODO: ...
 		return false;
 	}
 
-	else if (!strncmp(lexemStr, tokenStruct[MULTI_TOKEN_RLBIND][0], MAX_LEXEM_SIZE)) {
+	else if (!strncmp(lexemStr, tokenStruct[MULTI_TOKEN_RLASSIGN][0], MAX_LEXEM_SIZE)) {
 		return false;
 	}
 	if (!strncmp(lexemStr, tokenStruct[MULTI_TOKEN_BITWISE_NOT][0], MAX_LEXEM_SIZE)) {
@@ -194,9 +194,9 @@ void makePrepare4IdentifierOrValue(struct LexemInfo** lastLexemInfoInTable, stru
 			||
 			!strncmp((*lastLexemInfoInTable)[1].lexemStr, "INDEX_TO_VALUE", MAX_LEXEM_SIZE)
 			||
-			!strncmp((*lastLexemInfoInTable)[1].lexemStr, tokenStruct[MULTI_TOKEN_RLBIND][0], MAX_LEXEM_SIZE)
+			!strncmp((*lastLexemInfoInTable)[1].lexemStr, tokenStruct[MULTI_TOKEN_RLASSIGN][0], MAX_LEXEM_SIZE)
 			||
-			!strncmp((*lastLexemInfoInTable)[-1].lexemStr, tokenStruct[MULTI_TOKEN_LRBIND][0], MAX_LEXEM_SIZE)
+			!strncmp((*lastLexemInfoInTable)[-1].lexemStr, tokenStruct[MULTI_TOKEN_LRASSIGN][0], MAX_LEXEM_SIZE)
 			||
 			//!strncmp((*lastLexemInfoInTable)[-1].lexemStr, tokenStruct[MULTI_TOKEN_INPUT][0], MAX_LEXEM_SIZE)
 			//||
@@ -412,7 +412,7 @@ void makePrePrepare(struct LexemInfo* lexemInfoInTable, struct LexemInfo* tempLe
 		}
 		else if (!strncmp(tempLexemInfoInTable->lexemStr, "["/*TODO: add to config.h*/, MAX_LEXEM_SIZE)) {
 			bool bindDetect = false;
-			if (!strncmp(tempLexemInfoInTable[-2].lexemStr, tokenStruct[MULTI_TOKEN_LRBIND][0], MAX_LEXEM_SIZE)) {
+			if (!strncmp(tempLexemInfoInTable[-2].lexemStr, tokenStruct[MULTI_TOKEN_LRASSIGN][0], MAX_LEXEM_SIZE)) {
 				bindDetect = true;
 			}
 			else if (!strncmp(tempLexemInfoInTable[-2].lexemStr, tokenStruct[MULTI_TOKEN_INPUT][0], MAX_LEXEM_SIZE)) {
@@ -428,7 +428,7 @@ void makePrePrepare(struct LexemInfo* lexemInfoInTable, struct LexemInfo* tempLe
 
 					if (!strncmp(tempLexemInfoInTable[tempLexemInfoInTableAddonScanIndex].lexemStr, "]"/*TODO: add to config.h*/, MAX_LEXEM_SIZE)) {
 						if (!--openBracketCount) {
-							if (!strncmp(tempLexemInfoInTable[tempLexemInfoInTableAddonScanIndex + 1].lexemStr, tokenStruct[MULTI_TOKEN_RLBIND][0], MAX_LEXEM_SIZE)) {
+							if (!strncmp(tempLexemInfoInTable[tempLexemInfoInTableAddonScanIndex + 1].lexemStr, tokenStruct[MULTI_TOKEN_RLASSIGN][0], MAX_LEXEM_SIZE)) {
 								bindDetect = true;
 							}
 							break;

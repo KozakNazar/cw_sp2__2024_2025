@@ -38,7 +38,7 @@ typedef struct {
 
 typedef struct {
 	MarkedRule multiRules[MAX_RULES];
-	int rule_count;
+	//int rule_count;
 	char start_symbol[MAX_TOKEN_SIZE];
 } Grammar;
 

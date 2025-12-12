@@ -17,10 +17,24 @@ unsigned long long int getPostDataSectionLexemIndex(LexemInfo* lexemInfoTable, G
 	int lexemIndex = 0;
 	//struct LexemInfo* unexpectedLexemfailedTerminal = nullptr;
 
+	if (lexemInfoTable == NULL) {
+		printf("Error: No find data section end index!\r\n");
+		exit(0);
+		return ~0;
+	}
+
+#ifdef OLD_VERSION_OF_CHECKINGVARIABLEINITIALIZATION
 	if (getIndexAfterFragmentSyntax((char*)"program____part1", lexemIndex, lexemInfoTable, grammar, 0/*, &unexpectedLexemfailedTerminal*/)
 		&& lexemInfoTable[lexemIndex].lexemStr[0] != '\0') {
 		return lexemIndex;
 	}
+#else
+	for (; lexemInfoTable[lexemIndex].lexemStr[0] != '\0' && !strstr(lexemInfoTable[lexemIndex].lexemStr, T_DATA_0) != '\0'; ++lexemIndex);
+	for (; lexemInfoTable[lexemIndex].lexemStr[0] != '\0' && !strstr(lexemInfoTable[lexemIndex].lexemStr, T_SEMICOLON_0) != '\0'; ++lexemIndex);
+	if (lexemInfoTable->lexemStr[0] != '\0') {
+		return lexemIndex;
+	}
+#endif
 
 	printf("Error: No find data section end index!\r\n");
 	return ~0;
@@ -130,9 +144,9 @@ int checkingVariableInitialization(LexemInfo* lexemInfoTable, Grammar* grammar, 
 
 			int prevNonOpenParenthesesIndex = -1;
 			for (; !strcmp(lexemesInfoTable[lexemIndex + prevNonOpenParenthesesIndex].lexemStr, "("); --prevNonOpenParenthesesIndex);
-			if (!strncmp(lexemesInfoTable[lexemIndex + 1].lexemStr, tokenStruct[MULTI_TOKEN_RLBIND][0], MAX_LEXEM_SIZE)
+			if (!strncmp(lexemesInfoTable[lexemIndex + 1].lexemStr, tokenStruct[MULTI_TOKEN_RLASSIGN][0], MAX_LEXEM_SIZE)
 				||					
-				!strncmp(lexemesInfoTable[lexemIndex - 1].lexemStr, tokenStruct[MULTI_TOKEN_LRBIND][0], MAX_LEXEM_SIZE)
+				!strncmp(lexemesInfoTable[lexemIndex - 1].lexemStr, tokenStruct[MULTI_TOKEN_LRASSIGN][0], MAX_LEXEM_SIZE)
 				||					
 				//!strncmp(lexemesInfoTable[-1].lexemStr, tokenStruct[MULTI_TOKEN_INPUT][0], MAX_LEXEM_SIZE)					
 				//||					
@@ -153,7 +167,7 @@ int checkingVariableInitialization(LexemInfo* lexemInfoTable, Grammar* grammar, 
 
 					if (!strncmp(lexemesInfoTable[tempLexemInfoInTableAddonScanIndex].lexemStr, "]"/*TODO: add to config.h*/, MAX_LEXEM_SIZE)) {
 						if (!--openBracketCount) {
-							if (!strncmp(lexemesInfoTable[tempLexemInfoInTableAddonScanIndex + 1].lexemStr, tokenStruct[MULTI_TOKEN_RLBIND][0], MAX_LEXEM_SIZE)) {
+							if (!strncmp(lexemesInfoTable[tempLexemInfoInTableAddonScanIndex + 1].lexemStr, tokenStruct[MULTI_TOKEN_RLASSIGN][0], MAX_LEXEM_SIZE)) {
 								bindDetect = true;
 							}
 							break;

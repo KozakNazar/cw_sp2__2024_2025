@@ -509,8 +509,8 @@ unsigned char* makeInitCode(struct LexemInfo** lastLexemInfoInTable, unsigned ch
 #include "../../../src/include/generator/greater.h"
 #include "../../../src/include/generator/less_or_equal.h"
 #include "../../../src/include/generator/greater_or_equal.h"
-#include "../../../src/include/generator/rlbind.h"
-#include "../../../src/include/generator/lrbind.h"
+#include "../../../src/include/generator/rlassign.h"
+#include "../../../src/include/generator/lrassign.h"
 #include "../../../src/include/generator/index.h"
 #include "../../../src/include/generator/index_to_value.h"
 #include "../../../src/include/generator/goto_label.h"
@@ -714,8 +714,8 @@ unsigned char* makeCode(struct LexemInfo** lastLexemInfoInTable/*TODO:...*/, uns
 
 		//if (lastLexemInfoInTable_ == *lastLexemInfoInTable) currBytePtr = makeGetCode(lastLexemInfoInTable, currBytePtr);
 		//if (lastLexemInfoInTable_ == *lastLexemInfoInTable) currBytePtr = makePutCode(lastLexemInfoInTable, currBytePtr);
-		RLBIND_CODER(lastLexemInfoInTable_, lastLexemInfoInTable, currBytePtr, generatorMode, NULL);
-		LRBIND_CODER(lastLexemInfoInTable_, lastLexemInfoInTable, currBytePtr, generatorMode, NULL);
+		RLASSIGN_CODER(lastLexemInfoInTable_, lastLexemInfoInTable, currBytePtr, generatorMode, NULL);
+		LRASSIGN_CODER(lastLexemInfoInTable_, lastLexemInfoInTable, currBytePtr, generatorMode, NULL);
 
 		INDEX_CODER(lastLexemInfoInTable_, lastLexemInfoInTable, currBytePtr, generatorMode, NULL);
 		INDEX_TO_VALUE_CODER(lastLexemInfoInTable_, lastLexemInfoInTable, currBytePtr, generatorMode, NULL);
