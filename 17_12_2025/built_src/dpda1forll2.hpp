@@ -28,24 +28,24 @@ typedef enum {
 } TapeAction;
 
 typedef enum {
-	NOTHING, // STACK_NOTHING
+	NOTHING, // STACK_NOTHING // REMOVE (-?-)
 	PUSH,    // STACK_PUSH // REMOVE ???
-	POP,     // STACK_POP
+	POP,     // STACK_POP // REMOVE (-?-)
 	POP_AND_MULTIPLIPUSH
 } StackAction;
 
 #define MAX_RHSCONTEINER_COUNT 3 // syntax.h
 #define MAX_RHSCONTEINER_COUNT_IN_PDA (MAX_RHSCONTEINER_COUNT + 1)
 
-#define MAX_RTOKEN_COUNT 12 // 16
+#define MAX_RTOKEN_COUNT 12 // 16 // syntax.h ?
 typedef struct {
 	StackAction stackAction;
-	unsigned int stackAddon[MAX_RHSCONTEINER_COUNT_IN_PDA][MAX_RTOKEN_COUNT];
+	unsigned int stackAddon[MAX_RHSCONTEINER_COUNT_IN_PDA][MAX_RTOKEN_COUNT]; // TODO: unsigned char
 } StackUpdate;
 
 //typedef int INSTRUCTION_PDA[2/*3, but a single state is used*/];
 typedef struct { 
-	char rhsVariantAddonIndexMask;// NEW 08.2025
+	unsigned char rhsVariantAddonIndexMask;// NEW 08.2025
 	TapeAction tapeAction; // (1)
 	StackUpdate stackUpdate; // (2)
 	//int newState; // (3) // one state
