@@ -938,7 +938,25 @@ void terminalAndNonTerminalIdsInitPart2(struct LexemInfo* lexemInfoTable, int la
 }
 
 // set FREE_STATE_ID // -1
-void dpda1forLL2SetInitStateAndInitIndexing__DELETE(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+void dpda1forLL2SetInitStateAndInitIndexing__DELETE(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+	unsigned char code = 0; do {
+		//if (dpda1Program[toptapeAndStackCode][toptapeAndStackCode].tapeAction == FREE_STATE_ID) { // ... // ????
+		//	printf("Error: no support model\r\n");
+		//	exit(0);
+		//}
+		dpda1Instructions[code].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH; // no POP prev state (used for detect error) // NEW 08.2025
+		dpda1Instructions[code].tapeAction = SCROLL_TO_RIGHT;
+		//08.2025	dpda1Program[codee].stackUpdate.stackAction = POP; // (2)
+		//08.2025	dpda1Program[codee].stackUpdate.stackAction = PUSH; // (!)
+		//08.2025	dpda1Program[codee].stackUpdate.stackAction = PUSH; // (!)
+					//dpda1Program[code].stackUpdate.stackAddon[rhsVariantAddonIndex][rTokekIndex] = emptyElementCode;
+		dpda1Instructions[code].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
+		dpda1Instructions[code].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = FREE_STATE_ID;
+		for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
+			dpda1Instructions[code].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+		}
+	} while (++code);
+
 	unsigned char tapeCode = 0; do {
 		unsigned char topStackCode = 0; do {
 //#define ROW_INDEX tapeCode
@@ -961,7 +979,25 @@ void dpda1forLL2SetInitStateAndInitIndexing__DELETE(Grammar& grammar, DPDA1Progr
 
 // used
 // init f
-void setAllStatesToDeadStateAndInitIndexing(Grammar& grammar, DPDA1Program& dpda1Program, PrecursorIds & precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+void setAllStatesToDeadStateAndInitIndexing(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds & precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+	unsigned char code = 0; do {
+		//if (dpda1Program[toptapeAndStackCode][toptapeAndStackCode].tapeAction == FREE_STATE_ID) { // ... // ????
+		//	printf("Error: no support model\r\n");
+		//	exit(0);
+		//}
+		dpda1Instructions[code].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH; // no POP prev state (used for detect error) // NEW 08.2025
+		dpda1Instructions[code].tapeAction = SCROLL_TO_RIGHT;
+		//08.2025	dpda1Program[codee].stackUpdate.stackAction = POP; // (2)
+		//08.2025	dpda1Program[codee].stackUpdate.stackAction = PUSH; // (!)
+		//08.2025	dpda1Program[codee].stackUpdate.stackAction = PUSH; // (!)
+					//dpda1Program[code].stackUpdate.stackAddon[rhsVariantAddonIndex][rTokekIndex] = emptyElementCode;
+		dpda1Instructions[code].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
+		dpda1Instructions[code].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = DEAD_STATE_ID;
+		for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
+			dpda1Instructions[code].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+		}
+	} while (++code);
+
 	unsigned char tapeCode = 0; do {	
 		unsigned char topStackCode = 0; do {
 //#define ROW_INDEX tapeCode
@@ -970,6 +1006,7 @@ void setAllStatesToDeadStateAndInitIndexing(Grammar& grammar, DPDA1Program& dpda
 			//	printf("Error: no support model\r\n");
 			//	exit(0);
 			//}
+			//OLD:
 			dpda1Program[tapeCode][topStackCode].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH; // no POP prev state (used for detect error) // NEW 08.2025
 			dpda1Program[tapeCode][topStackCode].tapeAction = SCROLL_TO_RIGHT;
 			//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = POP; // (2)
@@ -1065,6 +1102,123 @@ void terminalAndNonTerminalIdsInit(Grammar& grammar, struct LexemInfo* lexemInfo
 	if (false) terminalAndNonTerminalIdsInitPart2(lexemInfoTable, lastNonUsedid); // TERMINAL INIT AFTER SCAN SOURCE
 }
 
+
+
+
+
+
+
+void setDPDA1InstructionByPrecursorId(MarkedRule& multiRule/*, DPDA1Program& dpda1Program*/, DPDA1Instructions& dpda1Instructions, unsigned char precursorId) {
+	bool stateIsNotDefault = false;
+	bool stateIsTwiñeChanged = false;
+	// not init or not to dead state
+	if (//dpda1Program[ROW_INDEX][columnIndexSelector].tapeAction != -1
+		dpda1Instructions[precursorId].tapeAction != SCROLL_TO_RIGHT
+		||
+		dpda1Instructions[precursorId].stackUpdate.stackAction != POP_AND_MULTIPLIPUSH
+		||
+		dpda1Instructions[precursorId].rhsVariantAddonIndexMask != 0
+		||
+		dpda1Instructions[precursorId].stackUpdate.stackAddon[0][0] != DEAD_STATE_ID
+		||
+		dpda1Instructions[precursorId].stackUpdate.stackAddon[0][1] != EMPTY_TOKEN_LEXEM_ID
+		) { // ?
+		//printf("ERROR: no support model\r\n.");
+		stateIsNotDefault = true;
+		//exit(0);
+	}
+
+	stateIsTwiñeChanged |= dpda1Instructions[precursorId].tapeAction != NO_SCROLL;
+	dpda1Instructions[precursorId].tapeAction = NO_SCROLL;
+	/* defaule */stateIsTwiñeChanged |= dpda1Instructions[precursorId].stackUpdate.stackAction != POP_AND_MULTIPLIPUSH;
+	/* defaule */dpda1Instructions[precursorId].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH;
+	stateIsTwiñeChanged |= dpda1Instructions[precursorId].rhsVariantAddonIndexMask != (unsigned char)~0;
+	dpda1Instructions[precursorId].rhsVariantAddonIndexMask = (unsigned char)~0;
+	int rhsVariantIndex = 0;
+	for (; multiRule.rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex) {
+		//if (multiRule->rule.rhss[rhsVariantIndex].secondMarks[0][0] == '\0') {
+		//    return multiRule->rule.rhss + rhsVariantIndex;
+		//}
+		if (/*TODO: REMOVE*/false && dpda1Instructions[precursorId].stackUpdate.stackAction != POP_AND_MULTIPLIPUSH) {
+			printf("ERROR: no support model\r\n.");
+			exit(0);
+		}
+		//#ifdef BUILD_AST_BY_DPDA1
+		//					dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH; // NEW 08.2025
+		//#else
+		/*TODO: REMOVE*/false && (dpda1Instructions[precursorId].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH); // NEW 08.2025
+//#endif
+
+#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
+		bool popStackInFoutStateCodeMarker = true;
+#endif
+		for (int rhsElementIndex = 0; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
+			if (rhsElementIndex < multiRule.rule.rhss[rhsVariantIndex].rhs_count) {
+				unsigned char newStackElement = getLexemId(multiRule.rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
+				stateIsTwiñeChanged |= dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != newStackElement;
+				dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = newStackElement;
+				//= getLexemTId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
+				// = getLexemId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
+			}
+#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
+			else if (popStackInFoutStateCodeMarker) {
+				stateIsTwiñeChanged |= dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != POP_STACK_IN_F_OUT_STATE_ID;
+				dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = POP_STACK_IN_F_OUT_STATE_ID;
+				popStackInFoutStateCodeMarker = false;
+			}
+#endif
+			else {
+				stateIsTwiñeChanged |= dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != EMPTY_TOKEN_LEXEM_ID;
+				dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
+			}
+
+#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
+		if (popStackInFoutStateCodeMarker) {
+			//
+			printf("Error: overflow of rhss size\r\n");
+			exit(0);
+		}
+#endif
+
+		//#if !defined(BUILD_AST_BY_DPDA1) || defined(BUILD_P2C_AST_TYPE_BY_DPDA1)
+#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
+					//char popStackInFoutStateCode = getLexemId((char*)"POP_STACK_IN_F_OUT_STATE");
+#endif
+
+							// not init or not to dead state
+		if (stateIsNotDefault && stateIsTwiñeChanged) { // ?
+			printf("ERROR: no support model\r\n.");
+			exit(0);
+		}
+
+////		if (precursorId > (unsigned char)~0) {
+////			printf("ERROR: no support model\r\n.");
+////			exit(0);
+////		}
+////		precursorIds[firstMarkCode][stackTopElementCode] = multiRuleIndex
+////#ifdef DEAD_STATE_ID // regardless of the value DEAD_STATE_ID will be encoded as 0
+////			+ 1
+////#endif
+////#ifndef NO_ACCEPTANCE_BEHAVIOR
+////			+ 1
+////#endif
+////			;
+
+		//#ifdef BUILD_AST_BY_DPDA1
+		//					lastRHSElementIndex
+		//					//dpda1Program[ROW_INDEX][columnIndexSelector].stackUpdate.stackAction = STACK_POP_AND_MULTIPLIPUSH; // NEW 08.2025
+		//#else
+
+
+	}
+}
+
+
+
+
+
+
+
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //char getLexemTId(char* lexemStr) { // getLexemId
 //	return 0;
@@ -1073,7 +1227,7 @@ void terminalAndNonTerminalIdsInit(Grammar& grammar, struct LexemInfo* lexemInfo
 // used
 //?// two table //+//
 // STACK_POP_AND_MULTIPLIPUSH
-void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program, PrecursorIds & precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds & precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
 
 	int aCount = 0; // REMOVE
 
@@ -1272,7 +1426,7 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 						dpda1Program[firstMarkCode][stackTopElementCode].tapeAction = NO_SCROLL;
 						/* defaule */stateIsTwiñeChanged |= dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAction != POP_AND_MULTIPLIPUSH;
 						/* defaule */dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH;
-						stateIsTwiñeChanged |= dpda1Program[firstMarkCode][stackTopElementCode].rhsVariantAddonIndexMask == (unsigned char)~0;
+						stateIsTwiñeChanged |= dpda1Program[firstMarkCode][stackTopElementCode].rhsVariantAddonIndexMask != (unsigned char)~0;
 						dpda1Program[firstMarkCode][stackTopElementCode].rhsVariantAddonIndexMask = (unsigned char)~0;
 						int rhsVariantIndex = 0;
 						for (; multiRule->rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex) {
@@ -1335,14 +1489,17 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 								printf("ERROR: no support model\r\n.");
 								exit(0);
 							}
-								precursorIds[firstMarkCode][stackTopElementCode] = multiRuleIndex
-#ifdef DEAD_STATE_ID // regardless of the value DEAD_STATE_ID will be encoded as 0
-									+ 1
+
+							setDPDA1InstructionByPrecursorId(*multiRule, dpda1Instructions, (unsigned char)multiRuleIndex);
+	
+							precursorIds[firstMarkCode][stackTopElementCode] = multiRuleIndex
+#ifdef DEAD_STATE_ID // regardless of the value DEAD_STATE_ID will be encoded as 0	
+								+ 1
 #endif
-#ifndef NO_ACCEPTANCE_BEHAVIOR
-									+ 1
-#endif
-									;
+#ifndef NO_ACCEPTANCE_BEHAVIOR							
+								+ 1
+#endif	
+								;
 
 //#ifdef BUILD_AST_BY_DPDA1
 //					lastRHSElementIndex
@@ -1756,7 +1913,7 @@ char rhs_buffer[MAX_LEXEM_SIZE * MAX_RTOKEN_COUNT] = { 0 };
 char part_buffer[MAX_LEXEM_SIZE * 3 + 1024] = { 0 };
 //TODO: gen second table for Str!!
 //typedef PDAInstruction DPDA1Program[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
-void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, int state_counter*/, DPDA1Program& dpda1Program, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement/*, int dead_state*/) {
+void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, int state_counter*/, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement/*, int dead_state*/, bool useShortTable = false) {
 	FILE* f = fopen(fileName, "w");
 	if (!f) {
 		perror("fopen");
@@ -1764,10 +1921,10 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 	}
 
 	fprintf(f, "#define _CRT_SECURE_NO_WARNINGS\n\n");
-	fprintf(f, "#define SYMBOL_NUMBER 256\n");
+	fprintf(f, "#define LL2_SYMBOL_NUMBER 256\n");
 	//fprintf(f, "#define STATE_NUMBER %d\n\n", state_counter);
-	fprintf(f, "#define MAX_STATES 1024\n");
-	fprintf(f, "#define MAX_FINIT_STATES 1024\n");
+	fprintf(f, "#define LL2_MAX_STATES 256\n");
+	//fprintf(f, "//#define MAX_FINIT_STATES 1024\n");
 
 	fprintf(f, "\n");
 
@@ -1780,7 +1937,10 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 	fprintf(f, "\n");
 
 	fprintf(f, "int %s[LL2_SYMBOL_NUMBER][LL2_MAX_STATES] = {\n", tableName);
-	fprintf(f, "//                                                         ");
+	if (useShortTable)
+		fprintf(f, "//                                                   ");
+	else
+		fprintf(f, "//                                                         ");
 
 	printf("\n");
 	std::string lexemStr("");
@@ -1798,91 +1958,115 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 			sprintf(part_buffer, " \\x%02X ", topStackCode);
 			//fprintf(f, " \\x%02X ", topStackCode);
 		}
-		fprintf(f, " %-139s ", part_buffer);
+		if (useShortTable)
+			fprintf(f, " %-55s ", part_buffer);
+		else
+			fprintf(f, " %-139s ", part_buffer);
 	}
 
 	printf("\n");
 	fprintf(f, "\n");
 	//unsigned int precursorId = 0;
 	for (int firstMarkCode = 0; firstMarkCode < LL2_SYMBOL_NUMBER; ++firstMarkCode) {
-		for (int rhsVariantIndex = 0; rhsVariantIndex < MAX_RHSCONTEINER_COUNT; ++rhsVariantIndex) {
+		for (int rhsVariantIndex = 0; rhsVariantIndex < MAX_RHSCONTEINER_COUNT && !(rhsVariantIndex && useShortTable); ++rhsVariantIndex) {
 			printf("\r%d                      ", firstMarkCode);		
 			std::string lexemStr("");		
-			if (firstMarkCode == EMPTY_TOKEN_LEXEM_ID) {			
-				sprintf(part_buffer, "/*  \"\"");
+			if (firstMarkCode == EMPTY_TOKEN_LEXEM_ID) {
+				if(rhsVariantIndex)
+					sprintf(part_buffer, "//  \"\"");
+				else
+					sprintf(part_buffer, "/*  \"\"");
 			}		
-			else if (getLexemStr(firstMarkCode, lexemStr)) {			
-				sprintf(part_buffer, "/*  %s", lexemStr.c_str());
+			else if (getLexemStr(firstMarkCode, lexemStr)) {
+				if (rhsVariantIndex)
+					sprintf(part_buffer, "//  %s", lexemStr.c_str());
+				else
+					sprintf(part_buffer, "/*  %s", lexemStr.c_str());
 			}		
-			else {			
-				sprintf(part_buffer, "/* \\x%02X", firstMarkCode);
+			else {
+				if (rhsVariantIndex)
+					sprintf(part_buffer, "// \\x%02X", firstMarkCode);
+				else
+					sprintf(part_buffer, "/* \\x%02X", firstMarkCode);
 			}
-			fprintf(f, "%-50s (v%1d)*/ { ", part_buffer, rhsVariantIndex);
+			if (rhsVariantIndex)	
+				fprintf(f, "%-50s (v%1d)   | ", part_buffer, rhsVariantIndex);
+			else {
+				if (useShortTable)
+					fprintf(f, "%-50s */ { ", part_buffer);
+				else
+					fprintf(f, "%-50s (v%1d)*/ { ", part_buffer, rhsVariantIndex);
+			}
+
 
 			for (int topStackCode = 0; topStackCode < LL2_MAX_STATES; ++topStackCode) {
 				if (//dpda1Program[firstMarkCode][topStackCode].tapeAction == NO_SCROLL &&
-					dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAction == POP_AND_MULTIPLIPUSH) {
-					char* part_buffer_ = (char*)part_buffer;
-					part_buffer[0] = '\0';
-					char* rhs_buffer_ = (char*)rhs_buffer;
-					rhs_buffer[0] = '\0';
-					std::string lexemStr("");
-					//...
-					for (int rhsElementIndex = 0; rhsElementIndex < MAX_RTOKEN_COUNT && dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != EMPTY_TOKEN_LEXEM_ID; ++rhsElementIndex) {
-						//if (rhsElementIndex) {
-						//	rhs_buffer_ += sprintf(rhs_buffer_, " ");
-						//}
+					dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAction == POP_AND_MULTIPLIPUSH) { // no cond
+					if (useShortTable)
+						fprintf(f, "%-55d", precursorIds[firstMarkCode][topStackCode]);
+					else {
+						char* part_buffer_ = (char*)part_buffer;
+						part_buffer[0] = '\0';
+						char* rhs_buffer_ = (char*)rhs_buffer;
+						rhs_buffer[0] = '\0';
+						std::string lexemStr("");
+						//...
+						for (int rhsElementIndex = 0; rhsElementIndex < MAX_RTOKEN_COUNT && dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != EMPTY_TOKEN_LEXEM_ID; ++rhsElementIndex) {
+							//if (rhsElementIndex) {
+							//	rhs_buffer_ += sprintf(rhs_buffer_, " ");
+							//}
 
-						unsigned char rhsElementId = dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex];
+							unsigned char rhsElementId = dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex];
 
-						//if (rhsElementId == EMPTY_TOKEN_LEXEM_ID) {
-						//	rhs_buffer_ += sprintf(rhs_buffer_, "\"\"");
-						//} else 
-						if (getLexemStr(rhsElementId, lexemStr)) {
-							rhs_buffer_ += sprintf(rhs_buffer_, "%s", lexemStr.c_str());
+							//if (rhsElementId == EMPTY_TOKEN_LEXEM_ID) {
+							//	rhs_buffer_ += sprintf(rhs_buffer_, "\"\"");
+							//} else 
+							if (getLexemStr(rhsElementId, lexemStr)) {
+								rhs_buffer_ += sprintf(rhs_buffer_, "%s", lexemStr.c_str());
+							}
+							else if (rhsElementId >= IDENTIFIER_LEXEM_MIN_ID && rhsElementId <= IDENTIFIER_LEXEM_MAX_ID) {
+								rhs_buffer_ += sprintf(rhs_buffer_, "%s", IDENTIFIER_METATERMINAL_LEXEM_STR);
+							}
+							else if (rhsElementId >= IDENTIFIER_LEXEM_MIN_ID && rhsElementId <= IDENTIFIER_LEXEM_MAX_ID) {
+								rhs_buffer_ += sprintf(rhs_buffer_, "%s", UNSIGNED_VALUE_METATERMINAL_LEXEM_STR);
+							}
+							else {
+								rhs_buffer_ += sprintf(rhs_buffer_, "x%02X", rhsElementId);
+							}
+
+							if (rhsElementIndex < MAX_RTOKEN_COUNT && dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != EMPTY_TOKEN_LEXEM_ID) {
+								rhs_buffer_ += sprintf(rhs_buffer_, " ");
+							}
 						}
-						else if (rhsElementId >= IDENTIFIER_LEXEM_MIN_ID && rhsElementId <= IDENTIFIER_LEXEM_MAX_ID) {
-							rhs_buffer_ += sprintf(rhs_buffer_, "%s", IDENTIFIER_METATERMINAL_LEXEM_STR);
-						}
-						else if (rhsElementId >= IDENTIFIER_LEXEM_MIN_ID && rhsElementId <= IDENTIFIER_LEXEM_MAX_ID) {
-							rhs_buffer_ += sprintf(rhs_buffer_, "%s", UNSIGNED_VALUE_METATERMINAL_LEXEM_STR);
+
+						if (dpda1Program[firstMarkCode][topStackCode].tapeAction == SCROLL_TO_RIGHT) {
+							//fprintf(f, "/*D(q,\"\",%s)->{(q,", lexemStr.c_str());
+							if (firstMarkCode == EMPTY_TOKEN_LEXEM_ID) {
+								part_buffer_ += sprintf(part_buffer_, "/*D(q,\"\"");
+							}
+							else if (getLexemStr(firstMarkCode, lexemStr)) {
+								part_buffer_ += sprintf(part_buffer_, "/*D(q,%s", lexemStr.c_str());
+							}
+							else {
+								part_buffer_ += sprintf(part_buffer_, "/*D(q,x%02X", firstMarkCode);
+							}
 						}
 						else {
-							rhs_buffer_ += sprintf(rhs_buffer_, "x%02X", rhsElementId);
-						}
-
-						if (rhsElementIndex < MAX_RTOKEN_COUNT && dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != EMPTY_TOKEN_LEXEM_ID) {
-							rhs_buffer_ += sprintf(rhs_buffer_, " ");
-						}
-					}
-
-					if (dpda1Program[firstMarkCode][topStackCode].tapeAction == SCROLL_TO_RIGHT) {
-						//fprintf(f, "/*D(q,\"\",%s)->{(q,", lexemStr.c_str());
-						if (firstMarkCode == EMPTY_TOKEN_LEXEM_ID) {
 							part_buffer_ += sprintf(part_buffer_, "/*D(q,\"\"");
 						}
-						else if (getLexemStr(firstMarkCode, lexemStr)) {
-							part_buffer_ += sprintf(part_buffer_, "/*D(q,%s", lexemStr.c_str());
+
+						if (topStackCode == EMPTY_TOKEN_LEXEM_ID) {
+							part_buffer_ += sprintf(part_buffer_, ",\"\")->{(q,%s)}*/", rhs_buffer);
+						}
+						else if (getLexemStr(topStackCode, lexemStr)) {
+							part_buffer_ += sprintf(part_buffer_, ",%s)->{(q,%s)}*/", lexemStr.c_str(), rhs_buffer);
 						}
 						else {
-							part_buffer_ += sprintf(part_buffer_, "/*D(q,x%02X", firstMarkCode);
+							part_buffer_ += sprintf(part_buffer_, ",x%02X)->{(q,%s)}*/", topStackCode, rhs_buffer);
 						}
-					}
-					else {
-						part_buffer_ += sprintf(part_buffer_, "/*D(q,\"\"");
-					}
 
-					if (topStackCode == EMPTY_TOKEN_LEXEM_ID) {
-						part_buffer_ += sprintf(part_buffer_, ",\"\")->{(q,%s)}*/", rhs_buffer);
+						fprintf(f, "%-135s %3d", part_buffer, precursorIds[firstMarkCode][topStackCode]);
 					}
-					else if (getLexemStr(topStackCode, lexemStr)) {
-						part_buffer_ += sprintf(part_buffer_, ",%s)->{(q,%s)}*/", lexemStr.c_str(), rhs_buffer);
-					}
-					else {
-						part_buffer_ += sprintf(part_buffer_, ",x%02X)->{(q,%s)}*/", topStackCode, rhs_buffer);
-					}
-
-					fprintf(f, "%-135s %3d", part_buffer, precursorIds[firstMarkCode][topStackCode]);
 
 					//for (int rhsElementIndex = 0; rhsElementIndex < MAX_RTOKEN_COUNT && dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsElementIndex][0] != '\0'; ++rhsElementIndex)
 					//	dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsElementIndex];
@@ -1914,10 +2098,16 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 					exit(0);
 				}
 				if (topStackCode < LL2_MAX_STATES - 1) {
-					fprintf(f, ", ");
+					if (rhsVariantIndex)
+						fprintf(f, "| ");
+					else
+						fprintf(f, ", ");
 				}
 			}
-			fprintf(f, " }%s\n", firstMarkCode < LL2_SYMBOL_NUMBER - 1 ? "," : "");
+			if (rhsVariantIndex)
+				fprintf(f, " | \n");
+			else
+				fprintf(f, " }%s\n", firstMarkCode < LL2_SYMBOL_NUMBER - 1 ? "," : "");
 		
 		}
 
@@ -1989,7 +2179,7 @@ void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Pr
 
 #define REMOVE___OR_NOT struct LexemInfo* lexemInfoTable
 
-void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement, REMOVE___OR_NOT) {
+void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement, REMOVE___OR_NOT) {
 
 	// init codes
 	terminalAndNonTerminalIdsInit(grammar, lexemInfoTable/*, int lastNonUsedid !!!!!!!!!!! */);
@@ -2007,12 +2197,12 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexin
 	//buildDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement); // TERMINAL INIT AFTER SCAN SOURCE
 	//return;
 	// set 255 (-1) // to dead state
-	setAllStatesToDeadStateAndInitIndexing(grammar, dpda1Program, precursorIds, dpda1IndexingForSecondElement);
+	setAllStatesToDeadStateAndInitIndexing(grammar, dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
 
 	// 123
-	buildRulePartForDPDA1forLL2(grammar, dpda1Program, precursorIds, dpda1IndexingForSecondElement);
+	buildRulePartForDPDA1forLL2(grammar, dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
 
-	print_pda_by_transition_table_to_file((char*)"fileName.h", (char*)"tableName", dpda1Program, precursorIds, dpda1IndexingForSecondElement);
+	print_pda_by_transition_table_to_file((char*)"fileName.h", (char*)"tableName", dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
 
 	return;
 
@@ -2085,13 +2275,15 @@ int main(int argc, char* argv[]) {
 		{
 			//dpda1.data = data; !!!
 			dpda1.dpdaProgram = &dpdaProgram;
+			dpda1.dpda1Instructions = &dpda1Instructions;
+			dpda1.precursorIds = &precursorIds;
 			dpda1.dpdaIndexingForSecondElement = &dpdaIndexingForSecondElement;
 			dpda1.run = runner3;
 			dpda1.stack_above_top = dpda1.stack + SAVE_OFFSET;
 
 
 			*dpda1.stack_above_top = '\0';
-			buildDPDA1forLL2(grammar, *dpda1.dpdaProgram, *dpda1.dpdaIndexingForSecondElement, lexemesInfoTable);
+			buildDPDA1forLL2(grammar, *dpda1.dpdaProgram, *dpda1.dpda1Instructions, *dpda1.precursorIds, *dpda1.dpdaIndexingForSecondElement, lexemesInfoTable);
 		}
 #if 0
 		errorMessagesPtrToLastBytePtr[0] = '\0';
