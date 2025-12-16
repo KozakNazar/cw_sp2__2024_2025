@@ -1798,7 +1798,7 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 			sprintf(part_buffer, " \\x%02X ", topStackCode);
 			//fprintf(f, " \\x%02X ", topStackCode);
 		}
-		fprintf(f, " %-104s ", part_buffer);
+		fprintf(f, " %-139s ", part_buffer);
 	}
 
 	printf("\n");
@@ -1835,20 +1835,24 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 
 						unsigned char rhsElementId = dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex];
 
-						if (firstMarkCode == EMPTY_TOKEN_LEXEM_ID) {
-							rhs_buffer_ += sprintf(rhs_buffer_, "\"\"");
-						}
-						else if (getLexemStr(firstMarkCode, lexemStr)) {
+						//if (rhsElementId == EMPTY_TOKEN_LEXEM_ID) {
+						//	rhs_buffer_ += sprintf(rhs_buffer_, "\"\"");
+						//} else 
+						if (getLexemStr(rhsElementId, lexemStr)) {
 							rhs_buffer_ += sprintf(rhs_buffer_, "%s", lexemStr.c_str());
 						}
-						else if (firstMarkCode >= IDENTIFIER_LEXEM_MIN_ID && firstMarkCode <= IDENTIFIER_LEXEM_MAX_ID) {
+						else if (rhsElementId >= IDENTIFIER_LEXEM_MIN_ID && rhsElementId <= IDENTIFIER_LEXEM_MAX_ID) {
 							rhs_buffer_ += sprintf(rhs_buffer_, "%s", IDENTIFIER_METATERMINAL_LEXEM_STR);
 						}
-						else if (firstMarkCode >= IDENTIFIER_LEXEM_MIN_ID && firstMarkCode <= IDENTIFIER_LEXEM_MAX_ID) {
+						else if (rhsElementId >= IDENTIFIER_LEXEM_MIN_ID && rhsElementId <= IDENTIFIER_LEXEM_MAX_ID) {
 							rhs_buffer_ += sprintf(rhs_buffer_, "%s", UNSIGNED_VALUE_METATERMINAL_LEXEM_STR);
 						}
 						else {
-							rhs_buffer_ += sprintf(rhs_buffer_, "x%02X", firstMarkCode);
+							rhs_buffer_ += sprintf(rhs_buffer_, "x%02X", rhsElementId);
+						}
+
+						if (rhsElementIndex < MAX_RTOKEN_COUNT && dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != EMPTY_TOKEN_LEXEM_ID) {
+							rhs_buffer_ += sprintf(rhs_buffer_, " ");
 						}
 					}
 
@@ -1878,7 +1882,7 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 						part_buffer_ += sprintf(part_buffer_, ",x%02X)->{(q,%s)}*/", topStackCode, rhs_buffer);
 					}
 
-					fprintf(f, "%-100s %3d", part_buffer, precursorIds[firstMarkCode][topStackCode]);
+					fprintf(f, "%-135s %3d", part_buffer, precursorIds[firstMarkCode][topStackCode]);
 
 					//for (int rhsElementIndex = 0; rhsElementIndex < MAX_RTOKEN_COUNT && dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsElementIndex][0] != '\0'; ++rhsElementIndex)
 					//	dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAddon[rhsElementIndex];
