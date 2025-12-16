@@ -50,9 +50,11 @@ typedef struct {
 	StackUpdate stackUpdate; // (2)
 	//int newState; // (3) // one state
 } PDAInstruction /* Praecursor */;
+typedef PDAInstruction DPDA1Instructions[LL2_MAX_STATES];
+DPDA1Instructions dpda1Instructions;
 typedef PDAInstruction DPDA1Program[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
 
-typedef unsigned int PrecursorIds[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
+typedef unsigned char PrecursorIds[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
 PrecursorIds precursorIds;
 
 //#define EMPTY_PDA_INSTRUCTION { NO_SCROLL, {PUSH, {123, 123, 4, 0}}}
@@ -82,6 +84,8 @@ DPDA1Program dpdaProgram = { /* default pass */
 typedef struct StructDPDA1{
 	char * data;
 	DPDA1Program * dpdaProgram;
+	DPDA1Instructions * dpda1Instructions;
+	PrecursorIds * precursorIds;
 	DPDA1IndexingForSecondElement* dpdaIndexingForSecondElement; // by sevond element!!!!!
 	void(*run)(struct StructDPDA1 * dpda1);
 	// int state; // one state
