@@ -785,7 +785,7 @@ void buildDeadState__DPDA1forLL2__OLD(Grammar& grammar, DPDA1Program& dpda1Progr
 
 
 
-		// + äåðåâî âèâîäó
+		// + Ã¤Ã¥Ã°Ã¥Ã¢Ã® Ã¢Ã¨Ã¢Ã®Ã¤Ã³
 		
 		//char emptyStringCode = getLexemId((char*)"");
 		//char deadStateCode = getLexemId((char*)"DEAD_STATE");
@@ -1110,7 +1110,7 @@ void terminalAndNonTerminalIdsInit(Grammar& grammar, struct LexemInfo* lexemInfo
 
 void setDPDA1InstructionByPrecursorId(MarkedRule& multiRule/*, DPDA1Program& dpda1Program*/, DPDA1Instructions& dpda1Instructions, unsigned char precursorId) {
 	bool stateIsNotDefault = false;
-	bool stateIsTwiñeChanged = false;
+	bool stateIsTwiÃ±eChanged = false;
 	// not init or not to dead state
 	if (//dpda1Program[ROW_INDEX][columnIndexSelector].tapeAction != -1
 		dpda1Instructions[precursorId].tapeAction != SCROLL_TO_RIGHT
@@ -1128,11 +1128,11 @@ void setDPDA1InstructionByPrecursorId(MarkedRule& multiRule/*, DPDA1Program& dpd
 		//exit(0);
 	}
 
-	stateIsTwiñeChanged |= dpda1Instructions[precursorId].tapeAction != NO_SCROLL;
+	stateIsTwiÃ±eChanged |= dpda1Instructions[precursorId].tapeAction != NO_SCROLL;
 	dpda1Instructions[precursorId].tapeAction = NO_SCROLL;
-	/* defaule */stateIsTwiñeChanged |= dpda1Instructions[precursorId].stackUpdate.stackAction != POP_AND_MULTIPLIPUSH;
+	/* defaule */stateIsTwiÃ±eChanged |= dpda1Instructions[precursorId].stackUpdate.stackAction != POP_AND_MULTIPLIPUSH;
 	/* defaule */dpda1Instructions[precursorId].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH;
-	stateIsTwiñeChanged |= dpda1Instructions[precursorId].rhsVariantAddonIndexMask != (unsigned char)~0;
+	stateIsTwiÃ±eChanged |= dpda1Instructions[precursorId].rhsVariantAddonIndexMask != (unsigned char)~0;
 	dpda1Instructions[precursorId].rhsVariantAddonIndexMask = (unsigned char)~0;
 	int rhsVariantIndex = 0;
 	for (; multiRule.rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex) {
@@ -1155,20 +1155,20 @@ void setDPDA1InstructionByPrecursorId(MarkedRule& multiRule/*, DPDA1Program& dpd
 		for (int rhsElementIndex = 0; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
 			if (rhsElementIndex < multiRule.rule.rhss[rhsVariantIndex].rhs_count) {
 				unsigned char newStackElement = getLexemId(multiRule.rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
-				stateIsTwiñeChanged |= dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != newStackElement;
+				stateIsTwiÃ±eChanged |= dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != newStackElement;
 				dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = newStackElement;
 				//= getLexemTId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
 				// = getLexemId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
 			}
 #ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
 			else if (popStackInFoutStateCodeMarker) {
-				stateIsTwiñeChanged |= dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != POP_STACK_IN_F_OUT_STATE_ID;
+				stateIsTwiÃ±eChanged |= dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != POP_STACK_IN_F_OUT_STATE_ID;
 				dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = POP_STACK_IN_F_OUT_STATE_ID;
 				popStackInFoutStateCodeMarker = false;
 			}
 #endif
 			else {
-				stateIsTwiñeChanged |= dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != EMPTY_TOKEN_LEXEM_ID;
+				stateIsTwiÃ±eChanged |= dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != EMPTY_TOKEN_LEXEM_ID;
 				dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID;
 			}
 
@@ -1186,7 +1186,7 @@ void setDPDA1InstructionByPrecursorId(MarkedRule& multiRule/*, DPDA1Program& dpd
 #endif
 
 							// not init or not to dead state
-		if (stateIsNotDefault && stateIsTwiñeChanged) { // ?
+		if (stateIsNotDefault && stateIsTwiÃ±eChanged) { // ?
 			printf("ERROR: no support model\r\n.");
 			exit(0);
 		}
@@ -1404,7 +1404,7 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 					//}
 
 					bool stateIsNotDefault = false;
-					bool stateIsTwiñeChanged = false;
+					bool stateIsTwiÃ±eChanged = false;
 						// not init or not to dead state
 						if (//dpda1Program[ROW_INDEX][columnIndexSelector].tapeAction != -1
 							dpda1Program[firstMarkCode][stackTopElementCode].tapeAction != SCROLL_TO_RIGHT
@@ -1422,11 +1422,11 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 							//exit(0);
 						}
 
-						stateIsTwiñeChanged |= dpda1Program[firstMarkCode][stackTopElementCode].tapeAction != NO_SCROLL;
+						stateIsTwiÃ±eChanged |= dpda1Program[firstMarkCode][stackTopElementCode].tapeAction != NO_SCROLL;
 						dpda1Program[firstMarkCode][stackTopElementCode].tapeAction = NO_SCROLL;
-						/* defaule */stateIsTwiñeChanged |= dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAction != POP_AND_MULTIPLIPUSH;
+						/* defaule */stateIsTwiÃ±eChanged |= dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAction != POP_AND_MULTIPLIPUSH;
 						/* defaule */dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH;
-						stateIsTwiñeChanged |= dpda1Program[firstMarkCode][stackTopElementCode].rhsVariantAddonIndexMask != (unsigned char)~0;
+						stateIsTwiÃ±eChanged |= dpda1Program[firstMarkCode][stackTopElementCode].rhsVariantAddonIndexMask != (unsigned char)~0;
 						dpda1Program[firstMarkCode][stackTopElementCode].rhsVariantAddonIndexMask = (unsigned char)~0;
 						int rhsVariantIndex = 0;
 						for (; multiRule->rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex) {
@@ -1449,20 +1449,20 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 							for (int rhsElementIndex = 0; rhsElementIndex < MAX_RTOKEN_COUNT; ++rhsElementIndex)
 								if (rhsElementIndex < multiRule->rule.rhss[rhsVariantIndex].rhs_count) {
 									unsigned char newStackElement = getLexemId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
-									stateIsTwiñeChanged |= dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != newStackElement;
+									stateIsTwiÃ±eChanged |= dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != newStackElement;
 									dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = newStackElement;
 										//= getLexemTId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
 										// = getLexemId(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
 								}
 #ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
 								else if (popStackInFoutStateCodeMarker) {
-									stateIsTwiñeChanged |= dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != POP_STACK_IN_F_OUT_STATE_ID;
+									stateIsTwiÃ±eChanged |= dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != POP_STACK_IN_F_OUT_STATE_ID;
 									dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = POP_STACK_IN_F_OUT_STATE_ID;
 									popStackInFoutStateCodeMarker = false;
 								}
 #endif
 								else { 
-									stateIsTwiñeChanged |= dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != EMPTY_TOKEN_LEXEM_ID;
+									stateIsTwiÃ±eChanged |= dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != EMPTY_TOKEN_LEXEM_ID;
 									dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = EMPTY_TOKEN_LEXEM_ID; 
 								}
 
@@ -1480,7 +1480,7 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 #endif
 
 							// not init or not to dead state
-							if (stateIsNotDefault && stateIsTwiñeChanged) { // ?
+							if (stateIsNotDefault && stateIsTwiÃ±eChanged) { // ?
 								printf("ERROR: no support model\r\n.");
 								exit(0);
 							}
