@@ -40,7 +40,7 @@ typedef enum {
 #define MAX_RTOKEN_COUNT 12 // 16 // syntax.h ?
 typedef struct {
 	StackAction stackAction;
-	unsigned int stackAddon[MAX_RHSCONTEINER_COUNT_IN_PDA][MAX_RTOKEN_COUNT]; // TODO: unsigned char
+	unsigned char stackAddon[MAX_RHSCONTEINER_COUNT_IN_PDA][MAX_RTOKEN_COUNT]; // TODO: unsigned char
 } StackUpdate;
 
 //typedef int INSTRUCTION_PDA[2/*3, but a single state is used*/];
@@ -51,6 +51,9 @@ typedef struct {
 	//int newState; // (3) // one state
 } PDAInstruction /* Praecursor */;
 typedef PDAInstruction DPDA1Program[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
+
+typedef unsigned int PrecursorIds[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
+PrecursorIds precursorIds;
 
 //#define EMPTY_PDA_INSTRUCTION { NO_SCROLL, {PUSH, {123, 123, 4, 0}}}
 #define PDA_DEAD_STATE_INSTRUCTION { 0, NO_SCROLL, {NOTHING, {-1, -1, -1, -1}}} // -1 => ?
