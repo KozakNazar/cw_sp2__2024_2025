@@ -9,7 +9,7 @@
 #define LL2_SYMBOL_NUMBER 256 // dup
 #define LL2_MAX_STATES /*LL2_SYMBOL_NUMBER*/ 256 // 1024 // dup
 
-//#define BUILD_C2P_AST_TYPE_BY_DPDA1
+#define BUILD_C2P_AST_TYPE_BY_DPDA1
 #ifndef BUILD_C2P_AST_TYPE_BY_DPDA1
 #define	BUILD_P2C_AST_TYPE_BY_DPDA1 // TODO: no default
 #endif
