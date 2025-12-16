@@ -119,7 +119,7 @@ void runner3(DPDA1 * dpda1){
 		//}
 #define SECOND_ELEMENT_INDEX 1
 		char rhsConteinerIndex = (*dpda1->dpdaIndexingForSecondElement)[dpda1->data[SECOND_ELEMENT_INDEX]][*dpda1->stack_above_top + SAVE_OFFSET - 1]; // 
-		unsigned int* stackAddonLastElementPtr = stackUpdate->stackAddon[rhsConteinerIndex];
+		unsigned char* stackAddonLastElementPtr = stackUpdate->stackAddon[rhsConteinerIndex];
 			// = stackUpdate->stackAddon[DPDA1IndexingForSecondElement[][]];
 		switch (stackUpdate->stackAction) {
 		case NOTHING: break;
