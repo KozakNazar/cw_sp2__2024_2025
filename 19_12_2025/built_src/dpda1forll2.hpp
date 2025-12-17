@@ -51,7 +51,7 @@ typedef struct {
 	StackUpdate stackUpdate; // (2)
 	//int newState; // (3) // one state
 } PDAInstruction /* Praecursor */;
-typedef PDAInstruction DPDA1Instructions[LL2_MAX_STATES];
+typedef PDAInstruction DPDA1Instructions[LL2_PRECURSOR_COUNT];
 DPDA1Instructions dpda1Instructions;
 typedef PDAInstruction DPDA1Program[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
 
