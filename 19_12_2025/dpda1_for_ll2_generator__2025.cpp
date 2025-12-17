@@ -857,8 +857,6 @@ void buildDPDA1forLL2_(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexi
 }
 */
 
-
-
 int nonTerminalIdsInit(Grammar& grammar, int lastNonUsedid) {
 	char* keywords_re = (char*)KEYWORDS_RE;
 	char keywords_[sizeof(KEYWORDS_RE)] = { '\0' };
@@ -950,10 +948,12 @@ void dpda1forLL2SetInitStateAndInitIndexing__DELETE(Grammar& grammar, DPDA1Progr
 		//08.2025	dpda1Program[codee].stackUpdate.stackAction = PUSH; // (!)
 		//08.2025	dpda1Program[codee].stackUpdate.stackAction = PUSH; // (!)
 					//dpda1Program[code].stackUpdate.stackAddon[rhsVariantAddonIndex][rTokekIndex] = emptyElementCode;
-		dpda1Instructions[code].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
-		dpda1Instructions[code].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = FREE_STATE_ID;
-		for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
-			dpda1Instructions[code].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+		dpda1Instructions[code].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now		
+		for (int rhsVariantIndex = 0; rhsVariantIndex < MAX_RHSCONTEINER_COUNT_IN_PDA; ++rhsVariantIndex) {
+			dpda1Instructions[code].stackUpdate.stackAddon[rhsVariantIndex][0] = FREE_STATE_ID;
+			for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
+				dpda1Instructions[code].stackUpdate.stackAddon[rhsVariantIndex][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+			}
 		}
 	} while (++code);
 
@@ -964,9 +964,11 @@ void dpda1forLL2SetInitStateAndInitIndexing__DELETE(Grammar& grammar, DPDA1Progr
 			dpda1Program[tapeCode][topStackCode].stackUpdate.stackAction = POP_AND_MULTIPLIPUSH; // no POP prev state (used for detect error) // NEW 08.2025
 			dpda1Program[tapeCode][topStackCode].tapeAction = NO_SCROLL; // !
 			dpda1Program[tapeCode][topStackCode].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
-			dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = FREE_STATE_ID;
-			for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
-				dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+			for (int rhsVariantIndex = 0; rhsVariantIndex < MAX_RHSCONTEINER_COUNT_IN_PDA; ++rhsVariantIndex) {
+				dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][0] = FREE_STATE_ID;
+				for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
+					dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+				}
 			}
 
 			// TODO: set 255 to start				
@@ -992,9 +994,11 @@ void setAllStatesToDeadStateAndInitIndexing(Grammar& grammar, DPDA1Program& dpda
 		//08.2025	dpda1Program[codee].stackUpdate.stackAction = PUSH; // (!)
 					//dpda1Program[code].stackUpdate.stackAddon[rhsVariantAddonIndex][rTokekIndex] = emptyElementCode;
 		dpda1Instructions[code].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
-		dpda1Instructions[code].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = DEAD_STATE_ID;
-		for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
-			dpda1Instructions[code].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+		for (int rhsVariantIndex = 0; rhsVariantIndex < MAX_RHSCONTEINER_COUNT_IN_PDA; ++rhsVariantIndex) {
+			dpda1Instructions[code].stackUpdate.stackAddon[rhsVariantIndex][0] = DEAD_STATE_ID;
+			for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
+				dpda1Instructions[code].stackUpdate.stackAddon[rhsVariantIndex][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+			}
 		}
 	} while (++code);
 
@@ -1013,12 +1017,14 @@ void setAllStatesToDeadStateAndInitIndexing(Grammar& grammar, DPDA1Program& dpda
 			//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = PUSH; // (!)
 			//08.2025	dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = PUSH; // (!)
 						//dpda1Program[ROW_INDEX][columnIndex].stackUpdate.stackAddon[rhsVariantAddonIndex][rTokekIndex] = emptyElementCode;
-			dpda1Program[tapeCode][topStackCode].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now
-			dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][0] = DEAD_STATE_ID;
-			for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
-				dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+			dpda1Program[tapeCode][topStackCode].rhsVariantAddonIndexMask = 0; // 0 to ignore dpda1IndexingForSecondElement[][] for now			
+			for (int rhsVariantIndex = 0; rhsVariantIndex < MAX_RHSCONTEINER_COUNT_IN_PDA; ++rhsVariantIndex) {
+				dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][0] = DEAD_STATE_ID;
+				for (unsigned int rTokekIndex = 1; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) {
+					dpda1Program[tapeCode][topStackCode].stackUpdate.stackAddon[rhsVariantIndex][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
+				}
 			}
-				
+						
 			// TODO: set 255 to start				
 			dpda1IndexingForSecondElement[tapeCode][topStackCode] = ~0;
 
@@ -1060,12 +1066,6 @@ void terminalAndNonTerminalIdsInit(Grammar& grammar, struct LexemInfo* lexemInfo
 
 	*/
 
-
-
-
-
-	;
-
 	terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // no exist in code, but exit as abstract zero lenght element // lastNonUsedid++;
 	//terminalAndNonTerminalLexemIds[] = UNKNOWN_ELEMENT_ID; // no exist in code and no exit as abstract element
 
@@ -1079,8 +1079,6 @@ void terminalAndNonTerminalIdsInit(Grammar& grammar, struct LexemInfo* lexemInfo
 //	char deadStateCode = getLexemId((char*)"DEAD_STATE");
 
 	/* EMPTY_TOKEN_LEXEM_ID *///terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // lastNonUsedid++; // !!!!!!!!!!!!!!!!
-
-
 
 	terminalAndNonTerminalLexemIds[IDENTIFIER_METATERMINAL_LEXEM_STR] = IDENTIFIER_METATERMINAL_LEXEM_ID;
 	terminalAndNonTerminalLexemIds[UNSIGNED_VALUE_METATERMINAL_LEXEM_STR] = UNSIGNED_VALUE_METATERMINAL_LEXEM_ID;
@@ -1100,13 +1098,9 @@ void terminalAndNonTerminalIdsInit(Grammar& grammar, struct LexemInfo* lexemInfo
 	if (lastNonUsedid);
 
 	if (false) terminalAndNonTerminalIdsInitPart2(lexemInfoTable, lastNonUsedid); // TERMINAL INIT AFTER SCAN SOURCE
+
+	terminalAndNonTerminalLexemIds["DEAD_STATE__for_tests__remove"] = DEAD_STATE_ID;
 }
-
-
-
-
-
-
 
 void setDPDA1InstructionByPrecursorId(MarkedRule& multiRule/*, DPDA1Program& dpda1Program*/, DPDA1Instructions& dpda1Instructions, unsigned char precursorId) {
 	bool stateIsNotDefault = false;
@@ -1902,7 +1896,7 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 	// set default 0-index for non-setted elements
 	unsigned char secondMarkCode = 0; do {
 		unsigned char topStackCode = 0; do {
-			if (dpda1IndexingForSecondElement[secondMarkCode][topStackCode] == ~0) {
+			if (dpda1IndexingForSecondElement[secondMarkCode][topStackCode] == (unsigned char)~0) {
 				dpda1IndexingForSecondElement[secondMarkCode][topStackCode] = 0;
 			}
 		} while (++topStackCode);
@@ -1913,7 +1907,7 @@ char rhs_buffer[MAX_LEXEM_SIZE * MAX_RTOKEN_COUNT] = { 0 };
 char part_buffer[MAX_LEXEM_SIZE * 3 + 1024] = { 0 };
 //TODO: gen second table for Str!!
 //typedef PDAInstruction DPDA1Program[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
-void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, int state_counter*/, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement/*, int dead_state*/, bool useShortTable = true) {
+void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, int state_counter*/, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement/*, int dead_state*/, bool useShortTable = false) {
 	FILE* f = fopen(fileName, "w");
 	if (!f) {
 		perror("fopen");
@@ -1928,9 +1922,10 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 
 	fprintf(f, "\n");
 
-	fprintf(f, "int %sInstructions[LL2_PRECURSOR_COUNT] = {\n", tableName);
-	for (unsigned int precursorId = 0; precursorId < LL2_MAX_STATES; ++precursorId) {
+	fprintf(f, "int %sInstructionByPrecursorId[LL2_PRECURSOR_COUNT] = {\n", tableName);
+	for (unsigned int precursorId = 0; precursorId < LL2_PRECURSOR_COUNT; ++precursorId) {
 	//{0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}},
+		printf("\r%d                      ", precursorId);
 		fprintf(f, "/* %3d */ { 0x%02hhX", precursorId, dpda1Instructions[precursorId].rhsVariantAddonIndexMask);
 		//.rhsVariantAddonIndexMask;
 
@@ -2018,7 +2013,7 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 			}
 		}
 
-		fprintf(f, " } } }\n");
+		fprintf(f, "} } }\n");
 
 	}
 	printf("\r\n");
@@ -2043,24 +2038,24 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 	printf("\n");
 	std::string lexemStr("");
 	for (int topStackCode = 0; topStackCode < LL2_MAX_STATES; ++topStackCode) {
-		//printf("\r%d                      ", topStackCode);
-		if (!useShortTable && topStackCode == EMPTY_TOKEN_LEXEM_ID) {
-			sprintf(part_buffer, "  \"\" ");
-			//fprintf(f, "  %s ", lexemStr.c_str());
-		}
-		else if (!useShortTable && topStackCode && getLexemStr(topStackCode, lexemStr)) {
-			sprintf(part_buffer, "  %s ", lexemStr.c_str());
-			//fprintf(f, "  %s ", lexemStr.c_str());
-		}
-		else {
-			sprintf(part_buffer, " \\x%02X ", topStackCode);
-			//fprintf(f, " \\x%02X ", topStackCode);
-		}
-
+		printf("\r%d                      ", topStackCode);
 		if (useShortTable)
-			fprintf(f, " %-3s ", part_buffer);
-		else
+			fprintf(f, "  0x%02X ", topStackCode);
+		else {
+			if (topStackCode == EMPTY_TOKEN_LEXEM_ID) {
+				sprintf(part_buffer, "  \"\" ");
+				//fprintf(f, "  %s ", lexemStr.c_str());
+			}
+			else if (topStackCode && getLexemStr(topStackCode, lexemStr)) {
+				sprintf(part_buffer, "  %s ", lexemStr.c_str());
+				//fprintf(f, "  %s ", lexemStr.c_str());
+			}
+			else {
+				sprintf(part_buffer, " 0x%02X ", topStackCode);
+				//fprintf(f, " \\x%02X ", topStackCode);
+			}
 			fprintf(f, " %-139s ", part_buffer);
+		}
 	}
 
 	printf("\n");
@@ -2068,10 +2063,10 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 	//unsigned int precursorId = 0;
 	for (int firstMarkCode = 0; firstMarkCode < LL2_SYMBOL_NUMBER; ++firstMarkCode) {
 		for (int rhsVariantIndex = 0; rhsVariantIndex < MAX_RHSCONTEINER_COUNT && !(rhsVariantIndex && useShortTable); ++rhsVariantIndex) {
-			//printf("\r%d                      ", firstMarkCode);		
+			printf("\r%d                      ", firstMarkCode);		
 			std::string lexemStr("");
 			if (useShortTable) {
-				fprintf(f, "/* \\x%02X */ { ", firstMarkCode);
+				fprintf(f, "/* 0x%02X */ { ", firstMarkCode);
 			}
 			else {
 				if (firstMarkCode == EMPTY_TOKEN_LEXEM_ID) {
@@ -2088,9 +2083,9 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 				}
 				else {
 					if (rhsVariantIndex)
-						sprintf(part_buffer, "// \\x%02X", firstMarkCode);
+						sprintf(part_buffer, "// 0x%02X", firstMarkCode);
 					else
-						sprintf(part_buffer, "/* \\x%02X", firstMarkCode);
+						sprintf(part_buffer, "/* 0x%02X", firstMarkCode);
 				}
 				if (rhsVariantIndex)
 					fprintf(f, "%-50s (v%1d)   | ", part_buffer, rhsVariantIndex);
@@ -2106,7 +2101,7 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 				if (//dpda1Program[firstMarkCode][topStackCode].tapeAction == NO_SCROLL &&
 					dpda1Program[firstMarkCode][topStackCode].stackUpdate.stackAction == POP_AND_MULTIPLIPUSH) { // no cond
 					if (useShortTable)
-						fprintf(f, "%-55d", precursorIds[firstMarkCode][topStackCode]);
+						fprintf(f, " %3d ", precursorIds[firstMarkCode][topStackCode]);
 					else {
 						char* part_buffer_ = (char*)part_buffer;
 						part_buffer[0] = '\0';
@@ -2159,15 +2154,27 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 						}
 
 						if (topStackCode == EMPTY_TOKEN_LEXEM_ID) {
-							part_buffer_ += sprintf(part_buffer_, ",\"\")->{(q,%s)}*/", rhs_buffer);
+							if(rhs_buffer[0] == '\0')
+								part_buffer_ += sprintf(part_buffer_, ",\"\")->{(q,\"\")}*/");
+							else
+								part_buffer_ += sprintf(part_buffer_, ",\"\")->{(q,%s)}*/", rhs_buffer);
 						}
 						else if (getLexemStr(topStackCode, lexemStr)) {
-							part_buffer_ += sprintf(part_buffer_, ",%s)->{(q,%s)}*/", lexemStr.c_str(), rhs_buffer);
+							if(rhs_buffer[0] == '\0')
+								part_buffer_ += sprintf(part_buffer_, ",%s)->{(q,\"\")}*/", lexemStr.c_str());
+							else
+								part_buffer_ += sprintf(part_buffer_, ",%s)->{(q,%s)}*/", lexemStr.c_str(), rhs_buffer);
 						}
 						else {
-							part_buffer_ += sprintf(part_buffer_, ",x%02X)->{(q,%s)}*/", topStackCode, rhs_buffer);
+							if(rhs_buffer[0] == '\0')
+								part_buffer_ += sprintf(part_buffer_, ",0x%02X)->{(q,\"\")}*/", topStackCode);
+							else
+								part_buffer_ += sprintf(part_buffer_, ",0x%02X)->{(q,%s)}*/", topStackCode, rhs_buffer);
 						}
 
+						//if (useShortTable)
+						//	fprintf(f, "%-50s */ { ", part_buffer);
+						//else
 						fprintf(f, "%-135s %3d", part_buffer, precursorIds[firstMarkCode][topStackCode]);
 					}
 
@@ -2219,8 +2226,18 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 	fprintf(f, "};\n");
 
 	fprintf(f, "\n");
-
-	fprintf(f, "int %sFinitStates[MAX_FINIT_STATES] = { ", tableName);
+ 
+	fprintf(f, "int %sIndexingForSecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_STATES] = {\n", tableName); 
+	for (int secondMarkCode = 0; secondMarkCode < LL2_SYMBOL_NUMBER; ++secondMarkCode) {
+		fprintf(f, "{ ");
+		for (int topStackCode = 0; topStackCode < LL2_MAX_STATES; ++topStackCode) {
+			if (topStackCode)
+				fprintf(f, ",");
+			fprintf(f, "%1d ", dpda1IndexingForSecondElement[secondMarkCode][topStackCode]);
+		}
+		fprintf(f, "};\n");
+	}
+//	for (unsigned int precursorId = 0; precursorId < LL2_PRECURSOR_COUNT; ++precursorId){
 //	for (int finitStatesIndex = 0; finitStatesIndex < finit_states_count; ++finitStatesIndex) {
 //		fprintf(f, "Q%03d%s", finit_states[finitStatesIndex], finitStatesIndex + 1 == finit_states_count ? " " : ", ");
 //	}
@@ -2231,7 +2248,7 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 
 // used
 // tape scroll
-void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
+void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
     // ALL IDENT <-to-> ALL IDENT
 	// ALL UNSIGNED VALUE <-to-> ALL UNSIGNED VALUE
 
@@ -2240,6 +2257,14 @@ void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Pr
 	// All Symbol -> only non-terminal
 	// char emptyStringCode = getLexemId((char*)"");
 	unsigned char tapeAndTopStackCode = 0; do {
+
+		if (tapeAndTopStackCode >= NONTERMINAL_LEXEM_MIN_ID && tapeAndTopStackCode <= NONTERMINAL_LEXEM_MAX_ID
+			//|| tapeAndTopStackCode == DEAD_STATE_ID
+			//|| tapeAndTopStackCode == POP_STACK_IN_F_OUT_STATE_ID
+			//|| tapeAndTopStackCode == FREE_STATE_ID
+			)
+			continue;
+
 			// not init or not to dead state
 			if (//dpda1Program[ROW_INDEX][columnIndexSelector].tapeAction != -1
 				dpda1Program[tapeAndTopStackCode][tapeAndTopStackCode].tapeAction != SCROLL_TO_RIGHT
@@ -2305,20 +2330,19 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instruc
 	// 123
 	buildRulePartForDPDA1forLL2(grammar, dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
 
-	print_pda_by_transition_table_to_file((char*)"fileName.h", (char*)"tableName", dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
-
-	return;
+	//return;
 
 	//
 	// 123
 	//
-	buildAcceptTapeElement__DPDA1forLL2(grammar, dpda1Program, precursorIds, dpda1IndexingForSecondElement);
+	buildAcceptTapeElement__DPDA1forLL2(grammar, dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
 
 	// dpda1IndexingForSecondElement[rowIndex][columnIndex]; // -1
 
 	// MIN_TERMIN
 	// All Symbol
 
+	print_pda_by_transition_table_to_file((char*)"fileName.h", (char*)"tableName", dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
 }
 
 
