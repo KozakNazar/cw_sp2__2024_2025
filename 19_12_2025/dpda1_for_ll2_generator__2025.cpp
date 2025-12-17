@@ -1922,7 +1922,7 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 
 	fprintf(f, "\n");
 
-	fprintf(f, "int %sInstructionByPrecursorId[LL2_PRECURSOR_COUNT] = {\n", tableName);
+	fprintf(f, "DPDA1Instructions %sDPDA1Instructions = {\n", tableName);
 	for (unsigned int precursorId = 0; precursorId < LL2_PRECURSOR_COUNT; ++precursorId) {
 	//{0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}},
 		printf("\r%d                      ", precursorId);
@@ -1930,10 +1930,10 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 		//.rhsVariantAddonIndexMask;
 
 		if (dpda1Instructions[precursorId].tapeAction == NO_SCROLL) {
-			fprintf(f, ", NO_SCROLL      ");
+			fprintf(f, ", NO_SCROLL      ,");
 		}
 		else if (dpda1Instructions[precursorId].tapeAction == SCROLL_TO_RIGHT) {
-			fprintf(f, ", SCROLL_TO_RIGHT");
+			fprintf(f, ", SCROLL_TO_RIGHT,");
 		}
 		else {
 			printf("ERROR: no support model\r\n.");
@@ -1967,7 +1967,7 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 
 				printSeparator = true;
 
-				part_buffer_ += sprintf(part_buffer_, " x%02X", dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex]);
+				part_buffer_ += sprintf(part_buffer_, " 0x%02X", dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex]);
 			}
 			if (useShortTable) {
 				if (rhsVariantIndex < MAX_RHSCONTEINER_COUNT_IN_PDA - 1)
@@ -2013,7 +2013,7 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 			}
 		}
 
-		fprintf(f, "} } }\n");
+		fprintf(f, "} } },\n");
 
 	}
 	printf("\r\n");
@@ -2029,7 +2029,7 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 
 	fprintf(f, "\n");
 
-	fprintf(f, "int %s[LL2_SYMBOL_NUMBER][LL2_MAX_STATES] = {\n", tableName);
+	fprintf(f, "PrecursorIds %sDPDA1ProgramByPrecursors = {\n", tableName);
 	if (useShortTable)
 		fprintf(f, "//         ");
 	else
@@ -2071,15 +2071,15 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 			else {
 				if (firstMarkCode == EMPTY_TOKEN_LEXEM_ID) {
 					if (rhsVariantIndex)
-						sprintf(part_buffer, "//  \"\"");
+						sprintf(part_buffer, "// \"\"");
 					else
-						sprintf(part_buffer, "/*  \"\"");
+						sprintf(part_buffer, "/* \"\"");
 				}
 				else if (getLexemStr(firstMarkCode, lexemStr)) {
 					if (rhsVariantIndex)
-						sprintf(part_buffer, "//  %s", lexemStr.c_str());
+						sprintf(part_buffer, "// %s", lexemStr.c_str());
 					else
-						sprintf(part_buffer, "/*  %s", lexemStr.c_str());
+						sprintf(part_buffer, "/* %s", lexemStr.c_str());
 				}
 				else {
 					if (rhsVariantIndex)
@@ -2227,15 +2227,15 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 
 	fprintf(f, "\n");
  
-	fprintf(f, "int %sIndexingForSecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_STATES] = {\n", tableName); 
+	fprintf(f, "unsigned char %sIndexingForSecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_STATES] = {\n", tableName); 
 	for (int secondMarkCode = 0; secondMarkCode < LL2_SYMBOL_NUMBER; ++secondMarkCode) {
 		fprintf(f, "{ ");
 		for (int topStackCode = 0; topStackCode < LL2_MAX_STATES; ++topStackCode) {
 			if (topStackCode)
-				fprintf(f, ",");
-			fprintf(f, "%1d ", dpda1IndexingForSecondElement[secondMarkCode][topStackCode]);
+				fprintf(f, ", ");
+			fprintf(f, "%1d", dpda1IndexingForSecondElement[secondMarkCode][topStackCode]);
 		}
-		fprintf(f, "};\n");
+		fprintf(f, " },\n");
 	}
 //	for (unsigned int precursorId = 0; precursorId < LL2_PRECURSOR_COUNT; ++precursorId){
 //	for (int finitStatesIndex = 0; finitStatesIndex < finit_states_count; ++finitStatesIndex) {
@@ -2310,7 +2310,7 @@ void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Pr
 void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement, REMOVE___OR_NOT) {
 
 	// init codes
-	terminalAndNonTerminalIdsInit(grammar, lexemInfoTable/*, int lastNonUsedid !!!!!!!!!!! */);
+	terminalAndNonTerminalIdsInit(grammar, lexemInfoTable/*, int lastNonUsedid ! */);
 
 	//for (const auto& [key, value] : terminalAndNonTerminalLexemIds) { // Using Structured Bindings (C++17 and later)
 	//	std::cout << "Key: \"" << key << "\", Value: " << value << std::endl;
@@ -2345,7 +2345,12 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instruc
 	print_pda_by_transition_table_to_file((char*)"fileName.h", (char*)"tableName", dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
 }
 
-
+#if 1
+#include "fileName.h"
+int main(int argc, char* argv[]) {
+	return 0;
+}
+#else
 int main(int argc, char* argv[]) {
 
 	char* text;
@@ -2454,3 +2459,4 @@ int main(int argc, char* argv[]) {
 
 	return 0;
 }
+#endif
