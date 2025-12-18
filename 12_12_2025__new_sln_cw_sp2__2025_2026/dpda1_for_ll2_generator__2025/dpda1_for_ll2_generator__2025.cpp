@@ -44,8 +44,9 @@ Grammar grammar = {
 	GRAMMAR_LL2__2025
 };
 
-#define NPDA "NPDA" // "..\"
-#define GRAMMAR "Grammar" // "..\"
+#define DOC_PATH "../built_doc/"
+#define NPDA "NPDA"
+#define GRAMMAR "Grammar"
 
 char rhs_buffer[MAX_LEXEM_SIZE * MAX_RTOKEN_COUNT] = { 0 };
 wchar_t rhs_buffer_w[MAX_LEXEM_SIZE * MAX_RTOKEN_COUNT] = { 0 };
@@ -55,15 +56,25 @@ wchar_t part_buffer_w[MAX_LEXEM_SIZE * 3 + 1024] = { 0 };
 //wchar_t* wcharArray = new wchar_t[(MAX_LEXEM_SIZE * 3 + 1024) * MAX_RULES * 12];
 wchar_t* wcharOneLineArray = new wchar_t[(MAX_LEXEM_SIZE * 3 + 1024)];
 
-void buildGrammar(/*const char * filename*/) {
+void buildGrammarRule() {
 	setlocale(LC_ALL, "en_US.UTF-8");
 
-	FILE* f = fopen(GRAMMAR"_ANSI.txt", "w");
-	FILE* fw = fopen(GRAMMAR"_UNICODE.txt", "w"); //FILE* fw = fopen(GRAMMAR"_UNICODE.txt", "w, ccs=UTF-8");
+	FILE* f = fopen(DOC_PATH GRAMMAR "_ANSI.txt", "w+");
+	if (!f) {
+		printf(DOC_PATH NPDA "_ANSI.txt    [ :( ]\r\n");
+		return;
+	}
+
+	FILE* fw = fopen(DOC_PATH GRAMMAR "_UNICODE.txt", "w+"); //FILE* fw = fopen(GRAMMAR"_UNICODE.txt", "w, ccs=UTF-8");	
+	if (!f) {
+		fclose(f);
+		printf(DOC_PATH GRAMMAR "_UNICODE.txt [ :( ]\r\n");
+		return;
+	}
 
 	bool skipNextEptyRule = false; /* this will not always work (only for variants of this coursework) */
 	for (MarkedRule* multiRule = grammar.multiRules; multiRule->firstMarksType; ++multiRule) {
-		if (multiRule->rule.rhss[0].rhs[0][0] == '\0') {
+		if (skipNextEptyRule && multiRule->rule.rhss[0].rhs[0][0] == '\0') {
 			skipNextEptyRule = false;
 			continue;
 		}
@@ -77,7 +88,7 @@ void buildGrammar(/*const char * filename*/) {
 
 			char* rhs_buffer_ = (char*)rhs_buffer;
 			rhs_buffer[0] = '\0';
-			if (multiRule->rule.rhss[rhsVariantIndex].rhs[0][0] == '\0')
+			if (rhsVariantIndex && multiRule->rule.rhss[rhsVariantIndex].rhs[0][0] == '\0')
 				skipNextEptyRule = true;
 			else
 				skipNextEptyRule = false;
@@ -100,82 +111,25 @@ void buildGrammar(/*const char * filename*/) {
 	fclose(f);
 	fclose(fw);
 
-	printf(GRAMMAR"_ANSI.txt    [ ok ]\r\n");
-	printf(GRAMMAR"_UNICODE.txt [ ok ]\r\n");
+	printf(DOC_PATH GRAMMAR "_ANSI.txt    [ ok ]\r\n");
+	printf(DOC_PATH GRAMMAR "_UNICODE.txt [ ok ]\r\n");
 }
 
-void buildNPDA_(/*const char * filename*/) {
+void buildDeltaFunctionOfNPDA() {
 	setlocale(LC_ALL, "en_US.UTF-8");
 
-//	FILE* f = fopen(NPDA"_ANSI.txt", "w"); // not use '\r'
-//	FILE* fw = fopen(NPDA"_UNICODE.txt", "w, ccs=UTF-8"); // not use '\r'
-
-	bool skipNextEptyRule = false; /* this will not always work (only for variants of this coursework) */
-	for (MarkedRule* multiRule = grammar.multiRules; multiRule->firstMarksType; ++multiRule) {
-		if (multiRule->rule.rhss[0].rhs[0][0] == '\0') {
-			skipNextEptyRule = false;
-			continue;
-		}
-		char* part_buffer_ = (char*)part_buffer;
-		part_buffer[0] = '\0';
-		part_buffer_ += sprintf(part_buffer_, "D(q,\"\",%s) -> {", multiRule->rule.lhs);
-		size_t curr_rhs_buffer_len;
-		for (int rhsVariantIndex = 0; multiRule->rule.rhss[rhsVariantIndex].secondMarksType; ++rhsVariantIndex) {	
-			if (rhsVariantIndex)
-				part_buffer_ += sprintf(part_buffer_, ",");
-			
-			char* rhs_buffer_ = (char*)rhs_buffer;
-			rhs_buffer[0] = '\0';
-			if (multiRule->rule.rhss[rhsVariantIndex].rhs[0][0] == '\0')
-				skipNextEptyRule = true;
-			else
-				skipNextEptyRule = false;
-			for (int rhsElementIndex = 0; !rhsElementIndex || multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex][0] != '\0'; ++rhsElementIndex) {
-				if(multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex][0] == '\0')
-					rhs_buffer_ += sprintf(rhs_buffer_, " \"\"");
-				else
-					rhs_buffer_ += sprintf(rhs_buffer_, " %s", multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
-			}
-//			curr_rhs_buffer_len = strlen(rhs_buffer);
-//			if (rhs_buffer[curr_rhs_buffer_len - 1] == ' ') rhs_buffer[curr_rhs_buffer_len - 1] = '\0';
-
-			part_buffer_ += sprintf(part_buffer_, "(q,%s )", rhs_buffer);
-
-			if (!multiRule[0].rule.rhss[rhsVariantIndex + 1].secondMarksType &&
-				multiRule[1].firstMarksType &&
-				!strncmp(multiRule[0].rule.lhs, multiRule[1].rule.lhs, MAX_LEXEM_SIZE)) {
-				size_t part_buffer_len = strlen(part_buffer);
-
-				//part_buffer_ += sprintf(part_buffer_, ",");
-				++multiRule;
-				rhsVariantIndex = -1;
-
-				if (skipNextEptyRule && multiRule->rule.rhss[0].rhs[0][0] == '\0') {
-					multiRule += 2;
-					rhsVariantIndex = 0;
-					skipNextEptyRule = false;
-				}
-				else if (part_buffer[part_buffer_len - 1] != ',') {
-					part_buffer[part_buffer_len] = ',';
-					part_buffer[part_buffer_len + 1] = '\0';
-					++part_buffer_;
-				}
-
-			}
-		}
-		curr_rhs_buffer_len = strlen(rhs_buffer);
-		if (rhs_buffer[curr_rhs_buffer_len - 1] == ',') rhs_buffer[curr_rhs_buffer_len - 1] = '\0';
-		part_buffer_ += sprintf(part_buffer_, "}");
-		printf("%s\n", part_buffer);
+	FILE* f = fopen(DOC_PATH NPDA "_ANSI.txt", "w+");
+	if (!f) {
+		printf(DOC_PATH NPDA "_ANSI.txt       [ :( ]\r\n");
+		return;
+	}	
+	
+	FILE* fw = fopen(DOC_PATH NPDA "_UNICODE.txt", "w+"); //FILE* fw = fopen(DOC_PATH NPDA "_UNICODE.txt", "w, ccs=UTF-8");	
+	if (!fw) {
+		fclose(f);
+		printf(DOC_PATH NPDA "_UNICODE.txt    [ :( ]\r\n");
+		return;
 	}
-}
-
-
-void buildNPDA(/*const char * filename*/) {
-	setlocale(LC_ALL, "en_US.UTF-8");
-
-	FILE* f = fopen(NPDA"_ANSI.txt", "w+");
-	FILE* fw = fopen(NPDA"_UNICODE.txt", "w+"); //FILE* fw = fopen(GRAMMAR"_UNICODE.txt", "w, ccs=UTF-8");
 
 	bool skipNextEptyRule = false; /* this will not always work (only for variants of this coursework) */
 	for (MarkedRule* multiRule = grammar.multiRules; multiRule->firstMarksType; ++multiRule) {
@@ -183,9 +137,6 @@ void buildNPDA(/*const char * filename*/) {
 			skipNextEptyRule = false;
 			continue;
 		}
-//		char* part_buffer_ = (char*)part_buffer;
-//		part_buffer[0] = '\0';
-		//part_buffer_ += sprintf(part_buffer_, "D(q,\"\",%s) -> {", multiRule->rule.lhs);
 
 		fprintf(f, "D(q,\"\"");
 		fwprintf(fw, L"D(q,%ls", EPSILON);
@@ -202,13 +153,10 @@ void buildNPDA(/*const char * filename*/) {
 				fprintf(f, ",");
 				fprintf(fw, ",");
 			}
-				//part_buffer_ += sprintf(part_buffer_, ",");
 
 			fprintf(f, "(q,");
 			fwprintf(fw, L"(q,");
 
-//			char* rhs_buffer_ = (char*)rhs_buffer;
-//			rhs_buffer[0] = '\0';
 			if (multiRule->rule.rhss[rhsVariantIndex].rhs[0][0] == '\0')
 				skipNextEptyRule = true;
 			else
@@ -218,46 +166,28 @@ void buildNPDA(/*const char * filename*/) {
 					fprintf(f, " \"\"");
 					fwprintf(fw, L" %ls", EPSILON);
 				}
-					//rhs_buffer_ += sprintf(rhs_buffer_, " \"\"");
 				else{
 					fprintf(f, " %s", multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
 					fprintf(fw, " %s", multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);
 				}
 			}
-			//curr_rhs_buffer_len = strlen(rhs_buffer);
-			//if (rhs_buffer[curr_rhs_buffer_len - 1] == ' ') rhs_buffer[curr_rhs_buffer_len - 1] = '\0';
-            //
-			//fseek(f, -1, SEEK_END);
-			//if (fgetc(f) == ' ') {
-			//	fseek(f, -1, SEEK_CUR); // Повертаємось
-			//	fputc(';', f);          // Міняємо
-			//}
 
-			//part_buffer_ += sprintf(part_buffer_, "%s )", rhs_buffer);
 			fprintf(f, " )");
 			fprintf(fw, " )");
 
 			if (!multiRule[0].rule.rhss[rhsVariantIndex + 1].secondMarksType &&
 				multiRule[1].firstMarksType &&
 				!strncmp(multiRule[0].rule.lhs, multiRule[1].rule.lhs, MAX_LEXEM_SIZE)) {
-				size_t part_buffer_len = strlen(part_buffer);
+				//size_t part_buffer_len = strlen(part_buffer);
 
-				//part_buffer_ += sprintf(part_buffer_, ",");
 				++multiRule;
 				rhsVariantIndex = -1;
 
-				//long pos = ftell(f);
-				//if (pos) fseek(f, -1, SEEK_END);
 				if (skipNextEptyRule && multiRule->rule.rhss[0].rhs[0][0] == '\0') {
 					multiRule += 2;
 					rhsVariantIndex = 0;
 					skipNextEptyRule = false;
 				}
-				//else if (part_buffer[part_buffer_len - 1] != ',') {
-				//	part_buffer[part_buffer_len] = ',';
-				//	part_buffer[part_buffer_len + 1] = '\0';
-				//	++part_buffer_;
-				//}
 				else {				
 					long pos = ftell(f);
 					if (pos > 0) {
@@ -274,21 +204,10 @@ void buildNPDA(/*const char * filename*/) {
 					else {
 						fputc(',', f);
 						fputc(',', fw);
-					}
-				
+					}			
 				}
-
-
-//				//fseek(f, -1, SEEK_END);            // На останній символ
-//				else if (fgetc(f) != ',') {             // Якщо не кома
-//					fputc(',', f);                 // Додати кому
-//				}
-
 			}
 		}
-//		curr_rhs_buffer_len = strlen(rhs_buffer);
-//		if (rhs_buffer[curr_rhs_buffer_len - 1] == ',') rhs_buffer[curr_rhs_buffer_len - 1] = '\0';
-
 		long pos = ftell(f);
 		if (pos > 0) {
 			fseek(f, -1, SEEK_END);
@@ -304,36 +223,21 @@ void buildNPDA(/*const char * filename*/) {
 			fseek(f, 0, SEEK_END);
 		}
 
-//		fseek(f, -1, SEEK_END);       // На останній символ
-//		if (fgetc(f) == ',') {        // Якщо кома
-//#ifdef _WIN32
-//			__int64 new_size = (__int64)ftell(f) - 1;
-//			_chsize_s(_fileno(f), new_size);
-//#else
-//			ftruncate(fileno(f), ftell(f) - 1);
-//#endif
-//		}
-
-		//part_buffer_ += sprintf(part_buffer_, "}");
-		//printf("%s\n", part_buffer);
-
 		fprintf(f, "}\n");
 		fprintf(fw, "}\n");
-
-
 	}
 
 	fclose(f);
 	fclose(fw);
 
-	printf(NPDA"_ANSI.txt    [ ok ]\r\n");
-	printf(NPDA"_UNICODE.txt [ ok ]\r\n");
+	printf(DOC_PATH NPDA "_ANSI.txt       [ ok ]\r\n");
+	printf(DOC_PATH NPDA "_UNICODE.txt    [ ok ]\r\n");
 }
 
 
 void main() {
-	//buildGrammar();
-	buildNPDA();
+	buildGrammarRule();
+	buildDeltaFunctionOfNPDA();
 	
 	return;
 }
