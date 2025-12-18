@@ -159,7 +159,7 @@ unsigned char errorMessagesPtrToLastBytePtr[8 * 1024 * 1024] = { '\0' };
 #define NONTERMINAL_LEXEM_MAX_ID 250
 
 #define DEAD_STATE_ID 253
-#define	POP_STACK_IN_F_OUT_STATE_ID 254
+#define	POP_STACK_IN_F_OUT_STATE_ID 254 // <null>-marker on out-tape
 #define FREE_STATE_ID 255
 
 
@@ -744,7 +744,7 @@ void addNonTerminalInterpretationInstructions(DPDA1Program* dpdaProgramPtr, Gram
 */
 
 //char getLexemId(char * lexemStr);
-
+#if 0
 // used --> not used
 void buildDeadState__DPDA1forLL2__OLD(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
 	// MIN_TERMIN
@@ -805,7 +805,7 @@ void buildDeadState__DPDA1forLL2__OLD(Grammar& grammar, DPDA1Program& dpda1Progr
 #undef COLUMN_INDEX
 		} while (++tapeCode);
 }
-
+#endif
 /*
 // tape scroll
 void preBildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
@@ -2026,8 +2026,6 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 			fprintf(f, "#define Q%03d %d\n", stateIndex, stateIndex);
 		}
 	}
-
-	fprintf(f, "\n");
 
 	fprintf(f, "PrecursorIds %sDPDA1ProgramByPrecursors = {\n", tableName);
 	if (useShortTable)
