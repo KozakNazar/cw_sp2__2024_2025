@@ -10,10 +10,10 @@
 #define LL2_MAX_STATES /*LL2_SYMBOL_NUMBER*/ 256 // 1024 // dup
 #define LL2_PRECURSOR_COUNT 256
 
-#define BUILD_C2P_AST_TYPE_BY_DPDA1
-#ifndef BUILD_C2P_AST_TYPE_BY_DPDA1
-#define	BUILD_P2C_AST_TYPE_BY_DPDA1 // TODO: no default
-#endif
+#define USE_PRE_ORDER_MARKER
+//#ifndef BUILD_C2P_AST_TYPE_BY_DPDA1
+//#define	BUILD_P2C_AST_TYPE_BY_DPDA1 // TODO: no default
+//#endif
 
 //#define NO_ACTION 0xFFFF
 
@@ -52,6 +52,10 @@ typedef struct {
 	//int newState; // (3) // one state
 } PDAInstruction /* Praecursor */;
 typedef PDAInstruction DPDA1Instructions[LL2_PRECURSOR_COUNT];
+
+typedef PDAInstruction PDAReverseInstruction;
+typedef PDAReverseInstruction DPDA1ReverseInstructions[LL2_PRECURSOR_COUNT];
+
 DPDA1Instructions dpda1Instructions;
 typedef PDAInstruction DPDA1Program[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
 
@@ -97,19 +101,21 @@ typedef struct StructDPDA1{
 	unsigned char stack[8192 + SAVE_OFFSET]; // STATCK;
 
 
-	// unsigned char stackForParentElementÂ³[8192 + SAVE_OFFSET]; // STATCK; // TODO: add to list translator
+	// unsigned char stackForParentElement³[8192 + SAVE_OFFSET]; // STATCK; // TODO: add to list translator
 
 	// TODO: add outTape
 
 } DPDA1;
 
 void runner3(DPDA1 * dpda1){
-#ifdef	BUILD_P2C_AST_TYPE_BY_DPDA1 // TODO: no default
-	printf("Don't use BUILD_P2C_AST_TYPE_BY_DPDA1, use BUILD_2C2P_AST_TYPE_BY_DPDA1!\r\n");
-	printf("TODO: need to use an additional stack of parent elements!\r\n");
+#ifndef USE_PRE_ORDER_MARKER
+	printf("Mode without USE_PRE_ORDER_MARKER is not support.\r\n");
+	printf("Define macro USE_PRE_ORDER_MARKER.\r\n");
 	exit(0);
 #endif
-	for (; *dpda1->data_in != '\0'; ++dpda1->data_in){
+	unsigned int v__MAX_ITERATION_COUNT_FOR_SAFEGUARD_DPDA1 = 32768;
+#define SAFEGUARD_DPDA1 (v__MAX_ITERATION_COUNT_FOR_SAFEGUARD_DPDA1--)
+	while (dpda1->stack == dpda1->stack_above_top + SAVE_OFFSET && SAFEGUARD_DPDA1){
 		//StackAction *stackAction = (*dpda1->dpdaProgram)[*dpda1->data_in][*dpda1->stack_top].stackUpdate.stackAction;
 		StackUpdate * stackUpdate = &(*dpda1->dpdaProgram)[*dpda1->data_in][*dpda1->stack_above_top + SAVE_OFFSET - 1].stackUpdate;
 		//TapeAction * tapeAction = &(*dpda1->dpdaProgram)[*dpda1->data_in][*dpda1->stack_above_top + SAVE_OFFSET - 1].tapeAction;
@@ -137,7 +143,10 @@ void runner3(DPDA1 * dpda1){
 			//divergencePointToOutTape = true;
 			++dpda1->data_in;
 			break;
-		default:; // break;
+		default:
+			printf("ERROR.\r\n.");
+			exit(0);
+			; // break;
 		}
 
 #define SECOND_ELEMENT_INDEX 1
@@ -179,9 +188,13 @@ void runner3(DPDA1 * dpda1){
 			// new [] + index
 			//
 			break;
-		default:; // break;
+		default:
+			printf("ERROR.\r\n.");
+			exit(0);
+			; // break;
 		}
 	}
+#undef SAFEGUARD_DPDA1
 }
 
 //#define SET_STACK_123
@@ -207,7 +220,7 @@ char tryToAcceptDPDA(DPDA1Program * dpdaProgram, DPDA1Instructions* dpda1Instruc
 	dpda1.run = runner3;
 	dpda1.stack_above_top = dpda1.stack + SAVE_OFFSET;
 
-	dpda1.stack_above_top[-1] = startState; // init by start symbol
+	*dpda1.stack_above_top++ = startState; // init by start symbol
 	dpda1.run(&dpda1);
 
 	if (dpda1.stack == dpda1.stack_above_top + SAVE_OFFSET) { // define in macro
