@@ -19,4 +19,10 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\built_doc\Grammar_ANSI.txt" />
+    <Text Include="..\built_doc\Grammar_UNICODE.txt" />
+    <Text Include="..\built_doc\NPDA_ANSI.txt" />
+    <Text Include="..\built_doc\NPDA_UNICODE.txt" />
+  </ItemGroup>
 </Project>

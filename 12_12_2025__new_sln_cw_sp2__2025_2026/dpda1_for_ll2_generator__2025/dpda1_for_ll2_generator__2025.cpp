@@ -95,7 +95,7 @@ void buildGrammarRule() {
 			for (int rhsElementIndex = 0; !rhsElementIndex || multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex][0] != '\0'; ++rhsElementIndex) {
 				if (multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex][0] == '\0') {
 					fprintf(f, " \"\"");
-					fwprintf(fw, L"%ls", EPSILON);
+					fwprintf(fw, L" %ls", EPSILON);
 				}
 				else {
 					fprintf(f, " %s", multiRule->rule.rhss[rhsVariantIndex].rhs[rhsElementIndex]);

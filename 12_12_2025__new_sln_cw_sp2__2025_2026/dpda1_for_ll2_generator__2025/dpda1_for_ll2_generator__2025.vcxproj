@@ -141,6 +141,12 @@
   <ItemGroup>
     <ClCompile Include="dpda1_for_ll2_generator__2025.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\built_doc\Grammar_ANSI.txt" />
+    <Text Include="..\built_doc\Grammar_UNICODE.txt" />
+    <Text Include="..\built_doc\NPDA_ANSI.txt" />
+    <Text Include="..\built_doc\NPDA_UNICODE.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
