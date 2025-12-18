@@ -1,0 +1,108 @@
+labeled_point -> ident :
+goto_label -> GOTO ident
+program_name -> ident
+value_type -> INTEGER16
+array_specify -> [ unsigned_value ]
+declaration_element -> ident array_specify__optional
+array_specify__optional -> array_specify
+array_specify__optional -> ""
+other_declaration_ident -> , declaration_element
+declaration -> value_type declaration_element other_declaration_ident__iteration
+other_declaration_ident__iteration -> other_declaration_ident other_declaration_ident__iteration
+other_declaration_ident__iteration -> ""
+index_action -> [ expression ]
+unary_operator -> NOT
+unary_operation -> unary_operator expression
+binary_operator -> AND
+binary_operator -> OR
+binary_operator -> ==
+binary_operator -> !=
+binary_operator -> <=
+binary_operator -> >=
+binary_operator -> +
+binary_operator -> -
+binary_operator -> *
+binary_operator -> DIV
+binary_operator -> MOD
+binary_action -> binary_operator expression
+left_expression -> group_expression
+left_expression -> unary_operation
+left_expression -> cond_block
+left_expression -> value
+left_expression -> value
+left_expression -> ident index_action__optional
+index_action__optional -> index_action
+index_action__optional -> ""
+expression -> left_expression binary_action__iteration
+binary_action__iteration -> binary_action binary_action__iteration
+binary_action__iteration -> ""
+group_expression -> ( expression )
+expression_or_cond_block__with_optional_assign -> expression assign_to_right__optional
+assign_to_right -> =: ident index_action__optional
+assign_to_right__optional -> assign_to_right
+assign_to_right__optional -> ""
+if_expression -> expression
+body_for_true -> block_statements_in_while_and_if_body
+false_cond_block_without_else -> ELSE IF if_expression body_for_true
+body_for_false -> ELSE block_statements
+cond_block -> IF if_expression body_for_true false_cond_block_without_else__iteration body_for_false__optional
+false_cond_block_without_else__iteration -> false_cond_block_without_else false_cond_block_without_else__iteration
+false_cond_block_without_else__iteration -> ""
+body_for_false__optional -> body_for_false
+body_for_false__optional -> ""
+cycle_begin_expression -> expression
+cycle_end_expression -> expression
+cycle_counter -> ident
+cycle_counter_lr_init -> cycle_begin_expression =: cycle_counter
+cycle_counter_init -> cycle_counter_lr_init
+cycle_counter_last_value -> cycle_end_expression
+cycle_body -> DO statements__or__block_statements
+forto_direction -> TO
+forto_direction -> DOWNTO
+forto_cycle -> FOR cycle_counter_init forto_direction cycle_counter_last_value cycle_body
+continue_while -> CONTINUE
+break_while -> BREAK
+statement_in_while_and_if_body -> statement
+statement_in_while_and_if_body -> continue_while
+statement_in_while_and_if_body -> break_while
+block_statements_in_while_and_if_body -> { statement_in_while_and_if_body__iteration }
+statement_in_while_and_if_body__iteration -> statement_in_while_and_if_body statement_in_while_and_if_body__iteration
+statement_in_while_and_if_body__iteration -> ""
+while_cycle_head_expression -> expression
+while_cycle -> WHILE while_cycle_head_expression block_statements_in_while_and_if_body
+repeat_until_cycle_cond -> expression
+repeat_until_cycle -> REPEAT statements__or__block_statements UNTIL repeat_until_cycle_cond
+statements__or__block_statements -> statement__iteration
+statements__or__block_statements -> block_statements
+input_rule -> GET argument_for_input
+argument_for_input -> ident index_action__optional
+argument_for_input -> ( ident index_action__optional )
+output_rule -> PUT expression
+statement -> labeled_point
+statement -> expression_or_cond_block__with_optional_assign
+statement -> expression_or_cond_block__with_optional_assign
+statement -> goto_label
+statement -> forto_cycle
+statement -> while_cycle
+statement -> repeat_until_cycle
+statement -> input_rule
+statement -> output_rule
+statement -> ;
+statement__iteration -> statement statement__iteration
+statement__iteration -> ""
+block_statements -> { statement__iteration }
+expression__optional -> expression
+expression__optional -> ""
+program_rule -> NAME program_name ; BODY DATA declaration__optional ; statement__iteration END
+declaration__optional -> declaration
+declaration__optional -> ""
+value -> sign__optional unsigned_value
+sign__optional -> sign
+sign__optional -> ""
+sign -> sign_plus
+sign -> sign_minus
+sign_plus -> +
+sign_minus -> -
+unsigned_value -> unsigned_value_terminal
+ident -> ident_terminal
+program____part1 -> NAME program_name ; BODY DATA declaration_optional ;

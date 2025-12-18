@@ -1,0 +1,65 @@
+D(q,"",labeled_point) -> {(q, ident : )}
+D(q,"",goto_label) -> {(q, GOTO ident )}
+D(q,"",program_name) -> {(q, ident )}
+D(q,"",value_type) -> {(q, INTEGER16 )}
+D(q,"",array_specify) -> {(q, [ unsigned_value ] )}
+D(q,"",declaration_element) -> {(q, ident array_specify__optional )}
+D(q,"",array_specify__optional) -> {(q, array_specify ),(q, "" )}
+D(q,"",other_declaration_ident) -> {(q, , declaration_element )}
+D(q,"",declaration) -> {(q, value_type declaration_element other_declaration_ident__iteration )}
+D(q,"",other_declaration_ident__iteration) -> {(q, other_declaration_ident other_declaration_ident__iteration ),(q, "" )}
+D(q,"",index_action) -> {(q, [ expression ] )}
+D(q,"",unary_operator) -> {(q, NOT )}
+D(q,"",unary_operation) -> {(q, unary_operator expression )}
+D(q,"",binary_operator) -> {(q, AND ),(q, OR ),(q, == ),(q, != ),(q, <= ),(q, >= ),(q, + ),(q, - ),(q, * ),(q, DIV ),(q, MOD )}
+D(q,"",binary_action) -> {(q, binary_operator expression )}
+D(q,"",left_expression) -> {(q, group_expression ),(q, unary_operation ),(q, cond_block ),(q, value ),(q, value ),(q, ident index_action__optional )}
+D(q,"",index_action__optional) -> {(q, index_action ),(q, "" )}
+D(q,"",expression) -> {(q, left_expression binary_action__iteration )}
+D(q,"",binary_action__iteration) -> {(q, binary_action binary_action__iteration ),(q, "" )}
+D(q,"",group_expression) -> {(q, ( expression ) )}
+D(q,"",expression_or_cond_block__with_optional_assign) -> {(q, expression assign_to_right__optional )}
+D(q,"",assign_to_right) -> {(q, =: ident index_action__optional )}
+D(q,"",assign_to_right__optional) -> {(q, assign_to_right ),(q, "" )}
+D(q,"",if_expression) -> {(q, expression )}
+D(q,"",body_for_true) -> {(q, block_statements_in_while_and_if_body )}
+D(q,"",false_cond_block_without_else) -> {(q, ELSE IF if_expression body_for_true )}
+D(q,"",body_for_false) -> {(q, ELSE block_statements )}
+D(q,"",cond_block) -> {(q, IF if_expression body_for_true false_cond_block_without_else__iteration body_for_false__optional )}
+D(q,"",false_cond_block_without_else__iteration) -> {(q, false_cond_block_without_else false_cond_block_without_else__iteration ),(q, "" )}
+D(q,"",cycle_begin_expression) -> {(q, expression )}
+D(q,"",cycle_end_expression) -> {(q, expression )}
+D(q,"",cycle_counter) -> {(q, ident )}
+D(q,"",cycle_counter_lr_init) -> {(q, cycle_begin_expression =: cycle_counter )}
+D(q,"",cycle_counter_init) -> {(q, cycle_counter_lr_init )}
+D(q,"",cycle_counter_last_value) -> {(q, cycle_end_expression )}
+D(q,"",cycle_body) -> {(q, DO statements__or__block_statements )}
+D(q,"",forto_direction) -> {(q, TO ),(q, DOWNTO )}
+D(q,"",forto_cycle) -> {(q, FOR cycle_counter_init forto_direction cycle_counter_last_value cycle_body )}
+D(q,"",continue_while) -> {(q, CONTINUE )}
+D(q,"",break_while) -> {(q, BREAK )}
+D(q,"",statement_in_while_and_if_body) -> {(q, statement ),(q, continue_while ),(q, break_while )}
+D(q,"",block_statements_in_while_and_if_body) -> {(q, { statement_in_while_and_if_body__iteration } )}
+D(q,"",statement_in_while_and_if_body__iteration) -> {(q, statement_in_while_and_if_body statement_in_while_and_if_body__iteration ),(q, "" )}
+D(q,"",while_cycle_head_expression) -> {(q, expression )}
+D(q,"",while_cycle) -> {(q, WHILE while_cycle_head_expression block_statements_in_while_and_if_body )}
+D(q,"",repeat_until_cycle_cond) -> {(q, expression )}
+D(q,"",repeat_until_cycle) -> {(q, REPEAT statements__or__block_statements UNTIL repeat_until_cycle_cond )}
+D(q,"",statements__or__block_statements) -> {(q, statement__iteration ),(q, block_statements )}
+D(q,"",input_rule) -> {(q, GET argument_for_input )}
+D(q,"",argument_for_input) -> {(q, ident index_action__optional ),(q, ( ident index_action__optional ) )}
+D(q,"",output_rule) -> {(q, PUT expression )}
+D(q,"",statement) -> {(q, labeled_point ),(q, expression_or_cond_block__with_optional_assign ),(q, expression_or_cond_block__with_optional_assign ),(q, goto_label ),(q, forto_cycle ),(q, while_cycle ),(q, repeat_until_cycle ),(q, input_rule ),(q, output_rule ),(q, ; )}
+D(q,"",statement__iteration) -> {(q, statement statement__iteration ),(q, "" )}
+D(q,"",block_statements) -> {(q, { statement__iteration } )}
+D(q,"",expression__optional) -> {(q, expression ),(q, "" )}
+D(q,"",program_rule) -> {(q, NAME program_name ; BODY DATA declaration__optional ; statement__iteration END )}
+D(q,"",declaration__optional) -> {(q, declaration ),(q, "" )}
+D(q,"",value) -> {(q, sign__optional unsigned_value )}
+D(q,"",sign__optional) -> {(q, sign ),(q, "" )}
+D(q,"",sign) -> {(q, sign_plus ),(q, sign_minus )}
+D(q,"",sign_plus) -> {(q, + )}
+D(q,"",sign_minus) -> {(q, - )}
+D(q,"",unsigned_value) -> {(q, unsigned_value_terminal )}
+D(q,"",ident) -> {(q, ident_terminal )}
+D(q,"",program____part1) -> {(q, NAME program_name ; BODY DATA declaration_optional ; )}
