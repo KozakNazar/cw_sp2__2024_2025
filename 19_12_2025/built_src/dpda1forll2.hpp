@@ -29,9 +29,9 @@ typedef enum {
 } TapeAction;
 
 typedef enum {
-	NOTHING, // STACK_NOTHING // REMOVE (-?-)
-	PUSH,    // STACK_PUSH // REMOVE ???
-	POP,     // STACK_POP // REMOVE (-?-)
+	// NOTHING, // STACK_NOTHING // REMOVE (-?-)
+	// PUSH,    // STACK_PUSH // REMOVE ???
+	// POP,     // STACK_POP // REMOVE (-?-)
 	POP_AND_MULTIPLIPUSH
 } StackAction;
 
@@ -66,13 +66,14 @@ DPDA1IndexingForSecondElement dpdaIndexingForSecondElement;
 
 // TODO: USE MEMSET !
 
-DPDA1Program dpdaProgram = { /* default pass */
-	//                       {q0, a0}                    {q0, 0}                                   {q0, 1}                                   {q0, ^}                                   {q0, NT123}
-	/* a0 */{ {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}},  PDA_DEAD_STATE_INSTRUCTION,               PDA_DEAD_STATE_INSTRUCTION,               PDA_DEAD_STATE_INSTRUCTION,               {0, NO_SCROLL, {POP                   }}  },
-	/* 0  */{ {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}},  {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, },
-	/* 1  */{ {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}},  {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, },
-	/* ^  */{ {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}},  {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}}, }
-};
+DPDA1Program dpdaProgram;
+//= { /* default pass */
+//	//                       {q0, a0}                    {q0, 0}                                   {q0, 1}                                   {q0, ^}                                   {q0, NT123}
+//	/* a0 */{ {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}},  PDA_DEAD_STATE_INSTRUCTION,               PDA_DEAD_STATE_INSTRUCTION,               PDA_DEAD_STATE_INSTRUCTION,               {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH                   }}  },
+//	/* 0  */{ {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}},  {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, },
+//	/* 1  */{ {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}},  {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, },
+//	/* ^  */{ {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}},  {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, }
+//};
 
 //typedef char Stack[8192] STATCK;
 //STATCK stack = {'\0'};
@@ -83,7 +84,8 @@ DPDA1Program dpdaProgram = { /* default pass */
 
 #define SAVE_OFFSET 0
 typedef struct StructDPDA1{
-	char * data;
+	unsigned char * data_in;
+	unsigned char * data_out;
 	DPDA1Program * dpdaProgram;
 	DPDA1Instructions * dpda1Instructions;
 	PrecursorIds * precursorIds;
@@ -91,8 +93,13 @@ typedef struct StructDPDA1{
 	void(*run)(struct StructDPDA1 * dpda1);
 	// int state; // one state
 
-	unsigned int* stack_above_top;
-	unsigned int stack[8192 + SAVE_OFFSET]; // STATCK;
+	unsigned char* stack_above_top;
+	unsigned char stack[8192 + SAVE_OFFSET]; // STATCK;
+
+
+	// unsigned char stackForParentElement³[8192 + SAVE_OFFSET]; // STATCK; // TODO: add to list translator
+
+	// TODO: add outTape
 
 } DPDA1;
 
@@ -102,10 +109,10 @@ void runner3(DPDA1 * dpda1){
 	printf("TODO: need to use an additional stack of parent elements!\r\n");
 	exit(0);
 #endif
-	for (; *dpda1->data != '\0'; ++dpda1->data){
-		//StackAction *stackAction = (*dpda1->dpdaProgram)[*dpda1->data][*dpda1->stack_top].stackUpdate.stackAction;
-		StackUpdate * stackUpdate = &(*dpda1->dpdaProgram)[*dpda1->data][*dpda1->stack_above_top + SAVE_OFFSET - 1].stackUpdate;
-		//TapeAction * tapeAction = &(*dpda1->dpdaProgram)[*dpda1->data][*dpda1->stack_above_top + SAVE_OFFSET - 1].tapeAction;
+	for (; *dpda1->data_in != '\0'; ++dpda1->data_in){
+		//StackAction *stackAction = (*dpda1->dpdaProgram)[*dpda1->data_in][*dpda1->stack_top].stackUpdate.stackAction;
+		StackUpdate * stackUpdate = &(*dpda1->dpdaProgram)[*dpda1->data_in][*dpda1->stack_above_top + SAVE_OFFSET - 1].stackUpdate;
+		//TapeAction * tapeAction = &(*dpda1->dpdaProgram)[*dpda1->data_in][*dpda1->stack_above_top + SAVE_OFFSET - 1].tapeAction;
 
 		//switch (stackUpdate->stackAction) {
 		//case PUSH:
@@ -122,29 +129,55 @@ void runner3(DPDA1 * dpda1){
 		//case NOTHING: break;
 		//defult: // break;
 		//}
-#define SECOND_ELEMENT_INDEX 1
-		char rhsConteinerIndex = (*dpda1->dpdaIndexingForSecondElement)[dpda1->data[SECOND_ELEMENT_INDEX]][*dpda1->stack_above_top + SAVE_OFFSET - 1]; // 
-		unsigned char* stackAddonLastElementPtr = stackUpdate->stackAddon[rhsConteinerIndex];
-			// = stackUpdate->stackAddon[DPDA1IndexingForSecondElement[][]];
-		switch (stackUpdate->stackAction) {
-		case NOTHING: break;
-		case PUSH:
-			while (*(stackAddonLastElementPtr++));
-			++stackAddonLastElementPtr;
-			for (; stackAddonLastElementPtr < stackUpdate->stackAddon[rhsConteinerIndex]; --stackAddonLastElementPtr) {
-				*(dpda1->stack_above_top++) = *stackAddonLastElementPtr;
-			}
-			break;
-		case POP:		
-			--dpda1->stack_above_top;
+
+		//bool divergencePointFromToOutTape = false;
+		switch ((*dpda1->dpdaProgram)[*dpda1->data_in][*dpda1->stack_above_top + SAVE_OFFSET - 1].tapeAction) {
+		case NO_SCROLL: break;
+		case SCROLL_TO_RIGHT:
+			//divergencePointToOutTape = true;
+			++dpda1->data_in;
 			break;
 		default:; // break;
 		}
+
+#define SECOND_ELEMENT_INDEX 1
+		char rhsConteinerIndex = (*dpda1->dpdaIndexingForSecondElement)[dpda1->data_in[SECOND_ELEMENT_INDEX]][*dpda1->stack_above_top + SAVE_OFFSET - 1]; // 
+		
+		unsigned char* stackAddonLastElementPtr = stackUpdate->stackAddon[rhsConteinerIndex];
+			// = stackUpdate->stackAddon[DPDA1IndexingForSecondElement[][]];
+		switch (stackUpdate->stackAction) {
+		//case NOTHING: // DELETE
+		//	break;
+		//case PUSH: // DELETE
+		//	while (*(stackAddonLastElementPtr++));
+		//	++stackAddonLastElementPtr;
+		//	for (; stackAddonLastElementPtr < stackUpdate->stackAddon[rhsConteinerIndex]; --stackAddonLastElementPtr) {
+		//		*(dpda1->stack_above_top++) = *stackAddonLastElementPtr;
+		//	}
+		//	break;
+		//case POP: // DELETE	
+		//	--dpda1->stack_above_top;
+		//	break;
+		case POP_AND_MULTIPLIPUSH: // 
+
+			//if ((*dpda1->dpdaProgram)[*dpda1->data_in][*dpda1->stack_above_top + SAVE_OFFSET - 1].tapeAction
+			//	== SCROLL_TO_RIGHT) {			
+			//}
+
+			*dpda1->data_out++ = *dpda1->stack_above_top--; // POP for first
 			
-		switch ((*dpda1->dpdaProgram)[*dpda1->data][*dpda1->stack_above_top + SAVE_OFFSET - 1].tapeAction) {
-		case NO_SCROLL: break;
-		case SCROLL_TO_RIGHT:
-			++dpda1->data;
+			// multi push
+#define SAFEGUARD_STACK_ADDON (stackAddonElementIndex < MAX_RTOKEN_COUNT)
+			for (unsigned char stackAddonElementIndex = 0; stackUpdate->stackAddon[rhsConteinerIndex][stackAddonElementIndex] != EMPTY_TOKEN_LEXEM_ID && SAFEGUARD_STACK_ADDON; ++stackAddonElementIndex) {
+				*(dpda1->stack_above_top++) = stackUpdate->stackAddon[rhsConteinerIndex][stackAddonElementIndex];
+			}
+#undef SAFEGUARD_STACK_ADDON
+
+			// parrent id stack
+			// int out
+			//
+			// new [] + index
+			//
 			break;
 		default:; // break;
 		}
@@ -161,18 +194,20 @@ void runner3(DPDA1 * dpda1){
 #pragma comment(linker, "/STACK:16777000,16777000")
 #endif
 DPDA1 dpda1;// = { data, dpdaProgram, runner3/*, 0*//*Q000*/ /*...*/, dpda1.stack + SAVE_OFFSET };
-char tryToAcceptDPDA(DPDA1Program * dpdaProgram, DPDA1IndexingForSecondElement* dpdaIndexingForSecondElement, int * finitStates, char * data){
+char tryToAcceptDPDA(DPDA1Program * dpdaProgram, DPDA1Instructions* dpda1Instructions, PrecursorIds* precursorIds, DPDA1IndexingForSecondElement* dpdaIndexingForSecondElement, unsigned char startState, unsigned char* data_in, unsigned char* data_out){
 	//DPDA1
 	//dpda1 = { data, dpdaProgram, runner3/*, 0*//*Q000*/ /*...*/, dpda1.stack + SAVE_OFFSET };
 
-	dpda1.data = data;
+	dpda1.data_in = data_in;
+	dpda1.data_out = data_out;
 	dpda1.dpdaProgram = dpdaProgram;
+	dpda1.dpda1Instructions = dpda1Instructions;
+	dpda1.precursorIds = precursorIds;
 	dpda1.dpdaIndexingForSecondElement = dpdaIndexingForSecondElement;
 	dpda1.run = runner3;
 	dpda1.stack_above_top = dpda1.stack + SAVE_OFFSET;
 
-
-	*dpda1.stack_above_top = '\0';
+	dpda1.stack_above_top[-1] = startState; // init by start symbol
 	dpda1.run(&dpda1);
 
 	if (dpda1.stack == dpda1.stack_above_top + SAVE_OFFSET) { // define in macro
