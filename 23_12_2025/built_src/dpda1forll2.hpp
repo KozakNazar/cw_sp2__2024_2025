@@ -97,7 +97,7 @@ typedef struct StructDPDA1{
 	unsigned char stack[8192 + SAVE_OFFSET]; // STATCK;
 
 
-	// unsigned char stackForParentElement³[8192 + SAVE_OFFSET]; // STATCK; // TODO: add to list translator
+	// unsigned char stackForParentElementÂ³[8192 + SAVE_OFFSET]; // STATCK; // TODO: add to list translator
 
 	// TODO: add outTape
 
