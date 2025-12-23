@@ -63,3 +63,47 @@
 δ(q,ε,unsigned_value) → {(q, unsigned_value_terminal )}
 δ(q,ε,ident) → {(q, ident_terminal )}
 δ(q,ε,program____part1) → {(q, NAME program_name ; BODY DATA declaration_optional ; )}
+
+δ(q,!=,!=) → {(q,ε)}
+δ(q,(,() → {(q,ε)}
+δ(q,),)) → {(q,ε)}
+δ(q,*,*) → {(q,ε)}
+δ(q,+,+) → {(q,ε)}
+δ(q,,,,) → {(q,ε)}
+δ(q,-,-) → {(q,ε)}
+δ(q,:,:) → {(q,ε)}
+δ(q,;,;) → {(q,ε)}
+δ(q,<=,<=) → {(q,ε)}
+δ(q,=:,=:) → {(q,ε)}
+δ(q,==,==) → {(q,ε)}
+δ(q,>=,>=) → {(q,ε)}
+δ(q,AND,AND) → {(q,ε)}
+δ(q,BODY,BODY) → {(q,ε)}
+δ(q,BREAK,BREAK) → {(q,ε)}
+δ(q,CONTINUE,CONTINUE) → {(q,ε)}
+δ(q,DATA,DATA) → {(q,ε)}
+δ(q,DIV,DIV) → {(q,ε)}
+δ(q,DO,DO) → {(q,ε)}
+δ(q,DOWNTO,DOWNTO) → {(q,ε)}
+δ(q,ELSE,ELSE) → {(q,ε)}
+δ(q,END,END) → {(q,ε)}
+δ(q,FOR,FOR) → {(q,ε)}
+δ(q,GET,GET) → {(q,ε)}
+δ(q,GOTO,GOTO) → {(q,ε)}
+δ(q,IF,IF) → {(q,ε)}
+δ(q,INTEGER16,INTEGER16) → {(q,ε)}
+δ(q,MOD,MOD) → {(q,ε)}
+δ(q,NAME,NAME) → {(q,ε)}
+δ(q,NOT,NOT) → {(q,ε)}
+δ(q,OR,OR) → {(q,ε)}
+δ(q,PUT,PUT) → {(q,ε)}
+δ(q,REPEAT,REPEAT) → {(q,ε)}
+δ(q,TO,TO) → {(q,ε)}
+δ(q,UNTIL,UNTIL) → {(q,ε)}
+δ(q,WHILE,WHILE) → {(q,ε)}
+δ(q,[,[) → {(q,ε)}
+δ(q,],]) → {(q,ε)}
+δ(q,ident_terminal,ident_terminal) → {(q,ε)}
+δ(q,unsigned_value_terminal,unsigned_value_terminal) → {(q,ε)}
+δ(q,{,{) → {(q,ε)}
+δ(q,},}) → {(q,ε)}

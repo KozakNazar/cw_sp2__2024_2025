@@ -63,12 +63,12 @@ wchar_t part_buffer_w[MAX_LEXEM_SIZE * 3 + 1024] = { 0 };
 wchar_t* wcharOneLineArray = new wchar_t[(MAX_LEXEM_SIZE * 3 + 1024)];
 
 std::map<std::string, unsigned char> terminalAndNonTerminalLexemIds;
-//std::map<unsigned char, std::string> terminalAndNonTerminalLexemStrs__copy;
+////std::map<unsigned char, std::string> terminalAndNonTerminalLexemStrs__copy;
 
-//void buildTerminalAndNonTerminalLexemStrs__copy() {
-//	for (auto iterator = terminalAndNonTerminalLexemIds.begin(); iterator != terminalAndNonTerminalLexemIds.end(); ++iterator)
-//		terminalAndNonTerminalLexemStrs__copy[iterator->second] = iterator->first;
-//}
+////void buildTerminalAndNonTerminalLexemStrs__copy() {
+////	for (auto iterator = terminalAndNonTerminalLexemIds.begin(); iterator != terminalAndNonTerminalLexemIds.end(); ++iterator)
+////		terminalAndNonTerminalLexemStrs__copy[iterator->second] = iterator->first;
+////}
 
 unsigned char getLexemId(char* str) {
 	if (str == nullptr)
@@ -159,31 +159,6 @@ int keyWordAndNonTerminalIdsInit(Grammar& grammar, int lastNonUsedid) {
 	return lastNonUsedid;
 }
 
-int main__123() {
-	ifstream f("EBNF_N1.ebn");
-	string s((istreambuf_iterator<char>(f)), {});
-
-	// 1. _
-	cout << "Unquoted lexems:\n";
-	set<string> u;
-	string t = regex_replace(s, regex("\"[^\"]+\""), "");
-	regex r1("[a-zA-Z_][a-zA-Z0-9_]*");
-	for (sregex_iterator it(t.begin(), t.end(), r1), end; it != end; ++it)
-		u.insert((*it)[0]);
-	for (const auto& l : u) cout << l << '\n';
-
-	// 3. "_"
-	cout << "\nQuoted lexems map:\n";
-	regex r2("\"([^\"]+)\"");
-	map<string, int> m;
-	int id = 1;
-	for (sregex_iterator it(s.begin(), s.end(), r2), end; it != end; ++it)
-		if (m.insert({ (*it)[1], id }).second)
-			cout << '"' << (*it)[1] << "\" -> " << id++ << '\n';
-
-	return 0;
-}
-
 void buildGrammar() {
 	setlocale(LC_ALL, "en_US.UTF-8");
 
@@ -211,40 +186,43 @@ void buildGrammar() {
 
 	keyWordAndNonTerminalIdsInit(grammar, NONTERMINAL_LEXEM_MIN_ID);
 
-	bool noFirstElement = false;
+	//bool noFirstElement = false;
 	for (const auto& pair : terminalAndNonTerminalLexemIds) { // Using a Range-Based For Loop (C++11 and later)
 		if (pair.second >= NONTERMINAL_LEXEM_MIN_ID) {
 			fprintf(f, "        %s ", pair.first.c_str());
 			fprintf(fw, "        %s ", pair.first.c_str());
-			if (noFirstElement) {
-				fprintf(f, ",\n");
-				fprintf(fw, ",\n");
-			}
-			else {
-				fprintf(f, "\n");
-				fprintf(fw, "\n");
-				noFirstElement = true;
-			}
-
+			//if (noFirstElement) {
+			//	fprintf(f, ",\n");
+			//	fprintf(fw, ",\n");
+			//}
+			//else {
+			//	fprintf(f, "\n");
+			//	fprintf(fw, "\n");
+			//	noFirstElement = true;
+			//}
+			fprintf(f, "\n");
+			fprintf(fw, "\n");
 		}
 	}
 	fprintf(f, "    },\n    T = {\n");
 	fprintf(fw, "    },\n    T = {\n");
 
+	//noFirstElement = false;
 	for (const auto& pair : terminalAndNonTerminalLexemIds) { // Using a Range-Based For Loop (C++11 and later)
 		if (pair.second < NONTERMINAL_LEXEM_MIN_ID) {
 			fprintf(f, "        %s ", pair.first.c_str());
 			fprintf(fw, "        %s ", pair.first.c_str());
-			if (noFirstElement) {
-				fprintf(f, ",\n");
-				fprintf(fw, ",\n");
-			}
-			else {
-				fprintf(f, "\n");
-				fprintf(fw, "\n");
-				noFirstElement = true;
-			}
-
+			//if (noFirstElement) {
+			//	fprintf(f, ",\n");
+			//	fprintf(fw, ",\n");
+			//}
+			//else {
+			//	fprintf(f, "\n");
+			//	fprintf(fw, "\n");
+			//	noFirstElement = true;
+			//}
+			fprintf(f, "\n");
+			fprintf(fw, "\n");
 		}
 	}
 	fprintf(f, "    },\n    P = {\n");
@@ -405,6 +383,35 @@ void buildDeltaFunctionOfNPDA() {
 
 		fprintf(f, "}\n");
 		fprintf(fw, "}\n");
+	}
+
+	fprintf(f, "\n");
+	fprintf(fw, "\n");
+
+	//noFirstElement = false;
+	for (const auto& pair : terminalAndNonTerminalLexemIds) { // Using a Range-Based For Loop (C++11 and later)
+		if (pair.second < NONTERMINAL_LEXEM_MIN_ID) {
+			fprintf(f, "D(q,");
+			fwprintf(fw, L"%ls(q,", DELTA);
+
+			fprintf(f, "%s,%s) ", pair.first.c_str(), pair.first.c_str());
+			fprintf(fw, "%s,%s) ", pair.first.c_str(), pair.first.c_str());
+
+			fprintf(f, "-> {(q,\"\")}");
+			fwprintf(fw, L"%ls {(q,%ls)}", ARROW_RIGHT, EPSILON); // fwprintf(fw, L"%lc {", 0x2192);
+
+			//if (noFirstElement) {
+			//	fprintf(f, ",\n");
+			//	fprintf(fw, ",\n");
+			//}
+			//else {
+			//	fprintf(f, "\n");
+			//	fprintf(fw, "\n");
+			//	noFirstElement = true;
+			//}
+			fprintf(f, "\n");
+			fprintf(fw, "\n");
+		}
 	}
 
 	fclose(f);

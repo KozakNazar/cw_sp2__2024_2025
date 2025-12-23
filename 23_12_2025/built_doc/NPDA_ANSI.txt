@@ -63,3 +63,47 @@ D(q,"",sign_minus) -> {(q, - )}
 D(q,"",unsigned_value) -> {(q, unsigned_value_terminal )}
 D(q,"",ident) -> {(q, ident_terminal )}
 D(q,"",program____part1) -> {(q, NAME program_name ; BODY DATA declaration_optional ; )}
+
+D(q,!=,!=) -> {(q,"")}
+D(q,(,() -> {(q,"")}
+D(q,),)) -> {(q,"")}
+D(q,*,*) -> {(q,"")}
+D(q,+,+) -> {(q,"")}
+D(q,,,,) -> {(q,"")}
+D(q,-,-) -> {(q,"")}
+D(q,:,:) -> {(q,"")}
+D(q,;,;) -> {(q,"")}
+D(q,<=,<=) -> {(q,"")}
+D(q,=:,=:) -> {(q,"")}
+D(q,==,==) -> {(q,"")}
+D(q,>=,>=) -> {(q,"")}
+D(q,AND,AND) -> {(q,"")}
+D(q,BODY,BODY) -> {(q,"")}
+D(q,BREAK,BREAK) -> {(q,"")}
+D(q,CONTINUE,CONTINUE) -> {(q,"")}
+D(q,DATA,DATA) -> {(q,"")}
+D(q,DIV,DIV) -> {(q,"")}
+D(q,DO,DO) -> {(q,"")}
+D(q,DOWNTO,DOWNTO) -> {(q,"")}
+D(q,ELSE,ELSE) -> {(q,"")}
+D(q,END,END) -> {(q,"")}
+D(q,FOR,FOR) -> {(q,"")}
+D(q,GET,GET) -> {(q,"")}
+D(q,GOTO,GOTO) -> {(q,"")}
+D(q,IF,IF) -> {(q,"")}
+D(q,INTEGER16,INTEGER16) -> {(q,"")}
+D(q,MOD,MOD) -> {(q,"")}
+D(q,NAME,NAME) -> {(q,"")}
+D(q,NOT,NOT) -> {(q,"")}
+D(q,OR,OR) -> {(q,"")}
+D(q,PUT,PUT) -> {(q,"")}
+D(q,REPEAT,REPEAT) -> {(q,"")}
+D(q,TO,TO) -> {(q,"")}
+D(q,UNTIL,UNTIL) -> {(q,"")}
+D(q,WHILE,WHILE) -> {(q,"")}
+D(q,[,[) -> {(q,"")}
+D(q,],]) -> {(q,"")}
+D(q,ident_terminal,ident_terminal) -> {(q,"")}
+D(q,unsigned_value_terminal,unsigned_value_terminal) -> {(q,"")}
+D(q,{,{) -> {(q,"")}
+D(q,},}) -> {(q,"")}

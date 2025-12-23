@@ -1,117 +1,117 @@
 G = (
     N = {
         argument_for_input 
-        array_specify ,
-        array_specify__optional ,
-        assign_to_right ,
-        assign_to_right__optional ,
-        binary_action ,
-        binary_action__iteration ,
-        binary_operator ,
-        block_statements ,
-        block_statements_in_while_and_if_body ,
-        body_for_false ,
-        body_for_false__optional ,
-        body_for_true ,
-        break_while ,
-        cond_block ,
-        continue_while ,
-        cycle_begin_expression ,
-        cycle_body ,
-        cycle_counter ,
-        cycle_counter_init ,
-        cycle_counter_last_value ,
-        cycle_counter_lr_init ,
-        cycle_end_expression ,
-        declaration ,
-        declaration__optional ,
-        declaration_element ,
-        declaration_optional ,
-        expression ,
-        expression__optional ,
-        expression_or_cond_block__with_optional_assign ,
-        false_cond_block_without_else ,
-        false_cond_block_without_else__iteration ,
-        forto_cycle ,
-        forto_direction ,
-        goto_label ,
-        group_expression ,
-        ident ,
-        if_expression ,
-        index_action ,
-        index_action__optional ,
-        input_rule ,
-        labeled_point ,
-        left_expression ,
-        other_declaration_ident ,
-        other_declaration_ident__iteration ,
-        output_rule ,
-        program____part1 ,
-        program_name ,
-        program_rule ,
-        repeat_until_cycle ,
-        repeat_until_cycle_cond ,
-        sign ,
-        sign__optional ,
-        sign_minus ,
-        sign_plus ,
-        statement ,
-        statement__iteration ,
-        statement_in_while_and_if_body ,
-        statement_in_while_and_if_body__iteration ,
-        statements__or__block_statements ,
-        unary_operation ,
-        unary_operator ,
-        unsigned_value ,
-        value ,
-        value_type ,
-        while_cycle ,
-        while_cycle_head_expression ,
+        array_specify 
+        array_specify__optional 
+        assign_to_right 
+        assign_to_right__optional 
+        binary_action 
+        binary_action__iteration 
+        binary_operator 
+        block_statements 
+        block_statements_in_while_and_if_body 
+        body_for_false 
+        body_for_false__optional 
+        body_for_true 
+        break_while 
+        cond_block 
+        continue_while 
+        cycle_begin_expression 
+        cycle_body 
+        cycle_counter 
+        cycle_counter_init 
+        cycle_counter_last_value 
+        cycle_counter_lr_init 
+        cycle_end_expression 
+        declaration 
+        declaration__optional 
+        declaration_element 
+        declaration_optional 
+        expression 
+        expression__optional 
+        expression_or_cond_block__with_optional_assign 
+        false_cond_block_without_else 
+        false_cond_block_without_else__iteration 
+        forto_cycle 
+        forto_direction 
+        goto_label 
+        group_expression 
+        ident 
+        if_expression 
+        index_action 
+        index_action__optional 
+        input_rule 
+        labeled_point 
+        left_expression 
+        other_declaration_ident 
+        other_declaration_ident__iteration 
+        output_rule 
+        program____part1 
+        program_name 
+        program_rule 
+        repeat_until_cycle 
+        repeat_until_cycle_cond 
+        sign 
+        sign__optional 
+        sign_minus 
+        sign_plus 
+        statement 
+        statement__iteration 
+        statement_in_while_and_if_body 
+        statement_in_while_and_if_body__iteration 
+        statements__or__block_statements 
+        unary_operation 
+        unary_operator 
+        unsigned_value 
+        value 
+        value_type 
+        while_cycle 
+        while_cycle_head_expression 
     },
     T = {
-        != ,
-        ( ,
-        ) ,
-        * ,
-        + ,
-        , ,
-        - ,
-        : ,
-        ; ,
-        <= ,
-        =: ,
-        == ,
-        >= ,
-        AND ,
-        BODY ,
-        BREAK ,
-        CONTINUE ,
-        DATA ,
-        DIV ,
-        DO ,
-        DOWNTO ,
-        ELSE ,
-        END ,
-        FOR ,
-        GET ,
-        GOTO ,
-        IF ,
-        INTEGER16 ,
-        MOD ,
-        NAME ,
-        NOT ,
-        OR ,
-        PUT ,
-        REPEAT ,
-        TO ,
-        UNTIL ,
-        WHILE ,
-        [ ,
-        ] ,
-        ident_terminal ,
-        unsigned_value_terminal ,
-        { ,
-        } ,
+        != 
+        ( 
+        ) 
+        * 
+        + 
+        , 
+        - 
+        : 
+        ; 
+        <= 
+        =: 
+        == 
+        >= 
+        AND 
+        BODY 
+        BREAK 
+        CONTINUE 
+        DATA 
+        DIV 
+        DO 
+        DOWNTO 
+        ELSE 
+        END 
+        FOR 
+        GET 
+        GOTO 
+        IF 
+        INTEGER16 
+        MOD 
+        NAME 
+        NOT 
+        OR 
+        PUT 
+        REPEAT 
+        TO 
+        UNTIL 
+        WHILE 
+        [ 
+        ] 
+        ident_terminal 
+        unsigned_value_terminal 
+        { 
+        } 
     },
     P = {
         labeled_point -> ident :
