@@ -692,7 +692,7 @@ DPDA1Program dpdaProgram123;
 std::map<std::string, unsigned char> terminalAndNonTerminalLexemIds;
 std::map<unsigned char, std::string> terminalAndNonTerminalLexemStrs__copy;
 
-void buildTerminalAndNonTerminalLexemStrs() {
+void buildTerminalAndNonTerminalLexemStrs__copy() {
 	for (auto iterator = terminalAndNonTerminalLexemIds.begin(); iterator != terminalAndNonTerminalLexemIds.end(); ++iterator)
 		terminalAndNonTerminalLexemStrs__copy[iterator->second] = iterator->first;
 }
@@ -892,7 +892,7 @@ void buildDPDA1forLL2_(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Indexi
 }
 */
 
-int nonTerminalIdsInit(Grammar& grammar, int lastNonUsedid) {
+int keyWordAndNonTerminalIdsInit(Grammar& grammar, int lastNonUsedid) {
 	char* keywords_re = (char*)KEYWORDS_RE;
 	char keywords_[sizeof(KEYWORDS_RE)] = { '\0' };
 	prepareKeyWordIdGetter(keywords_, keywords_re);
@@ -1119,7 +1119,7 @@ void terminalAndNonTerminalIdsInit(Grammar& grammar, struct LexemInfo* lexemInfo
 	terminalAndNonTerminalLexemIds[UNSIGNED_VALUE_METATERMINAL_LEXEM_STR] = UNSIGNED_VALUE_METATERMINAL_LEXEM_ID;
 
 	int lastNonUsedid = NONTERMINAL_LEXEM_MIN_ID;
-	lastNonUsedid = nonTerminalIdsInit(grammar, lastNonUsedid);
+	lastNonUsedid = keyWordAndNonTerminalIdsInit(grammar, lastNonUsedid);
 
 	//  !
 	//	if (lastNonUsedid > NONTERMINAL_LEXEM_MAX_ID) {
@@ -1943,7 +1943,13 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 	} while (++secondMarkCode);
 }
 
-void dpda2_convertor() {} // use print_pda_by_transition_table_to_file (TODO)
+// for buildDPDA2forLL2
+void  buildRulePartForDPDA2forLL2() { // use (TODO) // print_pda_by_transition_table_to_file
+ // q0 (POP), q1, q2, q3, q4, q5 ... (PUSH) 
+	//(q, part)
+	// //             0x00                0x01               0x02              0x03              0x04  
+	//         q0 q1 q2 q3 q4 a5 | q0 q1 q2 q3 q4 a5 | q0 q1 q2 q3 q4 q5    |              |
+}
 
 char rhs_buffer[MAX_LEXEM_SIZE * MAX_RTOKEN_COUNT] = { 0 };
 char part_buffer[MAX_LEXEM_SIZE * 3 + 1024] = { 0 };
@@ -2427,7 +2433,7 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instruc
 		std::cout << "Key: \"" << pair.first << "\", Value: " << (unsigned int)pair.second << std::endl;
 	}
 
-	buildTerminalAndNonTerminalLexemStrs();
+	buildTerminalAndNonTerminalLexemStrs__copy();
 
 	// dead state
 	//buildDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingForSecondElement); // TERMINAL INIT AFTER SCAN SOURCE
