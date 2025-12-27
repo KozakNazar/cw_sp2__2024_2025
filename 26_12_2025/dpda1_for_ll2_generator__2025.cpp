@@ -160,10 +160,9 @@ unsigned char errorMessagesPtrToLastBytePtr[8 * 1024 * 1024] = { '\0' };
 #define PROGRAM_RULE_STR "program_rule" // TODO: add to config.h (LexicaByRegExAndSyntaxByLL2protototype.h)
 #define PROGRAM_RULE_ID NONTERMINAL_LEXEM_MAX_ID
 
-#define DEAD_STATE_ID 253
 #define DEAD_STATE_STR "_#DS" // "DEAD_STATE__for_tests__remove"
 #define DEAD_STATE_ID 253
-#define	POP_STACK_IN_F_OUT_STATE_ID 254 // <null>-marker on out-tape
+#define	MARKER_OF_STRUCTURE_ID 254 // <null>-marker on out-tape
 #define FREE_STATE_ID 255
 
 
@@ -185,6 +184,7 @@ unsigned char errorMessagesPtrToLastBytePtr[8 * 1024 * 1024] = { '\0' };
 #define KEYWORD_LEXEME_TYPE 2
 #define IDENTIFIER_LEXEME_TYPE 4 // #define LABEL_LEXEME_TYPE 8
 #define VALUE_LEXEME_TYPE 8
+#define NONTERMINAL_LEXEME_TYPE 16 // NEW
 
 #ifndef LEXEM_INFO_
 #define LEXEM_INFO_
@@ -525,9 +525,7 @@ struct LexemInfo lexicalAnalyze(struct LexemInfo* lexemInfoInPtr, char(*identifi
 	if (tryToGetKeyWord(lexemInfoInPtr) == SUCCESS_STATE);
 	else if (tryToGetIdentifier(lexemInfoInPtr, identifierIdsTable) == SUCCESS_STATE);
 	else if (tryToGetUnsignedValue(lexemInfoInPtr) == SUCCESS_STATE);
-	else {
-		ifBadLexemeInfo.tokenType = UNEXPEXTED_LEXEME_TYPE;
-	}
+	else ifBadLexemeInfo.tokenType = UNEXPEXTED_LEXEME_TYPE;
 
 	return ifBadLexemeInfo;
 }
@@ -618,6 +616,7 @@ struct ASTNode {
 	ASTNode* parent;
 
 	ASTNode(const std::string& val, bool isTerminal) : isTerminal(isTerminal), value(val), parent(NULL) {}
+#ifdef INCLUDE_TO_SOLUTION_
 	static void redirectLinks(std::vector<ASTNode*>& terminalChildrens) {
 		for (ASTNode* node : terminalChildrens) {
 			if (node == NULL /*!node->isTerminal*/) continue;
@@ -633,6 +632,7 @@ struct ASTNode {
 			}
 		}
 	}
+#endif
 	~ASTNode() { // use redirectLinks
 		for (ASTNode* child : childrens) {
 			delete child;
@@ -686,7 +686,6 @@ DPDA1Program dpdaProgram123;
 #include <map>
 //#include <utility>
 #include <stack>
-
 
 
 std::map<std::string, unsigned char> terminalAndNonTerminalLexemIds;
@@ -1193,8 +1192,8 @@ void setDPDA1InstructionByPrecursorId(MarkedRule& multiRule/*, DPDA1Program& dpd
 			}
 #ifdef USE_PRE_ORDER_MARKER
 			else if (popStackInFoutStateCodeMarker) {
-				stateIsTwiñeChanged |= dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != POP_STACK_IN_F_OUT_STATE_ID;
-				dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = POP_STACK_IN_F_OUT_STATE_ID;
+				stateIsTwiñeChanged |= dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != MARKER_OF_STRUCTURE_ID;
+				dpda1Instructions[precursorId].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = MARKER_OF_STRUCTURE_ID;
 				popStackInFoutStateCodeMarker = false;
 			}
 #endif
@@ -1262,7 +1261,7 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 
 	int aCount = 0; // REMOVE
 
-    // POP_STACK_IN_F_OUT_STATE_ID no impl.
+    // MARKER_OF_STRUCTURE_ID no impl.
 	// ALL CODE FOR IDENT AND UNSIGNED VALUE
 
 	//char emptyElementCode = getLexemId((char*)"");
@@ -1275,7 +1274,7 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 ////#if !defined(BUILD_AST_BY_DPDA1) || defined(BUILD_P2C_AST_TYPE_BY_DPDA1)
 
 //#ifdef BUILD_P2C_AST_TYPE_BY_DPDA1
-//	char popStackInFoutStateCode = getLexemId((char*)"POP_STACK_IN_F_OUT_STATE"); // POP_STACK_IN_F_OUT_STATE_ID
+//	char popStackInFoutStateCode = getLexemId((char*)"POP_STACK_IN_F_OUT_STATE"); // MARKER_OF_STRUCTURE_ID
 //#endif
 	for (MarkedRule* multiRule = grammar.multiRules; multiRule->firstMarksType; ++multiRule) {
 		unsigned int multiRuleIndex = multiRule - grammar.multiRules;
@@ -1487,8 +1486,8 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 								}
 #ifdef USE_PRE_ORDER_MARKER
 								else if (popStackInFoutStateCodeMarker) {
-									stateIsTwiñeChanged |= dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != POP_STACK_IN_F_OUT_STATE_ID;
-									dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = POP_STACK_IN_F_OUT_STATE_ID;
+									stateIsTwiñeChanged |= dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] != MARKER_OF_STRUCTURE_ID;
+									dpda1Program[firstMarkCode][stackTopElementCode].stackUpdate.stackAddon[rhsVariantIndex][rhsElementIndex] = MARKER_OF_STRUCTURE_ID;
 									popStackInFoutStateCodeMarker = false;
 								}
 #endif
@@ -1945,7 +1944,7 @@ void buildRulePartForDPDA1forLL2(Grammar & grammar, DPDA1Program & dpda1Program,
 
 // for buildDPDA2forLL2
 void  buildRulePartForDPDA2forLL2() { // use (TODO) // print_pda_by_transition_table_to_file
- // q0 (POP), q1, q2, q3, q4, q5 ... (PUSH) 
+ // q0 (POP), q1(SCROLL_TO_RIGHT), q2, q3, q4, q5 ... (PUSH) 
 	//(q, part)
 	// //             0x00                0x01               0x02              0x03              0x04  
 	//         q0 q1 q2 q3 q4 a5 | q0 q1 q2 q3 q4 a5 | q0 q1 q2 q3 q4 q5    |              |
@@ -2317,7 +2316,7 @@ void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Pr
 
 		if (tapeAndTopStackCode >= NONTERMINAL_LEXEM_MIN_ID && tapeAndTopStackCode <= NONTERMINAL_LEXEM_MAX_ID
 			//|| tapeAndTopStackCode == DEAD_STATE_ID
-			//|| tapeAndTopStackCode == POP_STACK_IN_F_OUT_STATE_ID
+			//|| tapeAndTopStackCode == MARKER_OF_STRUCTURE_ID
 			//|| tapeAndTopStackCode == FREE_STATE_ID
 			)
 			continue;
@@ -2477,11 +2476,191 @@ void buildInputTapeByLexemTable(struct LexemInfo* lexemInfoTable, unsigned char 
 		}
 	}
 }
+unsigned char data_out_buffer[MAX_WORD_COUNT] = { '\0' };
 
-unsigned char data_out_buffer[MAX_WORD_COUNT] = { '\0' }; // struct LexemInfo* syntaxLL2(Grammar* grammar, char * ruleName, struct LexemInfo* lexemInfoTable, ASTNode** baseASTNode, struct LexemInfo** badLexemInfo)
-void buildASTFByOutputTape(struct LexemInfo* lexemInfoTable, unsigned char* data_out, ASTNode** baseASTNode) {
-	// TODO (26.12.2025): impl.
+void buildStructuredLexemInfoTable(struct LexemInfo* lexemInfoTable, unsigned char* tape, struct LexemInfo* structuredLexemInfoTable) {
+	printf("Warning: add EMPTY_TOKEN_LEXEM_ID to end of out tape.");
+	
+	if (!lexemInfoTable || !structuredLexemInfoTable)
+		return; // !
+
+	for (; *tape != EMPTY_TOKEN_LEXEM_ID; ++tape, ++structuredLexemInfoTable) { // EMPTY_TOKEN_LEXEM_ID
+		if (*tape == lexemInfoTable->lexemId) {
+			//index, 
+			//lexemInfoTable[index].lexemStr,
+			//lexemInfoTable[index].lexemId,
+			//lexemInfoTable[index].tokenType,
+			//lexemInfoTable[index].ifvalue,
+			//lexemInfoTable[index].row,
+			//lexemInfoTable[index].col;
+
+			*structuredLexemInfoTable = *lexemInfoTable; //  default assign constr
+#if 0
+			strncpy(structuredLexemInfoTable->lexemStr, lexemInfoTable->lexemStr, MAX_LEXEM_SIZE);
+			structuredLexemInfoTable->lexemId = lexemInfoTable->lexemId; // *tape
+			structuredLexemInfoTable->tokenType = lexemInfoTable->tokenType;
+			structuredLexemInfoTable->ifvalue = lexemInfoTable->ifvalue;
+			structuredLexemInfoTable->row = lexemInfoTable->row;
+			structuredLexemInfoTable->col = lexemInfoTable->col;
+			++lexemInfoTable;
+#endif
+			//++structuredLexemInfoTable;
+
+		}
+		else {
+			std::string lexemStr;
+			bool lexemHasString = getLexemStr(*tape, lexemStr);
+			if (lexemHasString)
+				strncpy(structuredLexemInfoTable->lexemStr, lexemInfoTable->lexemStr, MAX_LEXEM_SIZE);
+			else
+				structuredLexemInfoTable->lexemStr[0] = '\0';
+			structuredLexemInfoTable->lexemId = *tape;
+			structuredLexemInfoTable->tokenType = NONTERMINAL_LEXEME_TYPE;// lexemInfoTable->tokenType; // NONTERMINAL
+			structuredLexemInfoTable->ifvalue = 0;
+			structuredLexemInfoTable->row = lexemInfoTable[1].row; // position of next terminal
+			structuredLexemInfoTable->col = lexemInfoTable[1].col; // position of next terminal
+			//++structuredLexemInfoTable;
+		}
+	}
+
+	structuredLexemInfoTable->lexemStr[0] = '\0';
+	structuredLexemInfoTable->lexemId = EMPTY_TOKEN_LEXEM_ID;// *tape;
+	structuredLexemInfoTable->tokenType = NONTERMINAL_LEXEME_TYPE;
+	structuredLexemInfoTable->ifvalue = 0;
+	structuredLexemInfoTable->row = ~0;
+	structuredLexemInfoTable->col = ~0;
+	++structuredLexemInfoTable;
+	
+//	for (unsigned long long int index = 0; lexemInfoTable[index].lexemStr[0] != '\0'; ++index) {
+//		//index, 
+//		//lexemInfoTable[index].lexemStr,
+//		//lexemInfoTable[index].lexemId,
+//		//lexemInfoTable[index].tokenType,
+//		//lexemInfoTable[index].ifvalue,
+//		//lexemInfoTable[index].row,
+//		//lexemInfoTable[index].col;
+//		if (lexemInfoTable[index].lexemId <= (unsigned char)~0)
+//			*data_in_buffer++ = lexemInfoTable[index].lexemId;
+//		else {
+//			printf("Lexem id error.\r\n");
+//			exit(0);
+//		}
+//	}
 }
+
+//unsigned char data_out_buffer[MAX_WORD_COUNT] = { '\0' }; // struct LexemInfo* syntaxLL2(Grammar* grammar, char * ruleName, struct LexemInfo* lexemInfoTable, ASTNode** baseASTNode, struct LexemInfo** badLexemInfo)
+bool buildASTFByOutputTape(struct LexemInfo* structuredLexemInfoTable, ASTNode** baseASTNode) {
+	if (structuredLexemInfoTable == nullptr || baseASTNode == nullptr) {
+		return false;
+	}
+
+	ASTNode* stackOfASTParentNode[MAX_RULES] = { nullptr };
+	ASTNode** stackOfASTParentNodeAboveTop = stackOfASTParentNode;
+
+	for (*baseASTNode = nullptr; structuredLexemInfoTable; ++structuredLexemInfoTable) {
+		if (structuredLexemInfoTable->lexemId >= KEYWORD_LEXEM_MIN_ID && structuredLexemInfoTable->lexemId <= LITERAL_LEXEM_MAX_ID) {
+			ASTNode* node = new(std::nothrow) ASTNode(structuredLexemInfoTable->lexemStr, true);
+			if (!node || !stackOfASTParentNodeAboveTop[-1]) {
+				printf("Memory error.\n");
+				if (*baseASTNode) {
+					delete* baseASTNode;
+				}
+				return false;
+			}	
+			stackOfASTParentNodeAboveTop[-1]->childrens.push_back(node);
+		}	
+		else if (structuredLexemInfoTable->lexemId >= NONTERMINAL_LEXEM_MIN_ID && structuredLexemInfoTable->lexemId <= NONTERMINAL_LEXEM_MAX_ID) {
+			ASTNode* node = new(std::nothrow) ASTNode(structuredLexemInfoTable->lexemStr, false);
+			if (!node) {
+				printf("Memory error.\n");
+				if (*baseASTNode) {
+					delete* baseASTNode;
+				}
+				return false;
+			}
+			if (stackOfASTParentNodeAboveTop > stackOfASTParentNode) {
+				if (stackOfASTParentNodeAboveTop[-1]) {
+					stackOfASTParentNodeAboveTop[-1]->childrens.push_back(node);
+				}
+				else {
+					if (baseASTNode) {
+						delete* baseASTNode;
+					}
+					return false;
+				}
+			}
+			else if (*baseASTNode == nullptr) *baseASTNode = node; // if (*baseASTNode == nullptr) *baseASTNode = node; // !
+			*stackOfASTParentNodeAboveTop++ = node;
+		}
+		else if (structuredLexemInfoTable->lexemId == MARKER_OF_STRUCTURE_ID) {
+			--stackOfASTParentNodeAboveTop;
+		}
+		else {
+			if (baseASTNode) {
+				delete* baseASTNode;
+			}
+			printf("Error code of structured tape.\n");
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void printAST(struct LexemInfo* lexemInfoTable, const ASTNode* node, int depth = 0) {
+	static int lexemInfoTableIndexForPrintAST = 0; // ATTENTION: multithreading is not supported for this!
+	if (!node) {
+		return;
+	}
+	if (!depth) {
+		lexemInfoTableIndexForPrintAST = 0;
+	}
+
+	for (unsigned int depthIndex = 0; depthIndex <= depth; ++depthIndex) {
+		std::cout << "    " << "|";
+	}
+
+	std::cout << "--";
+	if (node->isTerminal) {
+		std::cout << "\"" << lexemInfoTable[lexemInfoTableIndexForPrintAST++].lexemStr << "\"";
+	}
+	else {
+		std::cout << node->value;
+	}
+	std::cout << "\n";
+
+	for (const ASTNode* child : node->childrens) {
+		printAST(lexemInfoTable, child, depth + 1);
+	}
+}
+
+void printASTToFile(struct LexemInfo* lexemInfoTable, const ASTNode* node, std::ofstream& outFile, int depth = 0) {
+	static int lexemInfoTableIndexForPrintAST = 0; // ATTENTION: multithreading is not supported for this!
+	if (!node) {
+		return;
+	}
+	if (!depth) {
+		lexemInfoTableIndexForPrintAST = 0;
+	}
+
+	for (unsigned int depthIndex = 0; depthIndex <= depth; ++depthIndex) {
+		outFile << "    |";
+	}
+	outFile << "--";
+
+	if (node->isTerminal) {
+		outFile << "\"" << lexemInfoTable[lexemInfoTableIndexForPrintAST++].lexemStr << "\"";
+	}
+	else {
+		outFile << node->value;
+	}
+	outFile << "\n";
+
+	for (const ASTNode* child : node->childrens) {
+		printASTToFile(lexemInfoTable, child, outFile, depth + 1);
+	}
+}
+
 
 #if 0
 #include "fileName.h"
