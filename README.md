@@ -24,4 +24,4 @@ https://github.com/KozakNazar1/compiler_compiler_2025
 
 **ENG:** Research into implementing the compiler as a hardware IP-core (ASIC/FPGA) that enables direct transformation of source code into binary format without software toolchains. The static compilation logic is synthesized, while the remaining reconfigurable part is generated without synthesis as tables for memory or with synthesis as direct logic.
 
-**UKR:** Дослідження реалізації компілятора у вигляді апаратного IP-ядра (ASIC/FPGA), який дозволяє пряме перетворення вихідного коду у бінарний формат без програмних інструментів. Статична логіка компіляції синтезована, а решта у реконфігурованій частині генерується без синтезу як таблиці для пам'яті або з синтезом як безпосередньо логіка.
+**UKR:** Дослідження реалізації компілятора у вигляді апаратного IP-ядра (ASIC/FPGA), яке дозволяє пряме перетворення вихідного коду у бінарний формат без програмних інструментів. Статична логіка компіляції синтезована, а решта у реконфігурованій частині генерується без синтезу як таблиці для пам'яті або з синтезом як безпосередньо логіка.
