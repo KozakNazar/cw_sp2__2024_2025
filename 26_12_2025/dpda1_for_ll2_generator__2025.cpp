@@ -2420,7 +2420,7 @@ void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Pr
 
 #define REMOVE___OR_NOT struct LexemInfo* lexemInfoTable
 
-void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement, REMOVE___OR_NOT) {
+void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement, REMOVE___OR_NOT, bool useShortTable = false) {
 
 	// init codes
 	terminalAndNonTerminalIdsInit(grammar, lexemInfoTable/*, int lastNonUsedid ! */);
@@ -2662,13 +2662,13 @@ void printASTToFile(struct LexemInfo* lexemInfoTable, const ASTNode* node, std::
 }
 
 
-#if 1
+#if 0
 #include "fileName.h"
 struct LexemInfo structuredLexemInfoTable[MAX_WORD_COUNT];
 int syntaxAnalyzeUsePDA(struct LexemInfo* lexemInfoTable, Grammar* grammar, char syntaxlAnalyzeMode/* not used */, char* astFileName, char* errorMessagesPtrToLastBytePtr, bool viewAST) {
 
 	//struct LexemInfo* lexemInfoTable;
-
+#if 0
 	dpda1.data_in = data_in_buffer; // ?
 	dpda1.data_out = data_out_buffer; // ?
 	dpda1.dpdaProgram = &dpdaProgram; // ?
@@ -2677,7 +2677,7 @@ int syntaxAnalyzeUsePDA(struct LexemInfo* lexemInfoTable, Grammar* grammar, char
 	dpda1.dpdaIndexingForSecondElement = &dpdaIndexingForSecondElement; // ?
 	dpda1.run = runner3; // ?
 	dpda1.stack_above_top = dpda1.stack + SAVE_OFFSET; // ?
-
+#endif
 	//buildDPDA1forLL2(grammar, *dpda1.dpdaProgram, *dpda1.dpda1Instructions, *dpda1.precursorIds, *dpda1.dpdaIndexingForSecondElement, lexemesInfoTable);
 
 
@@ -2828,7 +2828,8 @@ int main(int argc, char* argv[]) {
 }
 #else
 int main(int argc, char* argv[]) {
-
+//#define PART__0
+#ifdef PART__0
 	char* text;
 	char fileName[128] = DEFAULT_INPUT_FILE;
 	char choice[2] = { fileName[0], fileName[1] };
@@ -2881,6 +2882,7 @@ int main(int argc, char* argv[]) {
 	else {
 		printLexemes(lexemesInfoTable, 0);
 		{
+#endif
 			//dpda1.data = data; !!!
 			//dpda1.data_in = 
 			//dpda1.data_out =
@@ -2893,7 +2895,8 @@ int main(int argc, char* argv[]) {
 
 
 			//*dpda1.stack_above_top++ = getLexemId((char*)"program_rule");
-			buildDPDA1forLL2(grammar, *dpda1.dpdaProgram, *dpda1.dpda1Instructions, *dpda1.precursorIds, *dpda1.dpdaIndexingForSecondElement, lexemesInfoTable);
+			buildDPDA1forLL2(grammar, *dpda1.dpdaProgram, *dpda1.dpda1Instructions, *dpda1.precursorIds, *dpda1.dpdaIndexingForSecondElement, lexemesInfoTable, true);
+#ifdef PART__0
 		}
 #if 0
 		errorMessagesPtrToLastBytePtr[0] = '\0';
@@ -2925,6 +2928,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	free(text);
+#endif
 
 	(void)getchar();
 #ifdef RERUN_MODE
