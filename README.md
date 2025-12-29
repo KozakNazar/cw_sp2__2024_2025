@@ -15,6 +15,6 @@ https://github.com/KozakNazar1/compiler_compiler_2025
 **UKR:** Цей компілятор є засобом наукових досліджень у сфері формальних моделей обчислень та інтерпретацій між ними. Досліджуються як практичні аспекти відображення програмного представлення простих автоматів (для формальних мов різного рівня) у апаратні структури (RTL/ESL/TLM-описи), так і фундаментальні теоретичні питання математичної логіки – передусім теорії моделей (Model theory).
 
 ### Goal 3: Self-compiling Compiler (beginning stage)
-**ENG:** Another goal of this project is to create a compiler that would not require any other compiler — **including its own compiled version** — to recompile itself.
+**ENG:** Another goal of this project is to create a compiler that does not require any other compiler to compile itself ***(does not even need its own compiled version for recompilation)***.
 
-**UKR:** Ще однією метою цього проекту є створення компілятора, який навіть для компіляції самого себе не вимагав би жодного іншого компілятора, **включно зі своєю скомпільованою версією**.
+**UKR:** Ще однією метою цього проекту є створення компілятора, який не потребує жодного іншого компілятора для компіляції себе самого ***(не потребує навіть власної скомпільованої версії для перекомпіляції)***.
