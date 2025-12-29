@@ -2458,7 +2458,7 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instruc
 	print_pda_by_transition_table_to_file((char*)"fileName.h", (char*)"tableName", dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
 }
 
-unsigned char data_in_buffer[MAX_WORD_COUNT] = { '\0' };
+unsigned char data_in_buffer[MAX_WORD_COUNT] = { EMPTY_TOKEN_LEXEM_ID };
 void buildInputTapeByLexemTable(struct LexemInfo* lexemInfoTable, unsigned char * data_in_buffer) {
 	for (unsigned long long int index = 0; lexemInfoTable[index].lexemStr[0] != '\0'; ++index) {
 		//index, 
@@ -2476,7 +2476,7 @@ void buildInputTapeByLexemTable(struct LexemInfo* lexemInfoTable, unsigned char 
 		}
 	}
 }
-unsigned char data_out_buffer[MAX_WORD_COUNT] = { '\0' };
+unsigned char data_out_buffer[MAX_WORD_COUNT] = { EMPTY_TOKEN_LEXEM_ID };
 
 void buildStructuredLexemInfoTable(struct LexemInfo* lexemInfoTable, unsigned char* tape, struct LexemInfo* structuredLexemInfoTable) {
 	printf("Warning: add EMPTY_TOKEN_LEXEM_ID to end of out tape.");
@@ -2662,8 +2662,68 @@ void printASTToFile(struct LexemInfo* lexemInfoTable, const ASTNode* node, std::
 }
 
 
-#if 0
+#if 1
 #include "fileName.h"
+struct LexemInfo structuredLexemInfoTable[MAX_WORD_COUNT];
+int syntaxAnalyzeUsePDA(struct LexemInfo* lexemInfoTable, Grammar* grammar, char syntaxlAnalyzeMode/* not used */, char* astFileName, char* errorMessagesPtrToLastBytePtr, bool viewAST) {
+
+	//struct LexemInfo* lexemInfoTable;
+
+	dpda1.data_in = data_in_buffer; // ?
+	dpda1.data_out = data_out_buffer; // ?
+	dpda1.dpdaProgram = &dpdaProgram; // ?
+	dpda1.dpda1Instructions = &dpda1Instructions; // ?
+	dpda1.precursorIds = &precursorIds; // ?
+	dpda1.dpdaIndexingForSecondElement = &dpdaIndexingForSecondElement; // ?
+	dpda1.run = runner3; // ?
+	dpda1.stack_above_top = dpda1.stack + SAVE_OFFSET; // ?
+
+	//buildDPDA1forLL2(grammar, *dpda1.dpdaProgram, *dpda1.dpda1Instructions, *dpda1.precursorIds, *dpda1.dpdaIndexingForSecondElement, lexemesInfoTable);
+
+
+	// init +/-
+
+	// convert
+	//void buildDataInFromLexemTable(struct LexemInfo* lexemInfoTable, unsigned char* data_in_buffer);
+	
+	struct ASTNode* astRoot = NULL;
+	struct LexemInfo* unexpectedLexemfailedTerminal = NULL; // TODO: ...
+	buildInputTapeByLexemTable(lexemesInfoTable, data_in_buffer);
+	static char result = tryToAcceptDPDA(&dpdaProgram, &dpda1Instructions, &precursorIds, &dpdaIndexingForSecondElement,
+		PROGRAM_RULE_ID, data_in_buffer, data_out_buffer); // *dpda1.stack_above_top++ = PROGRAM_RULE_ID;
+	buildStructuredLexemInfoTable(lexemesInfoTable, data_out_buffer, structuredLexemInfoTable);
+	if (buildASTFByOutputTape(structuredLexemInfoTable, &astRoot)) {
+		printf("Error of AST biuild.\n");
+		exit(0);
+	}
+
+
+	//struct LexemInfo* lastLexemInfo = syntaxLL2(grammar, grammar->start_symbol, lexemInfoTable, &astRoot, &unexpectedLexemfailedTerminal);
+
+	if (dpda1.data_in == EMPTY_TOKEN_LEXEM_ID) {
+		if (viewAST) {
+			printAST(lexemInfoTable, astRoot);
+		}
+		std::ofstream astOFStream(astFileName, std::ofstream::out);
+		printASTToFile(lexemInfoTable, astRoot, astOFStream);
+		astOFStream.close();
+		return SUCCESS_STATE;
+	}
+	else {
+		/* struct LexemInfo* */unexpectedLexemfailedTerminal = lexemesInfoTable + (dpda1.data_in - data_in_buffer); // TODO: ...
+		printf("Parse failed.\r\n");
+		printf("    (The predicted terminal does not match the expected one.\r\n    Unexpected terminal \"%s\" on line %lld at position %lld.)\r\n", unexpectedLexemfailedTerminal->lexemStr, unexpectedLexemfailedTerminal->row, unexpectedLexemfailedTerminal->col);
+		errorMessagesPtrToLastBytePtr += sprintf(errorMessagesPtrToLastBytePtr, "Parse failed.\r\n");
+		errorMessagesPtrToLastBytePtr += snprintf(errorMessagesPtrToLastBytePtr, MAX_LEXEM_SIZE + 128 + strlen("    (The predicted terminal does not match the expected one.\r\n    Unexpected terminal \"#\" on line # at position #.)\r\n"), "    (The predicted terminal does not match the expected one.\r\n    Unexpected terminal \"%s\" on line %lld at position %lld.)\r\n", unexpectedLexemfailedTerminal->lexemStr, unexpectedLexemfailedTerminal->row, unexpectedLexemfailedTerminal->col);
+		//exit(0);
+		return ~SUCCESS_STATE;
+	}
+
+
+}
+
+//unsigned char errorMessagesPtrToLastBytePtr[8 * 1024 * 1024] = { '\0' };
+//struct LexemInfo structuredLexemInfoTable[MAX_WORD_COUNT];
 int main(int argc, char* argv[]) {
 
 
@@ -2718,33 +2778,12 @@ int main(int argc, char* argv[]) {
 	}
 	else {
 		printLexemes(lexemesInfoTable, 0);
-			dpda1.data_in = data_in_buffer;
-			dpda1.data_out = data_out_buffer;
-			dpda1.dpdaProgram = &dpdaProgram;
-			dpda1.dpda1Instructions = &dpda1Instructions;
-			dpda1.precursorIds = &precursorIds;
-			dpda1.dpdaIndexingForSecondElement = &dpdaIndexingForSecondElement;
-			dpda1.run = runner3;
-			dpda1.stack_above_top = dpda1.stack + SAVE_OFFSET;
 
-
+		if (0/*SUCCESS*/ != syntaxAnalyzeUsePDA(lexemesInfoTable, &grammar, !"char syntaxlAnalyzeMode/* not used */", (char*)"astFileName"".ast", (char*)errorMessagesPtrToLastBytePtr, true)) {		
+			// printf("Syntax analyze error\n");
+		}
 			
-
-			//buildDPDA1forLL2(grammar, *dpda1.dpdaProgram, *dpda1.dpda1Instructions, *dpda1.precursorIds, *dpda1.dpdaIndexingForSecondElement, lexemesInfoTable);
-
-
-			// init +/-
-
-			// convert
-			//void buildDataInFromLexemTable(struct LexemInfo* lexemInfoTable, unsigned char* data_in_buffer);
-			buildInputTapeByLexemTable(lexemesInfoTable, data_in_buffer);
-
-			static char result = tryToAcceptDPDA(&dpdaProgram, &dpda1Instructions, &precursorIds, &dpdaIndexingForSecondElement,
-				PROGRAM_RULE_ID, data_in_buffer, data_out_buffer); // *dpda1.stack_above_top++ = PROGRAM_RULE_ID;
-
-
-
-			return 0;
+		return 0;
 #if 0
 		errorMessagesPtrToLastBytePtr[0] = '\0';
 		unsigned char* errorMessagesPtrToLastBytePtr_ = errorMessagesPtrToLastBytePtr;
