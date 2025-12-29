@@ -678,10 +678,6 @@ Grammar grammar = {
 
 DPDA1Program dpdaProgram123;
 
-//void addAnigilateInstruction(/*no args*/) {}
-//
-//void addAnigilateInstructions(/*no args*/) {}
-
 #include <string>
 #include <map>
 //#include <utility>
@@ -724,172 +720,6 @@ bool getLexemStr(unsigned char id, std::string& lexemStr) {
 
 	return false;
 }
-
-//unsigned long long int getLexemTypeById(char id) {
-//
-//
-//	//#define KEYWORD_LEXEME_TYPE 1
-//	//#define IDENTIFIER_LEXEME_TYPE 2 // #define LABEL_LEXEME_TYPE 8
-//	//#define VALUE_LEXEME_TYPE 4
-//	//#define UNEXPEXTED_LEXEME_TYPE 127
-//
-//
-//	return UNEXPEXTED_LEXEME_TYPE;
-//}
-
-#if 0
-void addNonTerminalInterpretationInstruction(DPDA1Program* dpdaProgramPtr, Rule* rule/*, int instructionIndex*/) {
-	if (!dpdaProgramPtr || !rule) {
-		return;
-	}
-
-	//lookahead symbol
-
-	unsigned int lookahead = getNonterminlId(rule->las);
-	unsigned int nonterminlId = getNonterminlId(rule->lhs);
-
-	(*dpdaProgramPtr)[lookahead][nonterminlId].tapeAction = NO_SCROLL;
-	StackUpdate* stackUpdate = &(*dpdaProgramPtr)[lookahead][nonterminlId].stackUpdate;
-	stackUpdate->stackAction = PUSH; // StackAction::
-	//unsigned int * stackAddon = (unsigned int*) stackUpdate->stackAddon;
-
-	for (int rhsIndex = 0; rhsIndex < rule->rhs_count; ++rhsIndex) {
-		stackUpdate->stackAddon[rhsIndex] = getNonterminlId(rule->rhs[rhsIndex]);
-	}
-	stackUpdate->stackAddon[rule->rhs_count] = 0;
-
-	//int* stackAddonLastElementPtr = stackUpdate->stackAddon;	
-	//while (*(stackAddonLastElementPtr++));
-	//++stackAddonLastElementPtr;
-	//	for (; stackAddonLastElementPtr < stackUpdate->stackAddon; --stackAddonLastElementPtr) {
-	//		*(dpda1->stack_above_top++) = *stackAddonLastElementPtr;
-	//	}
-
-}
-#endif
-
-/*
-void addNonTerminalInterpretationInstructions(DPDA1Program* dpdaProgramPtr, Grammar* grammar) {
-	if (!dpdaProgramPtr) {
-		return;
-	}
-
-}
-*/
-
-//char getLexemId(char * lexemStr);
-#if 0
-// used --> not used
-void buildDeadState__DPDA1forLL2__OLD(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
-	// MIN_TERMIN
-	// All Symbol
-	//  for (char toptapeAndStackCode = 255; false && toptapeAndStackCode++;) {
-	//  	for (char tapeCode = 255; tapeCode++;) {
-	//  		if (dpda1Program[toptapeAndStackCode][toptapeAndStackCode].tapeAction == -1) {
-	//  			printf("Error: no support model\r\n");
-	//  			exit(0);
-	//  		}
-	//  
-	//  		dpda1Program[toptapeAndStackCode][toptapeAndStackCode].tapeAction = SCROLL_TO_RIGHT;
-	//  		dpda1Program[toptapeAndStackCode][toptapeAndStackCode].stackUpdate.stackAction = POP; // (2)
-	//  
-	//  		? dpda1IndexingForSecondElement;
-	//  	}
-	//  }
-
-	//char deadStateCode = getLexemId((char*)"DEAD_STATE");
-	//char passStateCode = getLexemId((char*)"PASS_STATE");
-
-//		for (char tapeCode = 255; tapeCode++;) {
-//			if (dpda1Program[tapeCode][deadStateCode].tapeAction == -1) {
-//				dpda1Program[tapeCode][deadStateCode].tapeAction = SCROLL_TO_RIGHT;
-//				dpda1Program[tapeCode][deadStateCode].stackUpdate.stackAction = NOTHING;
-//			}
-//			else {
-//				printf("Error\r\n");
-//				exit(0);
-//			}
-//		}
-
-		// no use dpda1IndexingForSecondElement (dpda1IndexingForSecondElement only for instruction PUSH)
-		// for other init 0 for dpda1IndexingForSecondElement
-
-
-
-
-
-
-		// + дерево виводу
-		
-		//char emptyStringCode = getLexemId((char*)"");
-		//char deadStateCode = getLexemId((char*)"DEAD_STATE");
-		unsigned char tapeCode = 0; do {
-#define ROW_INDEX tapeCode
-#define COLUMN_INDEX DEAD_STATE_ID			
-				// tape
-				dpda1Program[ROW_INDEX][COLUMN_INDEX].tapeAction = SCROLL_TO_RIGHT;
-
-				// stack
-				dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAction = NOTHING;
-				dpda1Program[ROW_INDEX][COLUMN_INDEX].rhsVariantAddonIndexMask = 0; // not useed for dead state
-				for (unsigned int rTokekIndex = 0; rTokekIndex < MAX_RTOKEN_COUNT; ++rTokekIndex) { // not useed for dead state
-					dpda1Program[ROW_INDEX][COLUMN_INDEX].stackUpdate.stackAddon[0/*rhsVariantAddonIndex NEW 08.2025*/][rTokekIndex] = EMPTY_TOKEN_LEXEM_ID; // (!)
-				}
-#undef ROW_INDEX
-#undef COLUMN_INDEX
-		} while (++tapeCode);
-}
-#endif
-/*
-// tape scroll
-void preBildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
-	// set -1
-
-	// dpda1IndexingForSecondElement[rowIndex][columnIndex]; // -1
-
-	// MIN_TERMIN
-	// All Symbol
-
-	for (char topStackCode = 255; topStackCode++;) {
-		//if no dead state
-		for (char tapeCode = 255; tapeCode++;) {
-			// if no setted (-1)
-
-			//if no dead state
-
-			if (dpda1Program[tapeCode][topStackCode].tapeAction == -1) {
-				dpda1Program[tapeCode][topStackCode].tapeAction = SCROLL_TO_RIGHT;
-			
-			}
-				TapeAction tapeAction; // (1)
-			StackUpdate stackUpdate; // (2)
-		}
-
-	}
-
-}
-
-// TODO: add dead state (SCROLL STATE) and to state (SCROLL STATE)!
-void buildDPDA1forLL2_(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
-	// TODO: add dead state (SCROLL STATE) and to state (SCROLL STATE)!
-
-	char toPassStateCode = getLexemId((char*)"TO_PASS_STATE");
-
-	char passStateCode = getLexemId((char*)"PASS_STATE");
-
-	for (char topStackCode = 255; topStackCode++;) {
-		//if no dead state
-			for (char firstMarkCode = 255; topStackCode != passStateCode && firstMarkCode++;) {
-				// if no setted (-1)
-				
-				//if no dead state
-			}
-
-	}
-
-
-}
-*/
 
 int keyWordAndNonTerminalIdsInit(Grammar& grammar, int lastNonUsedid) {
 	char* keywords_re = (char*)KEYWORDS_RE;
@@ -951,23 +781,23 @@ int keyWordAndNonTerminalIdsInit(Grammar& grammar, int lastNonUsedid) {
 	return lastNonUsedid;
 }
 
-void terminalAndNonTerminalIdsInitPart2(struct LexemInfo* lexemInfoTable, int lastNonUsedid) {
-	if (lexemInfoTable == NULL) {
-		printf("Error\n");
-		exit(0);
-	}
-
-	if (true) {
-		printf("Error\n");
-		exit(0);
-	}
-
-	for (; lexemInfoTable->lexemStr[0] != '\0'; ++lexemInfoTable) {
-		if (terminalAndNonTerminalLexemIds.find(lexemInfoTable->lexemStr) == terminalAndNonTerminalLexemIds.end()) {
-			terminalAndNonTerminalLexemIds[lexemInfoTable->lexemStr] = lastNonUsedid++;
-		}
-	}
-}
+//void terminalAndNonTerminalIdsInitPart2(struct LexemInfo* lexemInfoTable, int lastNonUsedid) {
+//	if (lexemInfoTable == NULL) {
+//		printf("Error\n");
+//		exit(0);
+//	}
+//
+//	if (true) {
+//		printf("Error\n");
+//		exit(0);
+//	}
+//
+//	for (; lexemInfoTable->lexemStr[0] != '\0'; ++lexemInfoTable) {
+//		if (terminalAndNonTerminalLexemIds.find(lexemInfoTable->lexemStr) == terminalAndNonTerminalLexemIds.end()) {
+//			terminalAndNonTerminalLexemIds[lexemInfoTable->lexemStr] = lastNonUsedid++;
+//		}
+//	}
+//}
 
 // set FREE_STATE_ID // -1
 void dpda1forLL2SetInitStateAndInitIndexing__DELETE(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement) {
@@ -1071,70 +901,16 @@ void setAllStatesToDeadStateAndInitIndexing(Grammar& grammar, DPDA1Program& dpda
 	} while (++tapeCode);
 }
 
-void terminalAndNonTerminalIdsInit(Grammar& grammar, struct LexemInfo* lexemInfoTable/*, int lastNonUsedid !!!!!!!!!!! */) {
-	if (lexemInfoTable == NULL) {
-		printf("Error\n");
-		exit(0);
-	}
-
-
-	/*
-
-	#define KEYWORD_LEXEM_MIN_ID (UNKNOWN_ELEMENT_ID + 1)
-	#define KEYWORD_LEXEM_MAX_ID (KEYWORD_LEXEM_MIN_ID + MAX_KEYWORD_COUNT)
-
-	#define IDENTIFIER_LEXEM_MIN_ID (KEYWORD_LEXEM_MAX_ID + 1)
-	#define IDENTIFIER_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + MAX_VARIABLES_COUNT)
-
-	#define LITERAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
-	#define LITERAL_LEXEM_MAX_ID (LITERAL_LEXEM_MIN_ID + MAX_LITERAL_COUNT)
-
-	// SPLIT TERMINAL AND NONTERMINAL // V
-	//#define TERMINAL_AND_NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
-	//#define TERMINAL_AND_NONTERMINAL_LEXEM_MAX_ID (IDENTIFIER_LEXEM_MIN_ID + 190)
-	#define NONTERMINAL_LEXEM_MIN_ID (IDENTIFIER_LEXEM_MAX_ID + 1)
-	#define NONTERMINAL_LEXEM_MAX_ID 252
-	//#define  253
-	#define DEAD_STATE_ID 254
-	//#define ...                    255
-
-	*/
-
+void terminalAndNonTerminalIdsInit(Grammar& grammar) {
 	terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // no exist in code, but exit as abstract zero lenght element // lastNonUsedid++;
 	//terminalAndNonTerminalLexemIds[] = UNKNOWN_ELEMENT_ID; // no exist in code and no exit as abstract element
 
-//#define EMPTY_TOKEN_LEXEM_ID 0
-//#define UNKNOWN_ELEMENT_ID 1 // (EMPTY_TOKEN_LEXEM_ID + 1)
-
-//EMPTY_TOKEN_LEXEM_ID
-//UNKNOWN_ELEMENT_ID (EMPTY_TOKEN_LEXEM_ID + 1)
-
-//	char emptyElementCode = getLexemId((char*)"");
-//	char deadStateCode = getLexemId((char*)"DEAD_STATE");
-
-	/* EMPTY_TOKEN_LEXEM_ID *///terminalAndNonTerminalLexemIds[""] = EMPTY_TOKEN_LEXEM_ID; // lastNonUsedid++; // !!!!!!!!!!!!!!!!
-
 	terminalAndNonTerminalLexemIds[IDENTIFIER_METATERMINAL_LEXEM_STR] = IDENTIFIER_METATERMINAL_LEXEM_ID;
 	terminalAndNonTerminalLexemIds[UNSIGNED_VALUE_METATERMINAL_LEXEM_STR] = UNSIGNED_VALUE_METATERMINAL_LEXEM_ID;
-
-	int lastNonUsedid = NONTERMINAL_LEXEM_MIN_ID;
-	lastNonUsedid = keyWordAndNonTerminalIdsInit(grammar, lastNonUsedid);
-
-	//  !
-	//	if (lastNonUsedid > NONTERMINAL_LEXEM_MAX_ID) {
-	//		printf("Error: maximum number of lexems exceeded.\n");
-	//		exit(0);
-	//	}
-
-		// terminalAndNonTerminalLexemIds["DEAD_STATE"] = DEAD_STATE_ID; // NOT INIT
-		//                                                FREE_STATE_ID;
-
-	if (lastNonUsedid);
-
-	if (false) terminalAndNonTerminalIdsInitPart2(lexemInfoTable, lastNonUsedid); // TERMINAL INIT AFTER SCAN SOURCE
+	
+	keyWordAndNonTerminalIdsInit(grammar, NONTERMINAL_LEXEM_MIN_ID);
 
 	terminalAndNonTerminalLexemIds[PROGRAM_RULE_STR] = PROGRAM_RULE_ID;
-
 	terminalAndNonTerminalLexemIds[DEAD_STATE_STR] = DEAD_STATE_ID;
 }
 
@@ -2418,12 +2194,9 @@ void buildAcceptTapeElement__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Pr
 
 }
 
-#define REMOVE___OR_NOT struct LexemInfo* lexemInfoTable
-
-void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement, REMOVE___OR_NOT, bool useShortTable = false) {
-
+void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement, bool useShortTable = false) {
 	// init codes
-	terminalAndNonTerminalIdsInit(grammar, lexemInfoTable/*, int lastNonUsedid ! */);
+	terminalAndNonTerminalIdsInit(grammar/*, lexemInfoTable*//*, int lastNonUsedid ! */);
 
 	//for (const auto& [key, value] : terminalAndNonTerminalLexemIds) { // Using Structured Bindings (C++17 and later)
 	//	std::cout << "Key: \"" << key << "\", Value: " << value << std::endl;
@@ -2440,14 +2213,10 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instruc
 	// set 255 (-1) // to dead state
 	setAllStatesToDeadStateAndInitIndexing(grammar, dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
 
-	// 123
+	// rules part
 	buildRulePartForDPDA1forLL2(grammar, dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
 
-	//return;
-
-	//
-	// 123
-	//
+	// accept part
 	buildAcceptTapeElement__DPDA1forLL2(grammar, dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
 
 	// dpda1IndexingForSecondElement[rowIndex][columnIndex]; // -1
@@ -2828,107 +2597,18 @@ int main(int argc, char* argv[]) {
 }
 #else
 int main(int argc, char* argv[]) {
-//#define PART__0
-#ifdef PART__0
-	char* text;
-	char fileName[128] = DEFAULT_INPUT_FILE;
-	char choice[2] = { fileName[0], fileName[1] };
-	system("CLS");
-	std::cout << "Enter file name(Enter \"" << choice[0] << "\" to use default \"" DEFAULT_INPUT_FILE "\"):";
-	std::cin >> fileName;
-	if (fileName[0] == choice[0] && fileName[1] == '\0') {
-		fileName[1] = choice[1];
-	}
-	size_t sourceSize = loadSource(&text, fileName);
-	if (!sourceSize) {
-#ifdef RERUN_MODE
-		(void)getchar();
-		printf("\nEnter 'y' to rerun program action(to pass action enter other key): ");
-		char valueByGetChar = getchar();
-		if (valueByGetChar == 'y' || valueByGetChar == 'Y') {
-			system((std::string("\"") + argv[0] + "\"").c_str());
-		}
-		return 0;
-#else
-		printf("Press Enter to exit . . .");
-		(void)getchar();
-		return 0;
-#endif
-	}
-	printf("Original source:\r\n");
-	printf("-------------------------------------------------------------------\r\n");
-	printf("%s\r\n", text);
-	printf("-------------------------------------------------------------------\r\n\r\n");
-	int commentRemoverResult = commentRemover(text, COMMENT_BEGIN_STR, COMMENT_END_STR);
-	if (commentRemoverResult) {
-		printf("Comment remover return %d\r\n", commentRemoverResult);
-		printf("Press Enter to exit . . .");
-		(void)getchar();
-		return 0;
-	}
-	printf("Source after comment removing:\r\n");
-	printf("-------------------------------------------------------------------\r\n");
-	printf("%s\r\n", text);
-	printf("-------------------------------------------------------------------\r\n\r\n");
+	//dpda1.data = data; !!!
+	//dpda1.data_in = 
+	//dpda1.data_out =
+	dpda1.dpdaProgram = &dpdaProgram;
+	dpda1.dpda1Instructions = &dpda1Instructions;
+	dpda1.precursorIds = &precursorIds;
+	dpda1.dpdaIndexingForSecondElement = &dpdaIndexingForSecondElement;
+	dpda1.run = runner3;
+	dpda1.stack_above_top = dpda1.stack + SAVE_OFFSET;
 
-	struct LexemInfo ifBadLexemeInfo = tokenize(text, &lastLexemInfoInTable, identifierIdsTable, lexicalAnalyze);
-
-	if (ifBadLexemeInfo.tokenType == UNEXPEXTED_LEXEME_TYPE) {
-		UNEXPEXTED_LEXEME_TYPE;
-		ifBadLexemeInfo.tokenType;
-		printf("Lexical analysis detected unexpected lexeme\r\n");
-		printLexemes(&ifBadLexemeInfo, 1);
-	}
-	else {
-		printLexemes(lexemesInfoTable, 0);
-		{
-#endif
-			//dpda1.data = data; !!!
-			//dpda1.data_in = 
-			//dpda1.data_out =
-			dpda1.dpdaProgram = &dpdaProgram;
-			dpda1.dpda1Instructions = &dpda1Instructions;
-			dpda1.precursorIds = &precursorIds;
-			dpda1.dpdaIndexingForSecondElement = &dpdaIndexingForSecondElement;
-			dpda1.run = runner3;
-			dpda1.stack_above_top = dpda1.stack + SAVE_OFFSET;
-
-
-			//*dpda1.stack_above_top++ = getLexemId((char*)"program_rule");
-			buildDPDA1forLL2(grammar, *dpda1.dpdaProgram, *dpda1.dpda1Instructions, *dpda1.precursorIds, *dpda1.dpdaIndexingForSecondElement, lexemesInfoTable, true);
-#ifdef PART__0
-		}
-#if 0
-		errorMessagesPtrToLastBytePtr[0] = '\0';
-		unsigned char* errorMessagesPtrToLastBytePtr_ = errorMessagesPtrToLastBytePtr;
-		if (SUCCESS_STATE != syntaxAnalyze(lexemesInfoTable, &grammar, 0, (char*)AST_OUTPUT_FILE, (char*)&errorMessagesPtrToLastBytePtr, true)) {
-			(void)getchar();
-			printf("\r\nPress Enter: ");
-			(void)getchar();
-			system("CLS");
-			fflush(stdin);
-			fflush(stdout);
-			fflush(stderr);
-			//(void)getchar();
-			printf("No command line arguments are entered, so you are working in interactive mode.\r\n");
-			printf("\nEnter 'y' to rerun (to pass action enter other key): ");
-			char valueByGetChar = getchar();
-			if (valueByGetChar == 'y' || valueByGetChar == 'Y') {
-				system("CLS");
-				fflush(stdin);
-				fflush(stdout);
-				fflush(stderr);
-				system((std::string("\"") + argv[0] + "\"").c_str());
-			}
-			else {
-				return 0;
-			}
-		}
-#endif
-	}
-
-	free(text);
-#endif
+	//*dpda1.stack_above_top++ = getLexemId((char*)"program_rule");
+	buildDPDA1forLL2(grammar, *dpda1.dpdaProgram, *dpda1.dpda1Instructions, *dpda1.precursorIds, *dpda1.dpdaIndexingForSecondElement, true);
 
 	(void)getchar();
 #ifdef RERUN_MODE
