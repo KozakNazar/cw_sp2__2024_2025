@@ -1,6 +1,6 @@
 ## Project Goals
 
-### Goal 1: Self-contained Compiler (✅ ≈99.78% completed)
+### Goal 1: Self-contained Simple Compiler (✅ ≈99.78% completed)
 **ENG:** This compiler can directly generate machine code for WIntel32 (x86 + Win32).  
 To compile the compiler itself, you can use:
 
