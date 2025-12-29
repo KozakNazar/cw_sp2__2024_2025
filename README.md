@@ -10,7 +10,7 @@ To compile the compiler itself, you can use:
 https://github.com/KozakNazar1/compiler_compiler_2025
 
 ### Goal 2: Model Theory Research Platform (~23% completed)
-**ENG:** This compiler serves as a research tool in the field of formal computation models and interpretations between them. It explores both practical aspects of mapping software representations of simple automata (for formal languages of various levels) to hardware structures (RTL/ESL/TLM descriptions), as well as fundamental theoretical questions of mathematical logic—primarily model theory.
+**ENG:** This compiler serves as a research tool in the field of formal computation models and interpretations between them. It explores both practical aspects of mapping software representations of simple automata (for formal languages of various levels) to hardware structures (RTL/ESL/TLM descriptions), as well as fundamental theoretical questions of mathematical logic — primarily model theory.
 
 **UKR:** Цей компілятор є засобом наукових досліджень у сфері формальних моделей обчислень та інтерпретацій між ними. Досліджуються як практичні аспекти відображення програмного представлення простих автоматів (для формальних мов різного рівня) у апаратні структури (RTL/ESL/TLM-описи), так і фундаментальні теоретичні питання математичної логіки – передусім теорії моделей (Model theory).
 
