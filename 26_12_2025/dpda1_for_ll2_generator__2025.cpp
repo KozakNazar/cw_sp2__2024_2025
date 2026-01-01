@@ -2244,6 +2244,7 @@ void buildInputTapeByLexemTable(struct LexemInfo* lexemInfoTable, unsigned char 
 			exit(0);
 		}
 	}
+	data_in_buffer = EMPTY_TOKEN_LEXEM_ID;
 }
 unsigned char data_out_buffer[MAX_WORD_COUNT] = { EMPTY_TOKEN_LEXEM_ID };
 
@@ -2431,7 +2432,7 @@ void printASTToFile(struct LexemInfo* lexemInfoTable, const ASTNode* node, std::
 }
 
 
-#if 0
+#if 1
 #include "fileName.h"
 struct LexemInfo structuredLexemInfoTable[MAX_WORD_COUNT];
 int syntaxAnalyzeUsePDA(struct LexemInfo* lexemInfoTable, Grammar* grammar, char syntaxlAnalyzeMode/* not used */, char* astFileName, char* errorMessagesPtrToLastBytePtr, bool viewAST) {
@@ -2494,8 +2495,6 @@ int syntaxAnalyzeUsePDA(struct LexemInfo* lexemInfoTable, Grammar* grammar, char
 //unsigned char errorMessagesPtrToLastBytePtr[8 * 1024 * 1024] = { '\0' };
 //struct LexemInfo structuredLexemInfoTable[MAX_WORD_COUNT];
 int main(int argc, char* argv[]) {
-
-
 	char* text;
 	char fileName[128] = DEFAULT_INPUT_FILE;
 	char choice[2] = { fileName[0], fileName[1] };
