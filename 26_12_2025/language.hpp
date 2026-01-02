@@ -1,8 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#define LL2_SYMBOL_NUMBER 256
-#define LL2_MAX_STATES 256
-#define LL2_PRECURSOR_COUNT 256
+//#define LL2_SYMBOL_NUMBER 256
+//#define LL2_MAX_STATES 256
+//#define LL2_PRECURSOR_COUNT 256
 
 DPDA1ReverseInstructions languageDPDA1ReverseInstructions = {
 /*   0 */ { 0x00, NO_SCROLL      , { POP_AND_MULTIPLIPUSH, { { 0xFD                                                       }, { 0xFD                                                       }, { 0xFD                                                       }, { 0xFD                                                       } } } },
