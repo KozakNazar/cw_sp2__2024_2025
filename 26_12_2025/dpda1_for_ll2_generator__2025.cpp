@@ -14,6 +14,20 @@
 #include <iterator>
 #include <regex>
 
+//#define DPDA1_TABLE_NAME tableName
+//#define CONCAT_NAME_(N1, N2) N1##N2
+//#define CONCAT_NAME(N1, N2) CONCAT_NAME_(N1, N2) // EXPAND
+
+#define CONCAT_NAME_(N1, N2) N1##N2
+#define CONCAT_NAME(N1, N2) CONCAT_NAME_(N1, N2) // EXPAND
+#define BY_DPDA1_TABLE_NAME(N2) CONCAT_NAME(DPDA1_TABLE_NAME, N2)
+
+#define CONST_STRING_(N) #N
+#define CONST_STRING(N) CONST_STRING_(N) // EXPAND
+
+#define DPDA1_TABLE_NAME language
+#define DPDA1_FILE_NAME BY_DPDA1_TABLE_NAME(.hpp)
+
 #undef INCLUDE_TO_SOLUTION
 
 #ifdef INCLUDE_TO_SOLUTION
@@ -1730,22 +1744,22 @@ char rhs_buffer[MAX_LEXEM_SIZE * MAX_RTOKEN_COUNT] = { 0 };
 char part_buffer[MAX_LEXEM_SIZE * 3 + 1024] = { 0 };
 //TODO: gen second table for Str!!
 //typedef PDAInstruction DPDA1Program[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
-void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, int state_counter*/, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement/*, int dead_state*/, bool useShortTable = false) {
-	FILE* f = fopen(fileName, "w");
+void print_pda_by_transition_table_to_file(DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingForSecondElement& dpda1IndexingForSecondElement, bool useShortTable = false) {
+	FILE* f = fopen(CONST_STRING(DPDA1_FILE_NAME), "w");
 	if (!f) {
 		perror("fopen");
 		return;
 	}
 
 	fprintf(f, "#define _CRT_SECURE_NO_WARNINGS\n\n");
-	fprintf(f, "#define LL2_SYMBOL_NUMBER 256\n");
-	//fprintf(f, "#define STATE_NUMBER %d\n\n", state_counter);
-	fprintf(f, "#define LL2_MAX_STATES 256\n");
-	fprintf(f, "#define LL2_PRECURSOR_COUNT 256\n");  
+	fprintf(f, "//#define LL2_SYMBOL_NUMBER 256\n");
+	//fprintf(f, "//#define STATE_NUMBER %d\n\n", state_counter);
+	fprintf(f, "//#define LL2_MAX_STATES 256\n");
+	fprintf(f, "//#define LL2_PRECURSOR_COUNT 256\n");  
 
 	fprintf(f, "\n");
 
-	fprintf(f, "DPDA1ReverseInstructions %sDPDA1ReverseInstructions = {\n", tableName);
+	fprintf(f, "%s %s = {\n", CONST_STRING(DPDA1ReverseInstructions), CONST_STRING(DPDA1_TABLE_NAME) CONST_STRING(DPDA1ReverseInstructions));
 	for (unsigned int precursorId = 0; precursorId < LL2_PRECURSOR_COUNT; ++precursorId) {
 	//{0, NO_SCROLL, {PUSH, {123, 123, 4, 0}}},
 		printf("\r%d                      ", precursorId);
@@ -1850,7 +1864,7 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 		}
 	}
 
-	fprintf(f, "PrecursorIds %sDPDA1ProgramByPrecursors = {\n", tableName);
+	fprintf(f, "%s %s = {\n", CONST_STRING(PrecursorIds), CONST_STRING(DPDA1_TABLE_NAME) CONST_STRING(DPDA1ProgramByPrecursors));
 	if (useShortTable)
 		fprintf(f, "//         ");
 	else
@@ -2048,7 +2062,7 @@ void print_pda_by_transition_table_to_file(char* fileName, char* tableName/*, in
 
 	fprintf(f, "\n");
  
-	fprintf(f, "unsigned char %sIndexingForSecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_STATES] = {\n", tableName); 
+	fprintf(f, "%s %s = {\n", CONST_STRING(DPDA1IndexingForSecondElement), CONST_STRING(DPDA1_TABLE_NAME) CONST_STRING(DPDA1IndexingForSecondElement));
 	for (int secondMarkCode = 0; secondMarkCode < LL2_SYMBOL_NUMBER; ++secondMarkCode) {
 		fprintf(f, "{ ");
 		for (int topStackCode = 0; topStackCode < LL2_MAX_STATES; ++topStackCode) {
@@ -2224,7 +2238,7 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instruc
 	// MIN_TERMIN
 	// All Symbol
 
-	print_pda_by_transition_table_to_file((char*)"fileName.h", (char*)"tableName", dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement);
+	print_pda_by_transition_table_to_file(dpda1Program, dpda1Instructions, precursorIds, dpda1IndexingForSecondElement, useShortTable);
 }
 
 unsigned char data_in_buffer[MAX_WORD_COUNT] = { EMPTY_TOKEN_LEXEM_ID };
@@ -2431,11 +2445,16 @@ void printASTToFile(struct LexemInfo* lexemInfoTable, const ASTNode* node, std::
 	}
 }
 
+#if 0
+//DPDA1Instructions dpda1Instructions;
+//PrecursorIds precursorIds;
+//DPDA1IndexingForSecondElement dpdaIndexingForSecondElement;
 
-#if 1
-#include "fileName.h"
+#include CONST_STRING(DPDA1_FILE_NAME) // #include "fileName.h" 
 struct LexemInfo structuredLexemInfoTable[MAX_WORD_COUNT];
 int syntaxAnalyzeUsePDA(struct LexemInfo* lexemInfoTable, Grammar* grammar, char syntaxlAnalyzeMode/* not used */, char* astFileName, char* errorMessagesPtrToLastBytePtr, bool viewAST) {
+
+	//const char* fname = CONST_STRING(DPDA1_TABLE_NAME.h);
 
 	//struct LexemInfo* lexemInfoTable;
 #if 0
@@ -2459,8 +2478,13 @@ int syntaxAnalyzeUsePDA(struct LexemInfo* lexemInfoTable, Grammar* grammar, char
 	struct ASTNode* astRoot = NULL;
 	struct LexemInfo* unexpectedLexemfailedTerminal = NULL; // TODO: ...
 	buildInputTapeByLexemTable(lexemesInfoTable, data_in_buffer);
-	static char result = tryToAcceptDPDA(&dpdaProgram, &dpda1Instructions, &precursorIds, &dpdaIndexingForSecondElement,
-		PROGRAM_RULE_ID, data_in_buffer, data_out_buffer); // *dpda1.stack_above_top++ = PROGRAM_RULE_ID;
+	static char result = tryToAcceptDPDA(
+		&BY_DPDA1_TABLE_NAME(DPDA1ProgramByPrecursors),
+		&BY_DPDA1_TABLE_NAME(DPDA1ReverseInstructions),
+		&BY_DPDA1_TABLE_NAME(DPDA1IndexingForSecondElement),
+		PROGRAM_RULE_ID,
+		data_in_buffer,
+		data_out_buffer); // *dpda1.stack_above_top++ = PROGRAM_RULE_ID;
 	buildStructuredLexemInfoTable(lexemesInfoTable, data_out_buffer, structuredLexemInfoTable);
 	if (buildASTFByOutputTape(structuredLexemInfoTable, &astRoot)) {
 		printf("Error of AST biuild.\n");
@@ -2595,19 +2619,25 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 #else
+
+DPDA1Program dpda1Program; // REMOVE
+DPDA1Instructions dpda1Instructions;
+PrecursorIds precursorIds;
+DPDA1IndexingForSecondElement dpdaIndexingForSecondElement;
+
 int main(int argc, char* argv[]) {
 	//dpda1.data = data; !!!
 	//dpda1.data_in = 
 	//dpda1.data_out =
-	dpda1.dpdaProgram = &dpdaProgram;
-	dpda1.dpda1Instructions = &dpda1Instructions;
-	dpda1.precursorIds = &precursorIds;
-	dpda1.dpdaIndexingForSecondElement = &dpdaIndexingForSecondElement;
-	dpda1.run = runner3;
-	dpda1.stack_above_top = dpda1.stack + SAVE_OFFSET;
+//	dpda1.dpdaProgram = &dpdaProgram;
+//	dpda1.dpda1ReverseInstructions = &dpda1ReverseInstructions;
+//	dpda1.precursorIds = &precursorIds;
+//	dpda1.dpdaIndexingForSecondElement = &dpdaIndexingForSecondElement;
+//	dpda1.run = runner3; // !
+//	dpda1.stack_above_top = dpda1.stack + SAVE_OFFSET; // !
 
 	//*dpda1.stack_above_top++ = getLexemId((char*)"program_rule");
-	buildDPDA1forLL2(grammar, *dpda1.dpdaProgram, *dpda1.dpda1Instructions, *dpda1.precursorIds, *dpda1.dpdaIndexingForSecondElement, true);
+	buildDPDA1forLL2(grammar, dpda1Program, dpda1Instructions/**dpda1.dpda1ReverseInstructions*/, precursorIds, dpdaIndexingForSecondElement/*, true*/);
 
 	(void)getchar();
 #ifdef RERUN_MODE
