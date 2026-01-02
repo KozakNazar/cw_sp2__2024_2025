@@ -1,10 +1,10 @@
-## Project Goals
+  ## Project Goals
 
 ### Goal 1: Self-contained Simple Compiler (✅ ≈99.78% completed)
-**ENG:** This compiler can ***directly*** *(without invoking or depending on any external compiler during the compilation process)* generate machine code for WIntel32 (x86 + Win32).
+**ENG:** This compiler can ***directly*** *(without invoking or depending on any external compiler during the compilation process)* generate machine code for WIntel32 (x86 + Win32).<br>
 To compile the compiler itself, you can use:
 
-**UKR:** Цей компілятор може ***напряму*** *(не викликає і не залежить від жодного зовнішнього компілятора під час процесу компіляції)* генерувати машинний код для WIntel32 (x86 + Win32).
+**UKR:** Цей компілятор може ***напряму*** *(не викликає і не залежить від жодного зовнішнього компілятора під час процесу компіляції)* генерувати машинний код для WIntel32 (x86 + Win32).<br>
 Для компіляції самого компілятора можна використати:
 
 https://github.com/KozakNazar1/compiler_compiler_2025
