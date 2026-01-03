@@ -98,8 +98,8 @@ typedef unsigned char DPDA1IndexingForSecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_S
 
 #define SAVE_OFFSET 0
 typedef struct StructDPDA1{
-	unsigned char * data_in;
-	unsigned char * data_out;
+	unsigned char * data_in; // tape_in
+	unsigned char * data_out; // tape_out
 	//DPDA1Program * dpdaProgram; // REMOVE!
 	DPDA1ReverseInstructions * dpda1ReverseInstructions;
 	PrecursorIds * precursorIds;
@@ -189,7 +189,7 @@ void runner3(DPDA1 * dpda1){
 			//	== SCROLL_TO_RIGHT) {			
 			//}
 
-			*dpda1->data_out++ = *dpda1->stack_above_top--; // POP for first
+			*dpda1->data_out++ = *--dpda1->stack_above_top; // POP for first
 			
 			// multi push
 #define SAFEGUARD_STACK_ADDON (stackAddonElementIndex < MAX_RTOKEN_COUNT)
