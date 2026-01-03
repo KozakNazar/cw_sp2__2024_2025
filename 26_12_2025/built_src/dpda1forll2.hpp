@@ -17,6 +17,10 @@
 #define	USE_DPDA2_MODEL
 #endif
 
+#if defined(USE_PRE_ORDER_MARKER) && defined(MARKER_OF_STRUCTURE_ID)							
+//
+#endif
+
 //#define NO_ACTION 0xFFFF
 
 //#define NO_RULE {NO_ACTION, NO_ACTION, NO_ACTION}
@@ -27,7 +31,7 @@
 
 typedef enum {
     NO_SCROLL,
-	SCROLL_TO_RIGHT
+	SCROLL_TO_RIGHT // SHIFT
 } TapeAction;
 
 typedef enum {
@@ -99,7 +103,10 @@ typedef unsigned char DPDA1IndexingForSecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_S
 #define SAVE_OFFSET 0
 typedef struct StructDPDA1{
 	unsigned char * data_in; // tape_in
-	unsigned char * data_out; // tape_out
+#if defined(USE_PRE_ORDER_MARKER) && defined(MARKER_OF_STRUCTURE_ID)							
+	unsigned char* data_out; // tape_out
+#endif
+
 	//DPDA1Program * dpdaProgram; // REMOVE!
 	DPDA1ReverseInstructions * dpda1ReverseInstructions;
 	PrecursorIds * precursorIds;
@@ -189,7 +196,9 @@ void runner3(DPDA1 * dpda1){
 			//	== SCROLL_TO_RIGHT) {			
 			//}
 
-			*dpda1->data_out++ = *--dpda1->stack_above_top; // POP for first
+#if defined(USE_PRE_ORDER_MARKER) && defined(MARKER_OF_STRUCTURE_ID)							
+			*dpda1->data_out++ = *--dpda1->stack_above_top; // POP for first // tape_out
+#endif
 			
 			// multi push
 #define SAFEGUARD_STACK_ADDON (stackAddonElementIndex < MAX_RTOKEN_COUNT)
