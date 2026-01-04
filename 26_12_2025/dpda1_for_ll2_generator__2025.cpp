@@ -121,7 +121,7 @@ bool getIndexAfterFragmentSyntax(char* ruleName, int& lexemIndex, struct LexemIn
 // #define AST_OUTPUT_FILE "../base_test_programs_2025/ast.txt"
 //#define DEFAULT_INPUT_FILE "../other_test_programs_2025/file4.k03"
 //#define AST_OUTPUT_FILE "../base_test_programs_2025/ast.txt"
-#define DEFAULT_INPUT_FILE "../base_test_programs_2025/file1.k03"
+#define DEFAULT_INPUT_FILE "file1.k03"
 #define AST_OUTPUT_FILE "ast.txt"
 
 unsigned char errorMessagesPtrToLastBytePtr[8 * 1024 * 1024] = { '\0' };
@@ -237,7 +237,7 @@ struct NonContainedLexemInfo {
 };
 #endif
 
-void printLexemes(struct LexemInfo* lexemInfoTable, char printBadLexeme/* = 0*/);
+void printLexemes(struct LexemInfo* lexemInfoTable, char printBadLexeme/* = 0*/, bool wideMode);
 void printLexemesToFile(struct LexemInfo* lexemInfoTable, char printBadLexeme, const char* filename);
 unsigned int getIdentifierId(char(*identifierIdsTable)[MAX_LEXEM_SIZE], char* str);
 unsigned int tryToGetIdentifier(struct LexemInfo* lexemInfoInTable, char(*identifierIdsTable)[MAX_LEXEM_SIZE]);
@@ -306,21 +306,33 @@ NonContainedLexemInfo::NonContainedLexemInfo(const LexemInfo& lexemInfo) {
 	col = lexemInfo.col;
 }
 
-void printLexemes(struct LexemInfo* lexemInfoTable, char printBadLexeme) {
+void printLexemes(struct LexemInfo* lexemInfoTable, char printBadLexeme, bool wideMode = false) {
 	if (printBadLexeme) {
 		printf("Bad lexeme:\r\n");
 	}
 	else {
 		printf("Lexemes table:\r\n");
 	}
-	printf("-------------------------------------------------------------------\r\n");
-	//printf("index\t\tlexeme\t\tid\ttype\tifvalue\trow\tcol\r\n");
-	printf("index           lexeme          id      type    ifvalue row     col\r\n");
-	printf("-------------------------------------------------------------------\r\n");
-	for (unsigned long long int index = 0; (!index || !printBadLexeme) && lexemInfoTable[index].lexemStr[0] != '\0'; ++index) {
-		printf("%5llu%17s%12llu%10llu%11llu%4lld%8lld\r\n", index, lexemInfoTable[index].lexemStr, lexemInfoTable[index].lexemId, lexemInfoTable[index].tokenType, lexemInfoTable[index].ifvalue, lexemInfoTable[index].row, lexemInfoTable[index].col);
+	if (wideMode) {
+		printf("----------------------------------------------------------------------------------------------------\r\n");
+		//printf("index\t\tlexeme\t\tid\ttype\tifvalue\trow\tcol\r\n");
+		printf("index           lexeme                                           id      type    ifvalue row     col\r\n");
+		printf("----------------------------------------------------------------------------------------------------\r\n");
+		for (unsigned long long int index = 0; (!index || !printBadLexeme) && lexemInfoTable[index].lexemStr[0] != '\0'; ++index) {
+			printf("%5llu%50s%12llu%10llu%11llu%4lld%8lld\r\n", index, lexemInfoTable[index].lexemStr, lexemInfoTable[index].lexemId, lexemInfoTable[index].tokenType, lexemInfoTable[index].ifvalue, lexemInfoTable[index].row, lexemInfoTable[index].col);
+		}
+		printf("----------------------------------------------------------------------------------------------------\r\n");
 	}
-	printf("-------------------------------------------------------------------\r\n\r\n");
+	else {
+		printf("-------------------------------------------------------------------\r\n");
+		//printf("index\t\tlexeme\t\tid\ttype\tifvalue\trow\tcol\r\n");
+		printf("index           lexeme          id      type    ifvalue row     col\r\n");
+		printf("-------------------------------------------------------------------\r\n");
+		for (unsigned long long int index = 0; (!index || !printBadLexeme) && lexemInfoTable[index].lexemStr[0] != '\0'; ++index) {
+			printf("%5llu%17s%12llu%10llu%11llu%4lld%8lld\r\n", index, lexemInfoTable[index].lexemStr, lexemInfoTable[index].lexemId, lexemInfoTable[index].tokenType, lexemInfoTable[index].ifvalue, lexemInfoTable[index].row, lexemInfoTable[index].col);
+		}
+		printf("-------------------------------------------------------------------\r\n\r\n");
+	}
 
 	return;
 }
@@ -2445,6 +2457,7 @@ void buildPutMarkerOfStructure__DPDA1forLL2(Grammar& grammar, DPDA1Program& dpda
 void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instructions& dpda1Instructions, PrecursorIds& precursorIds, DPDA1IndexingBySecondElement& dpda1IndexingBySecondElement, bool cancelIndexingBySecondElementForLL1Rule = false, bool useShortTable = true) {
 	// init codes
 	terminalAndNonTerminalIdsInit(grammar/*, lexemInfoTable*//*, int lastNonUsedid ! */);
+	buildTerminalAndNonTerminalLexemStrs__copy();
 
 	//for (const auto& [key, value] : terminalAndNonTerminalLexemIds) { // Using Structured Bindings (C++17 and later)
 	//	std::cout << "Key: \"" << key << "\", Value: " << value << std::endl;
@@ -2452,8 +2465,6 @@ void buildDPDA1forLL2(Grammar& grammar, DPDA1Program& dpda1Program, DPDA1Instruc
 	for (const auto& pair : terminalAndNonTerminalLexemIds) { // Using a Range-Based For Loop (C++11 and later)
 		std::cout << "Key: \"" << pair.first << "\", Value: " << (unsigned int)pair.second << std::endl;
 	}
-
-	buildTerminalAndNonTerminalLexemStrs__copy();
 
 	// dead state
 	//buildDeadState__DPDA1forLL2(grammar, dpda1Program, dpda1IndexingBySecondElement); // TERMINAL INIT AFTER SCAN SOURCE
@@ -2506,13 +2517,16 @@ unsigned char data_out_buffer[MAX_WORD_COUNT] = { EMPTY_TOKEN_LEXEM_ID };
 #endif
 
 void buildStructuredLexemInfoTable(struct LexemInfo* lexemInfoTable, unsigned char* tape, struct LexemInfo* structuredLexemInfoTable) {
-	printf("Warning: add EMPTY_TOKEN_LEXEM_ID to end of out tape.");
+	printf("Warning: add EMPTY_TOKEN_LEXEM_ID to end of out tape.\n");
 	
 	if (!lexemInfoTable || !structuredLexemInfoTable)
 		return; // !
 
 	for (; *tape != EMPTY_TOKEN_LEXEM_ID; ++tape, ++structuredLexemInfoTable) { // EMPTY_TOKEN_LEXEM_ID
-		if (*tape == lexemInfoTable->lexemId) {
+		unsigned char firstCode = *tape, lastCode = *tape;
+		getMetaterminalRange(*tape, firstCode, lastCode);
+		if (firstCode <= lexemInfoTable->lexemId
+			&& lastCode >= lexemInfoTable->lexemId) {
 			//index, 
 			//lexemInfoTable[index].lexemStr,
 			//lexemInfoTable[index].lexemId,
@@ -2521,7 +2535,8 @@ void buildStructuredLexemInfoTable(struct LexemInfo* lexemInfoTable, unsigned ch
 			//lexemInfoTable[index].row,
 			//lexemInfoTable[index].col;
 
-			*structuredLexemInfoTable = *lexemInfoTable; //  default assign constr
+			*structuredLexemInfoTable = *lexemInfoTable++; //  default assign constr
+			//++lexemInfoTable;
 #if 0
 			strncpy(structuredLexemInfoTable->lexemStr, lexemInfoTable->lexemStr, MAX_LEXEM_SIZE);
 			structuredLexemInfoTable->lexemId = lexemInfoTable->lexemId; // *tape
@@ -2536,16 +2551,16 @@ void buildStructuredLexemInfoTable(struct LexemInfo* lexemInfoTable, unsigned ch
 		}
 		else {
 			std::string lexemStr;
-			bool lexemHasString = getLexemStr(*tape, lexemStr);
+			bool lexemHasString = getLexemStr(*tape, lexemStr); // TODO: need init in analyze mode!
 			if (lexemHasString)
-				strncpy(structuredLexemInfoTable->lexemStr, lexemInfoTable->lexemStr, MAX_LEXEM_SIZE);
+				strncpy(structuredLexemInfoTable->lexemStr, lexemStr.c_str(), MAX_LEXEM_SIZE);
 			else
-				structuredLexemInfoTable->lexemStr[0] = '\0';
+				sprintf(structuredLexemInfoTable->lexemStr, "0x%02X", *tape);
 			structuredLexemInfoTable->lexemId = *tape;
 			structuredLexemInfoTable->tokenType = NONTERMINAL_LEXEME_TYPE;// lexemInfoTable->tokenType; // NONTERMINAL
 			structuredLexemInfoTable->ifvalue = 0;
-			structuredLexemInfoTable->row = lexemInfoTable[1].row; // position of next terminal
-			structuredLexemInfoTable->col = lexemInfoTable[1].col; // position of next terminal
+			structuredLexemInfoTable->row = lexemInfoTable->row; // position of current terminal
+			structuredLexemInfoTable->col = lexemInfoTable->col; // position of current terminal
 			//++structuredLexemInfoTable;
 		}
 	}
@@ -2556,7 +2571,7 @@ void buildStructuredLexemInfoTable(struct LexemInfo* lexemInfoTable, unsigned ch
 	structuredLexemInfoTable->ifvalue = 0;
 	structuredLexemInfoTable->row = ~0;
 	structuredLexemInfoTable->col = ~0;
-	++structuredLexemInfoTable;
+	//++structuredLexemInfoTable;
 	
 //	for (unsigned long long int index = 0; lexemInfoTable[index].lexemStr[0] != '\0'; ++index) {
 //		//index, 
@@ -2584,7 +2599,7 @@ bool buildASTFByOutputTape(struct LexemInfo* structuredLexemInfoTable, ASTNode**
 	ASTNode* stackOfASTParentNode[MAX_RULES] = { nullptr };
 	ASTNode** stackOfASTParentNodeAboveTop = stackOfASTParentNode;
 
-	for (*baseASTNode = nullptr; structuredLexemInfoTable; ++structuredLexemInfoTable) {
+	for (*baseASTNode = nullptr; structuredLexemInfoTable->lexemId != EMPTY_TOKEN_LEXEM_ID; ++structuredLexemInfoTable) {
 		if (structuredLexemInfoTable->lexemId >= KEYWORD_LEXEM_MIN_ID && structuredLexemInfoTable->lexemId <= LITERAL_LEXEM_MAX_ID) {
 			ASTNode* node = new(std::nothrow) ASTNode(structuredLexemInfoTable->lexemStr, true);
 			if (!node || !stackOfASTParentNodeAboveTop[-1]) {
@@ -2728,8 +2743,23 @@ int syntaxAnalyzeUsePDA(struct LexemInfo* lexemInfoTable, Grammar* grammar, char
 		, data_out_buffer
 #endif
 	); // *dpda1.stack_above_top++ = PROGRAM_RULE_ID;
+
+
+	// II
+	// init codes
+	terminalAndNonTerminalIdsInit(*grammar);
+	buildTerminalAndNonTerminalLexemStrs__copy();
+
+	//for (const auto& [key, value] : terminalAndNonTerminalLexemIds) { // Using Structured Bindings (C++17 and later)
+	//	std::cout << "Key: \"" << key << "\", Value: " << value << std::endl;
+	//}
+	//for (const auto& pair : terminalAndNonTerminalLexemIds) { // Using a Range-Based For Loop (C++11 and later)
+	//	std::cout << "Key: \"" << pair.first << "\", Value: " << (unsigned int)pair.second << std::endl;
+	//}
+
 	buildStructuredLexemInfoTable(lexemesInfoTable, data_out_buffer, structuredLexemInfoTable);
-	if (buildASTFByOutputTape(structuredLexemInfoTable, &astRoot)) {
+	printLexemes(structuredLexemInfoTable, 0, true);
+	if (!buildASTFByOutputTape(structuredLexemInfoTable, &astRoot)) {
 		printf("Error of AST biuild.\n");
 		exit(0);
 	}
@@ -2741,7 +2771,7 @@ int syntaxAnalyzeUsePDA(struct LexemInfo* lexemInfoTable, Grammar* grammar, char
 
 	//struct LexemInfo* lastLexemInfo = syntaxLL2(grammar, grammar->start_symbol, lexemInfoTable, &astRoot, &unexpectedLexemfailedTerminal);
 
-	if (dpda1.data_in == EMPTY_TOKEN_LEXEM_ID) {
+	if (*dpda1.data_in == EMPTY_TOKEN_LEXEM_ID) {
 		if (viewAST) {
 			printAST(lexemInfoTable, astRoot);
 		}
@@ -2818,7 +2848,7 @@ int main(int argc, char* argv[]) {
 	else {
 		printLexemes(lexemesInfoTable, 0);
 
-		if (0/*SUCCESS*/ != syntaxAnalyzeUsePDA(lexemesInfoTable, &grammar, !"char syntaxlAnalyzeMode/* not used */", (char*)"astFileName"".ast", (char*)errorMessagesPtrToLastBytePtr, true)) {		
+		if (0/*SUCCESS*/ != syntaxAnalyzeUsePDA(lexemesInfoTable, &grammar, !"char syntaxlAnalyzeMode/* not used */", (char*)AST_OUTPUT_FILE, (char*)errorMessagesPtrToLastBytePtr, true)) {
 			// printf("Syntax analyze error\n");
 		}
 			
