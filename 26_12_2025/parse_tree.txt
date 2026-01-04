@@ -1,150 +1,340 @@
     |--program_rule
     |    |--"NAME"
-    |    |--"_PROGRAM"
+    |    |--program_name
+    |    |    |--ident
+    |    |    |    |--"_PROGRAM"
     |    |--";"
     |    |--"BODY"
     |    |--"DATA"
-    |    |--declaration
-    |    |    |--"INTEGER16"
-    |    |    |--"_AAAAAAA"
-    |    |    |--other_declaration_ident__iteration
-    |    |    |    |--other_declaration_ident
-    |    |    |    |    |--","
-    |    |    |    |    |--"_BBBBBBB"
+    |    |--declaration__optional
+    |    |    |--declaration
+    |    |    |    |--value_type
+    |    |    |    |    |--"INTEGER16"
+    |    |    |    |--declaration_element
+    |    |    |    |    |--ident
+    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |--array_specify__optional
     |    |    |    |--other_declaration_ident__iteration
     |    |    |    |    |--other_declaration_ident
     |    |    |    |    |    |--","
-    |    |    |    |    |    |--"_XXXXXXX"
-    |    |    |    |    |--other_declaration_ident
-    |    |    |    |    |    |--","
-    |    |    |    |    |    |--"_YYYYYYY"
+    |    |    |    |    |    |--declaration_element
+    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |--array_specify__optional
+    |    |    |    |    |--other_declaration_ident__iteration
+    |    |    |    |    |    |--other_declaration_ident
+    |    |    |    |    |    |    |--","
+    |    |    |    |    |    |    |--declaration_element
+    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
+    |    |    |    |    |    |    |    |--array_specify__optional
+    |    |    |    |    |    |--other_declaration_ident__iteration
+    |    |    |    |    |    |    |--other_declaration_ident
+    |    |    |    |    |    |    |    |--","
+    |    |    |    |    |    |    |    |--declaration_element
+    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |--"_YYYYYYY"
+    |    |    |    |    |    |    |    |    |--array_specify__optional
+    |    |    |    |    |    |    |--other_declaration_ident__iteration
     |    |--";"
     |    |--statement__iteration
-    |    |    |--input_rule
-    |    |    |    |--"GET"
-    |    |    |    |--argument_for_input
-    |    |    |    |    |--"("
-    |    |    |    |    |--"_AAAAAAA"
-    |    |    |    |    |--")"
-    |    |    |--statement__iteration
+    |    |    |--statement
     |    |    |    |--input_rule
     |    |    |    |    |--"GET"
     |    |    |    |    |--argument_for_input
     |    |    |    |    |    |--"("
-    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |--index_action__optional
     |    |    |    |    |    |--")"
-    |    |    |    |--statement__iteration
-    |    |    |    |    |--output_rule
-    |    |    |    |    |    |--"PUT"
-    |    |    |    |    |    |--group_expression
+    |    |    |--statement__iteration
+    |    |    |    |--statement
+    |    |    |    |    |--input_rule
+    |    |    |    |    |    |--"GET"
+    |    |    |    |    |    |--argument_for_input
     |    |    |    |    |    |    |--"("
-    |    |    |    |    |    |    |--expression
-    |    |    |    |    |    |    |    |--"_AAAAAAA"
-    |    |    |    |    |    |    |    |--binary_action
-    |    |    |    |    |    |    |    |    |--"+"
-    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |--index_action__optional
     |    |    |    |    |    |    |--")"
-    |    |    |    |    |--statement__iteration
+    |    |    |    |--statement__iteration
+    |    |    |    |    |--statement
     |    |    |    |    |    |--output_rule
     |    |    |    |    |    |    |--"PUT"
-    |    |    |    |    |    |    |--group_expression
-    |    |    |    |    |    |    |    |--"("
-    |    |    |    |    |    |    |    |--expression
-    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
-    |    |    |    |    |    |    |    |    |--binary_action
-    |    |    |    |    |    |    |    |    |    |--"-"
-    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
-    |    |    |    |    |    |    |    |--")"
-    |    |    |    |    |    |--statement__iteration
-    |    |    |    |    |    |    |--output_rule
-    |    |    |    |    |    |    |    |--"PUT"
-    |    |    |    |    |    |    |    |--group_expression
-    |    |    |    |    |    |    |    |    |--"("
-    |    |    |    |    |    |    |    |    |--expression
-    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
-    |    |    |    |    |    |    |    |    |    |--binary_action
-    |    |    |    |    |    |    |    |    |    |    |--"*"
-    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
-    |    |    |    |    |    |    |    |    |--")"
-    |    |    |    |    |    |    |--statement__iteration
-    |    |    |    |    |    |    |    |--output_rule
-    |    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |--left_expression
     |    |    |    |    |    |    |    |    |--group_expression
     |    |    |    |    |    |    |    |    |    |--"("
     |    |    |    |    |    |    |    |    |    |--expression
-    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
-    |    |    |    |    |    |    |    |    |    |    |--binary_action
-    |    |    |    |    |    |    |    |    |    |    |    |--"DIV"
-    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"+"
+    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
     |    |    |    |    |    |    |    |    |    |--")"
-    |    |    |    |    |    |    |    |--statement__iteration
-    |    |    |    |    |    |    |    |    |--output_rule
-    |    |    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |--statement
+    |    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |--left_expression
     |    |    |    |    |    |    |    |    |    |--group_expression
     |    |    |    |    |    |    |    |    |    |    |--"("
     |    |    |    |    |    |    |    |    |    |    |--expression
-    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
-    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
-    |    |    |    |    |    |    |    |    |    |    |    |    |--"MOD"
-    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"-"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
     |    |    |    |    |    |    |    |    |    |    |--")"
-    |    |    |    |    |    |    |    |    |--statement__iteration
-    |    |    |    |    |    |    |    |    |    |--labeled_point
-    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
-    |    |    |    |    |    |    |    |    |    |    |--":="
-    |    |    |    |    |    |    |    |    |    |--statement__iteration
-    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |--statement
+    |    |    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"*"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |--statement
+    |    |    |    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |--left_expression
     |    |    |    |    |    |    |    |    |    |    |    |--group_expression
     |    |    |    |    |    |    |    |    |    |    |    |    |--"("
     |    |    |    |    |    |    |    |    |    |    |    |    |--expression
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"-"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
-    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
-    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
-    |    |    |    |    |    |    |    |    |    |    |    |    |--"*"
-    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"10"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"+"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"+"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
     |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"DIV"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"10"
-    |    |    |    |    |    |    |    |    |    |    |--statement__iteration
-    |    |    |    |    |    |    |    |    |    |    |    |--labeled_point
-    |    |    |    |    |    |    |    |    |    |    |    |    |--"_YYYYYYY"
-    |    |    |    |    |    |    |    |    |    |    |    |    |--":="
-    |    |    |    |    |    |    |    |    |    |    |    |--statement__iteration
-    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"+"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |--statement
+    |    |    |    |    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
     |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"MOD"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"10"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"MOD"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |    |--statement
+    |    |    |    |    |    |    |    |    |    |    |--labeled_point
+    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
+    |    |    |    |    |    |    |    |    |    |    |    |--":="
+    |    |    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |    |    |--statement
+    |    |    |    |    |    |    |    |    |    |    |    |--expression_or_cond_block__with_optional_assign
+    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"-"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"*"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--value
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--sign__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--unsigned_value
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"10"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"+"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"+"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"DIV"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--value
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--sign__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--unsigned_value
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"10"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |--assign_to_right__optional
+    |    |    |    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |--statement
+    |    |    |    |    |    |    |    |    |    |    |    |    |--labeled_point
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_YYYYYYY"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--":="
+    |    |    |    |    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |--statement
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression_or_cond_block__with_optional_assign
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"+"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_operator
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"MOD"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--value
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--sign__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--unsigned_value
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"10"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--assign_to_right__optional
     |    |    |    |    |    |    |    |    |    |    |    |    |--statement__iteration
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |--output_rule
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"PUT"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |--output_rule
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"PUT"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_YYYYYYY"
-    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--statement
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--statement
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--left_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--ident
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_YYYYYYY"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--index_action__optional
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--statement__iteration
     |    |--"END"

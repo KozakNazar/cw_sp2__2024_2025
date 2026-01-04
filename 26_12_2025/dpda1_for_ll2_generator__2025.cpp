@@ -2780,9 +2780,9 @@ int syntaxAnalyzeUsePDA(struct LexemInfo* lexemInfoTable, Grammar* grammar, char
 			printf("\n\nParse Tree:\n");
 			printAST(lexemInfoTable, astRoot);
 		}
-		std::ofstream astOFStream(astFileName, std::ofstream::out);
-		printASTToFile(lexemInfoTable, astRoot, astOFStream);
-		astOFStream.close();
+		std::ofstream parseTreeOFStream(parseTreeFileName, std::ofstream::out);
+		printASTToFile(lexemInfoTable, astRoot, parseTreeOFStream);
+		parseTreeOFStream.close();
 
 		optimizeAST(astRoot);
 
@@ -2790,9 +2790,9 @@ int syntaxAnalyzeUsePDA(struct LexemInfo* lexemInfoTable, Grammar* grammar, char
 			printf("\n\nAbstract Syntax Tree (AST):\n");
 			printAST(lexemInfoTable, astRoot);
 		}
-		std::ofstream parseTreeOFStream(parseTreeFileName, std::ofstream::out);
-		printASTToFile(lexemInfoTable, astRoot, parseTreeOFStream);
-		parseTreeOFStream.close();
+		std::ofstream astOFStream(astFileName, std::ofstream::out);
+		printASTToFile(lexemInfoTable, astRoot, astOFStream);
+		astOFStream.close();
 
 		return SUCCESS_STATE;
 	}
