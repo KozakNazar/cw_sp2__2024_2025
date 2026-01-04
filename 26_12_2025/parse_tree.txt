@@ -1,0 +1,150 @@
+    |--program_rule
+    |    |--"NAME"
+    |    |--"_PROGRAM"
+    |    |--";"
+    |    |--"BODY"
+    |    |--"DATA"
+    |    |--declaration
+    |    |    |--"INTEGER16"
+    |    |    |--"_AAAAAAA"
+    |    |    |--other_declaration_ident__iteration
+    |    |    |    |--other_declaration_ident
+    |    |    |    |    |--","
+    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |--other_declaration_ident__iteration
+    |    |    |    |    |--other_declaration_ident
+    |    |    |    |    |    |--","
+    |    |    |    |    |    |--"_XXXXXXX"
+    |    |    |    |    |--other_declaration_ident
+    |    |    |    |    |    |--","
+    |    |    |    |    |    |--"_YYYYYYY"
+    |    |--";"
+    |    |--statement__iteration
+    |    |    |--input_rule
+    |    |    |    |--"GET"
+    |    |    |    |--argument_for_input
+    |    |    |    |    |--"("
+    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |--")"
+    |    |    |--statement__iteration
+    |    |    |    |--input_rule
+    |    |    |    |    |--"GET"
+    |    |    |    |    |--argument_for_input
+    |    |    |    |    |    |--"("
+    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |--")"
+    |    |    |    |--statement__iteration
+    |    |    |    |    |--output_rule
+    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |--"+"
+    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |--")"
+    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |--"-"
+    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |--"*"
+    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |--"DIV"
+    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |--"MOD"
+    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |    |--labeled_point
+    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
+    |    |    |    |    |    |    |    |    |    |    |--":="
+    |    |    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"-"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |--"*"
+    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"10"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"+"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_AAAAAAA"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"+"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_BBBBBBB"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"DIV"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"10"
+    |    |    |    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |--labeled_point
+    |    |    |    |    |    |    |    |    |    |    |    |    |--"_YYYYYYY"
+    |    |    |    |    |    |    |    |    |    |    |    |    |--":="
+    |    |    |    |    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"+"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--binary_action
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"MOD"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"10"
+    |    |    |    |    |    |    |    |    |    |    |    |    |--statement__iteration
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_XXXXXXX"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |--output_rule
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"PUT"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--group_expression
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"("
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--"_YYYYYYY"
+    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |--")"
+    |    |--"END"

@@ -387,7 +387,7 @@
     {LA_IS, {""}, 1, { "cycle_end_expression" }}\
 }}},\
 {LA_IS, { T_DO_0 }, { "cycle_body",{\
-    {LA_IS, {""}, 2, { T_DO_0, "statements__or__block_statements" }}\
+    {LA_IS, {""}, 2, { T_DO_0, "statement__or__block_statements" }}\
 }}},\
 {LA_IS, { T_TO_0 }, { "forto_direction",{\
     {LA_IS, {""}, 1, { T_TO_0 }}\
@@ -432,12 +432,12 @@
     {LA_IS, {""}, 1, { "expression" }}\
 }}},\
 {LA_IS, { T_REPEAT_0 }, { "repeat_until_cycle",{\
-    {LA_IS, {""}, 4, { T_REPEAT_0, "statements__or__block_statements", T_UNTIL_0, "repeat_until_cycle_cond" }}\
+    {LA_IS, {""}, 4, { T_REPEAT_0, "statement__or__block_statements", T_UNTIL_0, "repeat_until_cycle_cond" }}\
 }}},\
-{LA_IS, { "ident_terminal", "(", T_NOT_0, "unsigned_value_terminal", T_ADD_0, T_SUB_0, T_IF_0, T_FOR_0, T_WHILE_0, T_REPEAT_0, T_GOTO_0, T_INPUT_0, T_OUTPUT_0, T_SEMICOLON_0 }, { "statements__or__block_statements",{\
-    {LA_IS, {""}, 1, { "statement__iteration" }}\
+{LA_IS, { "ident_terminal", "(", T_NOT_0, "unsigned_value_terminal", T_ADD_0, T_SUB_0, T_IF_0, T_FOR_0, T_WHILE_0, T_REPEAT_0, T_GOTO_0, T_INPUT_0, T_OUTPUT_0, T_SEMICOLON_0 }, { "statement__or__block_statements",{\
+    {LA_IS, {""}, 1, { "statement" }}\
 }}},\
-{LA_IS, { T_BEGIN_BLOCK_0 }, { "statements__or__block_statements",{\
+{LA_IS, { T_BEGIN_BLOCK_0 }, { "statement__or__block_statements",{\
     {LA_IS, {""}, 1, { "block_statements" }}\
 }}},\
 {LA_IS, { T_INPUT_0 }, { "input_rule",{\
