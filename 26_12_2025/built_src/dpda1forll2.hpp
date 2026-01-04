@@ -79,8 +79,8 @@ typedef unsigned char PrecursorIds[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
 //#define EMPTY_PDA_INSTRUCTION { NO_SCROLL, {PUSH, {123, 123, 4, 0}}}
 //#define PDA_DEAD_STATE_INSTRUCTION { 0, NO_SCROLL, {NOTHING, {-1, -1, -1, -1}}} // -1 => ?
 
-typedef unsigned char DPDA1IndexingForSecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
-//DPDA1IndexingForSecondElement dpdaIndexingForSecondElement;
+typedef unsigned char DPDA1IndexingBySecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_STATES];
+//DPDA1IndexingBySecondElement dpdaIndexingBySecondElement;
 
 // TODO: USE MEMSET !
 
@@ -110,7 +110,7 @@ typedef struct StructDPDA1{
 	//DPDA1Program * dpdaProgram; // REMOVE!
 	DPDA1ReverseInstructions * dpda1ReverseInstructions;
 	PrecursorIds * precursorIds;
-	DPDA1IndexingForSecondElement* dpdaIndexingForSecondElement; // by second element!!!!!
+	DPDA1IndexingBySecondElement* dpdaIndexingBySecondElement; // by second element!!!!!
 	void(*run)(struct StructDPDA1 * dpda1);
 	// int state; // one state
 
@@ -181,12 +181,13 @@ void runner3(DPDA1 * dpda1){
 
 #define SECOND_ELEMENT_INDEX 1
 #ifdef USE_DPDA1_MODEL
-		char rhsConteinerIndex = (*dpda1->dpdaIndexingForSecondElement)[dpda1->data_in[SECOND_ELEMENT_INDEX]][*(dpda1->stack_above_top + SAVE_OFFSET - 1)]; // 
+		char rhsConteinerIndex = (*dpda1->dpdaIndexingBySecondElement)[dpda1->data_in[SECOND_ELEMENT_INDEX]][*(dpda1->stack_above_top + SAVE_OFFSET - 1)] // + 
+		                         & dpda1ReverseInstruction->rhsVariantAddonIndexMask;
 #elif defined(USE_DPDA2_MODEL)
 		...
 #endif		
 		//NEW//unsigned char* stackAddonLastElementPtr = stackUpdate->stackAddon[rhsConteinerIndex];
-			// = stackUpdate->stackAddon[DPDA1IndexingForSecondElement[][]];
+			// = stackUpdate->stackAddon[DPDA1IndexingBySecondElement[][]];
 		switch (dpda1ReverseInstruction->stackUpdate.stackAction) {
 
 #ifdef USE_DPDA1_MODEL
@@ -247,7 +248,7 @@ void runner3(DPDA1 * dpda1){
 #pragma comment(linker, "/STACK:16777000,16777000")
 #endif
 DPDA1 dpda1;// = { data, dpdaProgram, runner3/*, 0*//*Q000*/ /*...*/, dpda1.stack + SAVE_OFFSET };
-char tryToAcceptDPDA(/*DPDA1Program * dpdaProgram, */PrecursorIds* precursorIds, DPDA1ReverseInstructions* dpda1ReverseInstructions, DPDA1IndexingForSecondElement* dpdaIndexingForSecondElement, unsigned char startState, unsigned char* data_in, unsigned char* data_out){
+char tryToAcceptDPDA(/*DPDA1Program * dpdaProgram, */PrecursorIds* precursorIds, DPDA1ReverseInstructions* dpda1ReverseInstructions, DPDA1IndexingBySecondElement* dpdaIndexingBySecondElement, unsigned char startState, unsigned char* data_in, unsigned char* data_out){
 	//DPDA1
 	//dpda1 = { data, dpdaProgram, runner3/*, 0*//*Q000*/ /*...*/, dpda1.stack + SAVE_OFFSET };
 
@@ -256,7 +257,7 @@ char tryToAcceptDPDA(/*DPDA1Program * dpdaProgram, */PrecursorIds* precursorIds,
 //	dpda1.dpdaProgram = dpdaProgram;
 	dpda1.dpda1ReverseInstructions = dpda1ReverseInstructions;
 	dpda1.precursorIds = precursorIds;
-	dpda1.dpdaIndexingForSecondElement = dpdaIndexingForSecondElement;
+	dpda1.dpdaIndexingBySecondElement = dpdaIndexingBySecondElement;
 	dpda1.run = runner3;
 	dpda1.stack_above_top = dpda1.stack + SAVE_OFFSET;
 
