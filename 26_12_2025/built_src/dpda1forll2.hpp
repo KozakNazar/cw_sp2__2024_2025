@@ -84,18 +84,6 @@ typedef unsigned char DPDA1IndexingBySecondElement[LL2_SYMBOL_NUMBER][LL2_MAX_ST
 
 // TODO: USE MEMSET !
 
-//DPDA1Program dpdaProgram; 
-//= { /* default pass */
-//	//                       {q0, a0}                    {q0, 0}                                   {q0, 1}                                   {q0, ^}                                   {q0, NT123}
-//	/* a0 */{ {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}},  PDA_DEAD_STATE_INSTRUCTION,               PDA_DEAD_STATE_INSTRUCTION,               PDA_DEAD_STATE_INSTRUCTION,               {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH                   }}  },
-//	/* 0  */{ {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}},  {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, },
-//	/* 1  */{ {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}},  {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, },
-//	/* ^  */{ {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}},  {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, {0, NO_SCROLL, {POP_AND_MULTIPLIPUSH, {123, 123, 4, 0}}}, }
-//};
-
-//typedef char Stack[8192] STATCK;
-//STATCK stack = {'\0'};
-
 #define STACK_TOP_STATE(STACK) STACK[0]
 
 #define STACK_EMPTY_STATE(STACK) (stackSize == 0)
@@ -199,6 +187,9 @@ void runner3(DPDA1 * dpda1){
 
 #if defined(USE_PRE_ORDER_MARKER) && defined(MARKER_OF_STRUCTURE_ID)							
 			*dpda1->data_out++ = *--dpda1->stack_above_top; // POP for first // tape_out
+			if (*dpda1->stack_above_top == 4) {
+				printf("123\n");
+			}
 #endif
 			
 			// multi push
