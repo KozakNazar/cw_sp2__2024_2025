@@ -1,0 +1,24 @@
+ASTNode* optimizeAST(ASTNode* node) {
+	if (!node) return nullptr;
+
+	for (size_t childrenIndex = 0; childrenIndex < node->childrens.size();) {
+		node->childrens[childrenIndex] = optimizeAST(node->childrens[childrenIndex]);
+		if (node->childrens[childrenIndex] == nullptr) node->childrens.erase(node->childrens.begin() + childrenIndex);
+		else ++childrenIndex;
+	}
+
+	if (!node->isTerminal && node->childrens.size() <= 1) {
+		if (node->childrens.empty()) {
+			delete node;
+			return nullptr;
+		}
+		else if (node->childrens.size() == 1) {
+			ASTNode* child = node->childrens[0];
+			node->childrens.clear(); // Important
+			delete node;
+			return child;
+		}
+	}
+
+	return node;
+}
