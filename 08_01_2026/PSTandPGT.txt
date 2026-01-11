@@ -251,8 +251,8 @@ void printPST(const PGTNode* node, std::vector<const PGTNode*>& printedNodes, bo
 
 	bool isOptional = false, isOptional_ = isOptional;
 	bool isIteration = false, isIteration_ = isIteration;
-	while (((isOptional_ = node->value.find("_optional") != std::string::npos) ||
-		(isIteration_ = node->value.find("_iteration") != std::string::npos)) &&
+	while (((isOptional_ = node->value.find("__optional") != std::string::npos) ||
+		(isIteration_ = node->value.find("__iteration") != std::string::npos)) &&
 		node->childrens.size() && node->childrens[0].size()
 		){ 
 		isOptional |= isOptional_;
@@ -317,8 +317,8 @@ void printPSTToFile(const PGTNode* node, std::vector<const PGTNode*>& printedNod
 
 	bool isOptional = false, isOptional_ = isOptional;
 	bool isIteration = false, isIteration_ = isIteration;
-	while (((isOptional_ = node->value.find("_optional") != std::string::npos) ||
-		(isIteration_ = node->value.find("_iteration") != std::string::npos)) &&
+	while (((isOptional_ = node->value.find("__optional") != std::string::npos) ||
+		(isIteration_ = node->value.find("__iteration") != std::string::npos)) &&
 		node->childrens.size() && node->childrens[0].size()
 		){ 
 		isOptional |= isOptional_;
