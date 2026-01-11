@@ -210,7 +210,7 @@ void printPGTToFile(const PGTNode* node, std::vector<const PGTNode*>& printedNod
 
 	if (!node) {
 		fprintf(f, "\"\"\n");
-		fwprintf(fw, L"\"%ls\"\n", EPSILON); // fwprintf(fw, L"%lc {", 0x2192);
+		fwprintf(fw, L"%ls\n", EPSILON); // fwprintf(fw, L"%lc {", 0x2192);
 		return;
 	}
 	else if (node->isTerminal){

@@ -18,14 +18,14 @@
      |     |     |     |     |     |     |--unsigned_value
      |     |     |     |     |     |     |     |--"unsigned_value_terminal"
      |     |     |     |     |     |     |--"]"
-     |     |     |     |     |   v02--"ε"
+     |     |     |     |     |   v02--ε
      |     |     |     |--other_declaration_ident__iteration
      |     |     |     |   v01--other_declaration_ident
      |     |     |     |     |     |--","
      |     |     |     |     |     |--declaration_element
      |     |     |     |     |--other_declaration_ident__iteration
-     |     |     |     |   v02--"ε"
-     |     |   v02--"ε"
+     |     |     |     |   v02--ε
+     |     |   v02--ε
      |     |--";"
      |     |--statement__iteration
      |     |   v01--statement
@@ -58,7 +58,7 @@
      |     |     |     |     |     |     |     |     |     |     |   v03--break_while
      |     |     |     |     |     |     |     |     |     |     |     |     |--"BREAK"
      |     |     |     |     |     |     |     |     |     |     |--statement_in_while_and_if_body__iteration
-     |     |     |     |     |     |     |     |     |     |   v02--"ε"
+     |     |     |     |     |     |     |     |     |     |   v02--ε
      |     |     |     |     |     |     |     |     |     |--"}"
      |     |     |     |     |     |     |     |--false_cond_block_without_else__iteration
      |     |     |     |     |     |     |     |   v01--false_cond_block_without_else
@@ -67,7 +67,7 @@
      |     |     |     |     |     |     |     |     |     |--if_expression
      |     |     |     |     |     |     |     |     |     |--body_for_true
      |     |     |     |     |     |     |     |     |--false_cond_block_without_else__iteration
-     |     |     |     |     |     |     |     |   v02--"ε"
+     |     |     |     |     |     |     |     |   v02--ε
      |     |     |     |     |     |     |     |--body_for_false__optional
      |     |     |     |     |     |     |     |   v01--body_for_false
      |     |     |     |     |     |     |     |     |     |--"ELSE"
@@ -75,7 +75,7 @@
      |     |     |     |     |     |     |     |     |     |     |--"{"
      |     |     |     |     |     |     |     |     |     |     |--statement__iteration
      |     |     |     |     |     |     |     |     |     |     |--"}"
-     |     |     |     |     |     |     |     |   v02--"ε"
+     |     |     |     |     |     |     |     |   v02--ε
      |     |     |     |     |     |   v04--value
      |     |     |     |     |     |     |     |--sign__optional
      |     |     |     |     |     |     |     |   v01--sign
@@ -83,7 +83,7 @@
      |     |     |     |     |     |     |     |     |     |     |--"+"
      |     |     |     |     |     |     |     |     |   v02--sign_minus
      |     |     |     |     |     |     |     |     |     |     |--"-"
-     |     |     |     |     |     |     |     |   v02--"ε"
+     |     |     |     |     |     |     |     |   v02--ε
      |     |     |     |     |     |     |     |--unsigned_value
      |     |     |     |     |     |   v05--ident
      |     |     |     |     |     |     |--index_action__optional
@@ -91,7 +91,7 @@
      |     |     |     |     |     |     |     |     |--"["
      |     |     |     |     |     |     |     |     |--expression
      |     |     |     |     |     |     |     |     |--"]"
-     |     |     |     |     |     |     |   v02--"ε"
+     |     |     |     |     |     |     |   v02--ε
      |     |     |     |     |     |--binary_action__iteration
      |     |     |     |     |     |   v01--binary_action
      |     |     |     |     |     |     |     |--binary_operator
@@ -108,13 +108,13 @@
      |     |     |     |     |     |     |     |   v11--"MOD"
      |     |     |     |     |     |     |     |--expression
      |     |     |     |     |     |     |--binary_action__iteration
-     |     |     |     |     |     |   v02--"ε"
+     |     |     |     |     |     |   v02--ε
      |     |     |     |     |--assign_to_right__optional
      |     |     |     |     |   v01--assign_to_right
      |     |     |     |     |     |     |--"=:"
      |     |     |     |     |     |     |--ident
      |     |     |     |     |     |     |--index_action__optional
-     |     |     |     |     |   v02--"ε"
+     |     |     |     |     |   v02--ε
      |     |     |   v03--goto_label
      |     |     |     |     |--"GOTO"
      |     |     |     |     |--ident
@@ -163,5 +163,5 @@
      |     |     |     |     |--expression
      |     |     |   v09--";"
      |     |     |--statement__iteration
-     |     |   v02--"ε"
+     |     |   v02--ε
      |     |--"END"
