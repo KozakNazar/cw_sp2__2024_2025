@@ -1,0 +1,377 @@
+// For use: /*
+	PGTNode* basePGTNode = nullptr;
+
+	buildPGT(grammar, &basePGTNode);
+
+	//printPGT(basePGTNode, printedNodes);
+	printPGTToFile(basePGTNode, printedNodes, (char*)"pgt_ANSI.txt", (char*)"pgt_UNICODE.txt");
+	//printf("\n\n");
+	//printPST(basePGTNode, printedNodes);
+	printPSTToFile(basePGTNode, printedNodes, (char*)"pst.txt");
+
+	PGTNode::cleanup();
+	nonterminalNodes.clear();
+	rhssForNonterminal.clear();
+
+	printf("\n* [v01], [v02] ... - alternative version\n");
+*/
+// Impl: // TODO: add to syntax.cpp
+struct PGTNode {
+	std::string value;
+	bool isTerminal;
+	std::vector<std::vector<PGTNode*>> childrens;
+
+	static std::vector<PGTNode*> allNodes;
+
+	PGTNode(const std::string& val, bool isTerminal) : isTerminal(isTerminal), value(val) {
+		allNodes.push_back(this);
+	}
+	~PGTNode() {
+		for (auto& variant : childrens) {
+			variant.clear();
+		}
+		childrens.clear();
+	}
+
+	static void cleanup() {
+		for (PGTNode* node : allNodes) {
+			delete node;
+		}
+		allNodes.clear();
+	}
+};
+std::vector<PGTNode*> PGTNode::allNodes;
+
+std::map<std::string, PGTNode*> nonterminalNodes;
+std::map<std::string, std::vector<std::vector<std::string>>> rhssForNonterminal;
+void buildPGT(Grammar& grammar, PGTNode** basePGTNode) {
+	PGTNode* node = nullptr;
+	for (MarkedRule* multiRule = grammar.multiRules; multiRule->firstMarksType; ++multiRule) {
+		if (!(node = new(std::nothrow) PGTNode(multiRule->rule.lhs, false))) {
+			printf("Memory error.\n");
+//			for (auto nonterminalNodesIterator = nonterminalNodes.begin(); nonterminalNodesIterator != nonterminalNodes.end(); ++nonterminalNodesIterator)
+//				if (nonterminalNodesIterator->second) delete nonterminalNodesIterator->second;
+			PGTNode::cleanup();
+			nonterminalNodes.clear();
+			rhssForNonterminal.clear();
+
+			return; // exit(0);
+		}
+		nonterminalNodes[multiRule->rule.lhs] = node;
+		//allNodes[multiRule->rule.lhs] = node;
+	}
+
+	auto nonterminalNodeIterator = nonterminalNodes.find(grammar.start_symbol);
+	if (nonterminalNodeIterator == nonterminalNodes.end()) {
+		printf("Error: no find start rule.\n");
+
+//		for (auto nonterminalNodesIterator = nonterminalNodes.begin(); nonterminalNodesIterator != nonterminalNodes.end(); ++nonterminalNodesIterator)
+//			if (nonterminalNodesIterator->second) delete nonterminalNodesIterator->second;
+		PGTNode::cleanup();
+		nonterminalNodes.clear();
+		rhssForNonterminal.clear();
+
+		return; // exit(0);
+	}
+	else *basePGTNode = nonterminalNodeIterator->second;
+
+	for (MarkedRule* multiRule = grammar.multiRules; multiRule->firstMarksType; ++multiRule) {
+		//if (false && !multiRule->rule.rhss[0].secondMarksType) {
+		//	continue;
+		//}
+		auto* rhssForNonterminalElementPtr = &rhssForNonterminal[multiRule->rule.lhs];
+		auto nonterminalNodeCurrentIterator = nonterminalNodes.find(multiRule->rule.lhs);
+		if (nonterminalNodeCurrentIterator == nonterminalNodes.end()) {
+			printf("Error: grammar is changed.\n");
+
+			//if (*basePGTNode) delete* basePGTNode;	
+			//*basePGTNode = nullptr;
+            //
+			//for (auto nonterminalNodesIterator = nonterminalNodes.begin(); nonterminalNodesIterator != nonterminalNodes.end(); ++nonterminalNodesIterator)	
+			//	if (nonterminalNodesIterator->second) delete nonterminalNodesIterator->second;
+			PGTNode::cleanup();
+			nonterminalNodes.clear();
+			rhssForNonterminal.clear();
+	
+			return;
+		}
+		for (unsigned int rhssVariantIndexByRule = 0; multiRule->rule.rhss[rhssVariantIndexByRule].secondMarksType/* && secondMarks[rhssVariantByRuleIterator][0] != '\0'*/; ++rhssVariantIndexByRule) {
+			bool findRHS = false;
+			for (auto rhssVariantIterator = rhssForNonterminalElementPtr->begin(); rhssVariantIterator != rhssForNonterminalElementPtr->end(); ++rhssVariantIterator) {
+				unsigned int rhsSize = rhssVariantIterator->size();
+				unsigned int rhssElementIndexByRule = 0;
+				for (; rhssElementIndexByRule < rhsSize
+					&& multiRule->rule.rhss[rhssVariantIndexByRule].rhs[rhssElementIndexByRule][0] != '\0'
+					&& (*rhssVariantIterator)[rhssElementIndexByRule] == multiRule->rule.rhss[rhssVariantIndexByRule].rhs[rhssElementIndexByRule]
+					; ++rhssElementIndexByRule);
+				if (rhssElementIndexByRule == rhsSize)
+					findRHS = true;
+			}
+
+			if (!findRHS) {
+				rhssForNonterminalElementPtr->push_back(std::vector<std::string>());
+				nonterminalNodeCurrentIterator->second->childrens.push_back(std::vector<PGTNode*>());
+				for (unsigned int rhssElementIndexByRule = 0; multiRule->rule.rhss[rhssVariantIndexByRule].rhs[rhssElementIndexByRule][0] != '\0'; ++rhssElementIndexByRule) {
+					// add rhs element
+					rhssForNonterminalElementPtr->back().push_back(multiRule->rule.rhss[rhssVariantIndexByRule].rhs[rhssElementIndexByRule]);
+					
+					// add pgt node
+					auto nonterminalNodeIterator = nonterminalNodes.find(multiRule->rule.rhss[rhssVariantIndexByRule].rhs[rhssElementIndexByRule]);
+					if (nonterminalNodeIterator == nonterminalNodes.end()) {
+						if (!(node = new(std::nothrow) PGTNode(multiRule->rule.rhss[rhssVariantIndexByRule].rhs[rhssElementIndexByRule], nonterminalNodeIterator == nonterminalNodes.end()))) {
+							printf("Memory error.\n");
+
+							//if (*basePGTNode) delete* basePGTNode;
+							//*basePGTNode = nullptr;
+                            //
+							//for (auto nonterminalNodesIterator = nonterminalNodes.begin(); nonterminalNodesIterator != nonterminalNodes.end(); ++nonterminalNodesIterator)
+							//	if (nonterminalNodesIterator->second) delete nonterminalNodesIterator->second;
+                            //
+							PGTNode::cleanup();
+							nonterminalNodes.clear();
+							rhssForNonterminal.clear();
+
+							return; // exit(0);
+						}
+						nonterminalNodeCurrentIterator->second->childrens.back().push_back(node);
+					}
+					else {
+						nonterminalNodeCurrentIterator->second->childrens.back().push_back(nonterminalNodeIterator->second);
+					}
+				}
+			}
+		}
+	}
+}
+
+std::vector<const PGTNode*> printedNodes;
+void printPGT(const PGTNode* node, std::vector<const PGTNode*>& printedNodes, bool multiVariantOfchildrensIfFirstChildren = false, unsigned int variantOfchildrensIndex = 0, int depth = 0) {
+	if (!depth) {
+		printedNodes.clear();
+	}
+	for (unsigned int depthIndex = 0; depthIndex < depth; ++depthIndex)
+		printf("     |");
+	if (multiVariantOfchildrensIfFirstChildren) printf("   v%02d--", variantOfchildrensIndex + 1);
+	else printf("     |--");
+
+	if (!node) {
+		printf("\"\"\n");
+		return;
+	}
+	else if (node->isTerminal)
+		printf("\"%s\"\n", node->value.c_str());
+	else
+		printf("%s\n", node->value.c_str());
+
+	auto printedNodesCurrentIterator = std::find(printedNodes.begin(), printedNodes.end(), node);
+	if (printedNodesCurrentIterator == printedNodes.end()) {
+		if (printedNodesCurrentIterator == printedNodes.end()) printedNodes.push_back(node);
+		for (unsigned int variantOfchildrensIndex = 0; variantOfchildrensIndex != node->childrens.size(); ++variantOfchildrensIndex) {
+			unsigned int childrensCount = node->childrens[variantOfchildrensIndex].size();
+			if (childrensCount)
+				for (unsigned int childIndex = 0; childIndex < childrensCount; ++childIndex)
+					printPGT(node->childrens[variantOfchildrensIndex][childIndex], printedNodes, node->childrens.size() > 1 && !childIndex, variantOfchildrensIndex, depth + 1);
+			else printPGT(nullptr, printedNodes, node->childrens.size() > 1, variantOfchildrensIndex, depth + 1);
+		}
+	}
+}
+#define EPSILON     L"\u03B5"
+void printPGTToFile(const PGTNode* node, std::vector<const PGTNode*>& printedNodes, char* ansiPSTFileName, char* unicodePSTFileName, FILE* f = nullptr, FILE* fw = nullptr, bool multiVariantOfchildrensIfFirstChildren = false, unsigned int variantOfchildrensIndex = 0, int depth = 0) {
+	if (!depth) {
+		printedNodes.clear();
+
+		setlocale(LC_ALL, "en_US.UTF-8");
+
+		f = fopen(ansiPSTFileName, "w+");
+		if (!f) {
+			printf("%s       [ :( ]\r\n", ansiPSTFileName);
+			return;
+		}
+
+		fw = fopen(unicodePSTFileName, "w+"); //FILE* fw = fopen(unicodePSTFileName, "w, ccs=UTF-8");	
+		if (!fw) {
+			fclose(f);
+			printf("%s    [ :( ]\r\n", unicodePSTFileName);
+			return;
+		}
+	}
+	for (unsigned int depthIndex = 0; depthIndex < depth; ++depthIndex) {
+		fprintf(f, "     |");
+		fprintf(fw, "     |");
+	}
+	if (multiVariantOfchildrensIfFirstChildren) { 
+		fprintf(f, "   v%02d--", variantOfchildrensIndex + 1);
+		fprintf(fw, "   v%02d--", variantOfchildrensIndex + 1);
+	}
+	else {
+		fprintf(f, "     |--");
+		fprintf(fw, "     |--");
+	}
+
+	if (!node) {
+		fprintf(f, "\"\"\n");
+		fwprintf(fw, L"\"%ls\"\n", EPSILON); // fwprintf(fw, L"%lc {", 0x2192);
+		return;
+	}
+	else if (node->isTerminal){
+		fprintf(f, "\"%s\"\n", node->value.c_str());
+		fprintf(fw, "\"%s\"\n", node->value.c_str());
+	}
+	else{
+		fprintf(f, "%s\n", node->value.c_str());
+		fprintf(fw, "%s\n", node->value.c_str());
+	}
+
+	auto printedNodesCurrentIterator = std::find(printedNodes.begin(), printedNodes.end(), node);
+	if (printedNodesCurrentIterator == printedNodes.end()) {
+		if (printedNodesCurrentIterator == printedNodes.end()) printedNodes.push_back(node);
+		for (unsigned int variantOfchildrensIndex = 0; variantOfchildrensIndex != node->childrens.size(); ++variantOfchildrensIndex) {
+			unsigned int childrensCount = node->childrens[variantOfchildrensIndex].size();
+			if (childrensCount)
+				for (unsigned int childIndex = 0; childIndex < childrensCount; ++childIndex)
+					printPGTToFile(node->childrens[variantOfchildrensIndex][childIndex], printedNodes, ansiPSTFileName, unicodePSTFileName, f, fw, node->childrens.size() > 1 && !childIndex, variantOfchildrensIndex, depth + 1);
+			else printPGTToFile(nullptr, printedNodes, ansiPSTFileName, unicodePSTFileName, f, fw, node->childrens.size() > 1, variantOfchildrensIndex, depth + 1);
+		}
+	}
+
+	if (!depth) {
+		fclose(f);
+		fclose(fw);
+
+		printf("%s       [ ok ]\r\n", ansiPSTFileName);
+		printf("%s    [ ok ]\r\n", unicodePSTFileName);
+	}
+}
+
+void printPST(const PGTNode* node, std::vector<const PGTNode*>& printedNodes, bool multiVariantOfchildrensIfFirstChildren = false, unsigned int variantOfchildrensIndex = 0, int depth = 0, int depthSkip = 0) {
+	/* This will work specifically for the grammar of the course project only. */
+	if (!depth) {
+		printedNodes.clear();
+	}
+
+	bool isOptional = false, isOptional_ = isOptional;
+	bool isIteration = false, isIteration_ = isIteration;
+	while (((isOptional_ = node->value.find("_optional") != std::string::npos) ||
+		(isIteration_ = node->value.find("_iteration") != std::string::npos)) &&
+		node->childrens.size() && node->childrens[0].size()
+		){ 
+		isOptional |= isOptional_;
+		isIteration |= isIteration_;
+		node = node->childrens[0][0];
+		++depth;
+		++depthSkip;
+	}
+
+	int depth_ = depth - depthSkip;
+	for (unsigned int depthIndex = 0; depthIndex < depth_; ++depthIndex)
+		printf("     |");
+	if (multiVariantOfchildrensIfFirstChildren) printf("   v%02d--", variantOfchildrensIndex + 1);
+	else printf("     |--");
+
+	if (!node) {
+		printf("\"\"\n");
+		return;
+	}
+	else if (node->isTerminal) {
+		//if (isOptional)
+		//	printf("\"[ %s ]\"\n", node->value.c_str());
+		//else if (isIteration) 
+		//	printf("\"{%s}\"\n", node->value.c_str());
+		//else
+		printf("\"%s\"\n", node->value.c_str());
+	}
+	else {
+		if (isOptional)	
+			printf("[%s]\n", node->value.c_str());	
+		else if (isIteration)		
+			printf("{%s}\n", node->value.c_str());	
+		else	
+			printf("%s\n", node->value.c_str());
+	}
+
+	auto printedNodesCurrentIterator = std::find(printedNodes.begin(), printedNodes.end(), node);
+	if (printedNodesCurrentIterator == printedNodes.end()) {
+		if (printedNodesCurrentIterator == printedNodes.end()) printedNodes.push_back(node);
+		for (unsigned int variantOfchildrensIndex = 0; variantOfchildrensIndex != node->childrens.size(); ++variantOfchildrensIndex) {
+			unsigned int childrensCount = node->childrens[variantOfchildrensIndex].size();
+			if (childrensCount)
+				for (unsigned int childIndex = 0; childIndex < childrensCount; ++childIndex)
+					printPST(node->childrens[variantOfchildrensIndex][childIndex], printedNodes, node->childrens.size() > 1 && !childIndex, variantOfchildrensIndex, depth + 1, depthSkip);
+			else printPST(nullptr, printedNodes, node->childrens.size() > 1, variantOfchildrensIndex, depth + 1, depthSkip);
+		}
+	}
+}
+void printPSTToFile(const PGTNode* node, std::vector<const PGTNode*>& printedNodes, char* pstFileName, FILE* f = nullptr, bool multiVariantOfchildrensIfFirstChildren = false, unsigned int variantOfchildrensIndex = 0, int depth = 0, int depthSkip = 0) {
+	/* This will work specifically for the grammar of the course project only. */
+	if (!depth) {
+		printedNodes.clear();
+
+		setlocale(LC_ALL, "en_US.UTF-8");
+
+		f = fopen(pstFileName, "w+");
+		if (!f) {
+			printf("%s       [ :( ]\r\n", pstFileName);
+			return;
+		}
+	}
+
+	bool isOptional = false, isOptional_ = isOptional;
+	bool isIteration = false, isIteration_ = isIteration;
+	while (((isOptional_ = node->value.find("_optional") != std::string::npos) ||
+		(isIteration_ = node->value.find("_iteration") != std::string::npos)) &&
+		node->childrens.size() && node->childrens[0].size()
+		){ 
+		isOptional |= isOptional_;
+		isIteration |= isIteration_;
+		node = node->childrens[0][0];
+		++depth;
+		++depthSkip;
+	}
+
+	int depth_ = depth - depthSkip;
+	for (unsigned int depthIndex = 0; depthIndex < depth_; ++depthIndex)
+		fprintf(f, "     |");
+	if (multiVariantOfchildrensIfFirstChildren) fprintf(f, "   v%02d--", variantOfchildrensIndex + 1);
+	else fprintf(f, "     |--");
+
+	if (!node) {
+		fprintf(f, "\"\"\n");
+		return;
+	}
+	else if (node->isTerminal) {
+		//if (isOptional)
+		//	fprintf(f, "\"[ %s ]\"\n", node->value.c_str());
+		//else if (isIteration) 
+		//	fprintf(f, "\"{%s}\"\n", node->value.c_str());
+		//else
+		fprintf(f, "\"%s\"\n", node->value.c_str());
+	}
+	else {
+		if (isOptional)	
+			fprintf(f, "[%s]\n", node->value.c_str());	
+		else if (isIteration)		
+			fprintf(f, "{%s}\n", node->value.c_str());	
+		else	
+			fprintf(f, "%s\n", node->value.c_str());
+	}
+
+	auto printedNodesCurrentIterator = std::find(printedNodes.begin(), printedNodes.end(), node);
+	if (printedNodesCurrentIterator == printedNodes.end()) {
+		if (printedNodesCurrentIterator == printedNodes.end()) printedNodes.push_back(node);
+		for (unsigned int variantOfchildrensIndex = 0; variantOfchildrensIndex != node->childrens.size(); ++variantOfchildrensIndex) {
+			unsigned int childrensCount = node->childrens[variantOfchildrensIndex].size();
+			if (childrensCount)
+				for (unsigned int childIndex = 0; childIndex < childrensCount; ++childIndex)
+					printPSTToFile(node->childrens[variantOfchildrensIndex][childIndex], printedNodes, pstFileName, f, node->childrens.size() > 1 && !childIndex, variantOfchildrensIndex, depth + 1, depthSkip);
+			else printPSTToFile(nullptr, printedNodes, pstFileName, f, node->childrens.size() > 1, variantOfchildrensIndex, depth + 1, depthSkip);
+		}
+	}
+
+	if (!depth) {
+		printedNodes.clear();
+
+		fclose(f);
+
+		printf("%s            [ ok ]\r\n", pstFileName);
+	}
+}

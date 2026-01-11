@@ -1,0 +1,167 @@
+     |--program_rule
+     |     |--"NAME"
+     |     |--program_name
+     |     |     |--ident
+     |     |     |     |--"ident_terminal"
+     |     |--";"
+     |     |--"BODY"
+     |     |--"DATA"
+     |     |--declaration__optional
+     |     |   v01--declaration
+     |     |     |     |--value_type
+     |     |     |     |     |--"INTEGER16"
+     |     |     |     |--declaration_element
+     |     |     |     |     |--ident
+     |     |     |     |     |--array_specify__optional
+     |     |     |     |     |   v01--array_specify
+     |     |     |     |     |     |     |--"["
+     |     |     |     |     |     |     |--unsigned_value
+     |     |     |     |     |     |     |     |--"unsigned_value_terminal"
+     |     |     |     |     |     |     |--"]"
+     |     |     |     |     |   v02--""
+     |     |     |     |--other_declaration_ident__iteration
+     |     |     |     |   v01--other_declaration_ident
+     |     |     |     |     |     |--","
+     |     |     |     |     |     |--declaration_element
+     |     |     |     |     |--other_declaration_ident__iteration
+     |     |     |     |   v02--""
+     |     |   v02--""
+     |     |--";"
+     |     |--statement__iteration
+     |     |   v01--statement
+     |     |     |   v01--labeled_point
+     |     |     |     |     |--ident
+     |     |     |     |     |--":"
+     |     |     |   v02--expression_or_cond_block__with_optional_assign
+     |     |     |     |     |--expression
+     |     |     |     |     |     |--left_expression
+     |     |     |     |     |     |   v01--group_expression
+     |     |     |     |     |     |     |     |--"("
+     |     |     |     |     |     |     |     |--expression
+     |     |     |     |     |     |     |     |--")"
+     |     |     |     |     |     |   v02--unary_operation
+     |     |     |     |     |     |     |     |--unary_operator
+     |     |     |     |     |     |     |     |     |--"NOT"
+     |     |     |     |     |     |     |     |--expression
+     |     |     |     |     |     |   v03--cond_block
+     |     |     |     |     |     |     |     |--"IF"
+     |     |     |     |     |     |     |     |--if_expression
+     |     |     |     |     |     |     |     |     |--expression
+     |     |     |     |     |     |     |     |--body_for_true
+     |     |     |     |     |     |     |     |     |--block_statements_in_while_and_if_body
+     |     |     |     |     |     |     |     |     |     |--"{"
+     |     |     |     |     |     |     |     |     |     |--statement_in_while_and_if_body__iteration
+     |     |     |     |     |     |     |     |     |     |   v01--statement_in_while_and_if_body
+     |     |     |     |     |     |     |     |     |     |     |   v01--statement
+     |     |     |     |     |     |     |     |     |     |     |   v02--continue_while
+     |     |     |     |     |     |     |     |     |     |     |     |     |--"CONTINUE"
+     |     |     |     |     |     |     |     |     |     |     |   v03--break_while
+     |     |     |     |     |     |     |     |     |     |     |     |     |--"BREAK"
+     |     |     |     |     |     |     |     |     |     |     |--statement_in_while_and_if_body__iteration
+     |     |     |     |     |     |     |     |     |     |   v02--""
+     |     |     |     |     |     |     |     |     |     |--"}"
+     |     |     |     |     |     |     |     |--false_cond_block_without_else__iteration
+     |     |     |     |     |     |     |     |   v01--false_cond_block_without_else
+     |     |     |     |     |     |     |     |     |     |--"ELSE"
+     |     |     |     |     |     |     |     |     |     |--"IF"
+     |     |     |     |     |     |     |     |     |     |--if_expression
+     |     |     |     |     |     |     |     |     |     |--body_for_true
+     |     |     |     |     |     |     |     |     |--false_cond_block_without_else__iteration
+     |     |     |     |     |     |     |     |   v02--""
+     |     |     |     |     |     |     |     |--body_for_false__optional
+     |     |     |     |     |     |     |     |   v01--body_for_false
+     |     |     |     |     |     |     |     |     |     |--"ELSE"
+     |     |     |     |     |     |     |     |     |     |--block_statements
+     |     |     |     |     |     |     |     |     |     |     |--"{"
+     |     |     |     |     |     |     |     |     |     |     |--statement__iteration
+     |     |     |     |     |     |     |     |     |     |     |--"}"
+     |     |     |     |     |     |     |     |   v02--""
+     |     |     |     |     |     |   v04--value
+     |     |     |     |     |     |     |     |--sign__optional
+     |     |     |     |     |     |     |     |   v01--sign
+     |     |     |     |     |     |     |     |     |   v01--sign_plus
+     |     |     |     |     |     |     |     |     |     |     |--"+"
+     |     |     |     |     |     |     |     |     |   v02--sign_minus
+     |     |     |     |     |     |     |     |     |     |     |--"-"
+     |     |     |     |     |     |     |     |   v02--""
+     |     |     |     |     |     |     |     |--unsigned_value
+     |     |     |     |     |     |   v05--ident
+     |     |     |     |     |     |     |--index_action__optional
+     |     |     |     |     |     |     |   v01--index_action
+     |     |     |     |     |     |     |     |     |--"["
+     |     |     |     |     |     |     |     |     |--expression
+     |     |     |     |     |     |     |     |     |--"]"
+     |     |     |     |     |     |     |   v02--""
+     |     |     |     |     |     |--binary_action__iteration
+     |     |     |     |     |     |   v01--binary_action
+     |     |     |     |     |     |     |     |--binary_operator
+     |     |     |     |     |     |     |     |   v01--"AND"
+     |     |     |     |     |     |     |     |   v02--"OR"
+     |     |     |     |     |     |     |     |   v03--"=="
+     |     |     |     |     |     |     |     |   v04--"!="
+     |     |     |     |     |     |     |     |   v05--"<="
+     |     |     |     |     |     |     |     |   v06--">="
+     |     |     |     |     |     |     |     |   v07--"+"
+     |     |     |     |     |     |     |     |   v08--"-"
+     |     |     |     |     |     |     |     |   v09--"*"
+     |     |     |     |     |     |     |     |   v10--"DIV"
+     |     |     |     |     |     |     |     |   v11--"MOD"
+     |     |     |     |     |     |     |     |--expression
+     |     |     |     |     |     |     |--binary_action__iteration
+     |     |     |     |     |     |   v02--""
+     |     |     |     |     |--assign_to_right__optional
+     |     |     |     |     |   v01--assign_to_right
+     |     |     |     |     |     |     |--"=:"
+     |     |     |     |     |     |     |--ident
+     |     |     |     |     |     |     |--index_action__optional
+     |     |     |     |     |   v02--""
+     |     |     |   v03--goto_label
+     |     |     |     |     |--"GOTO"
+     |     |     |     |     |--ident
+     |     |     |   v04--forto_cycle
+     |     |     |     |     |--"FOR"
+     |     |     |     |     |--cycle_counter_init
+     |     |     |     |     |     |--cycle_counter_lr_init
+     |     |     |     |     |     |     |--cycle_begin_expression
+     |     |     |     |     |     |     |     |--expression
+     |     |     |     |     |     |     |--"=:"
+     |     |     |     |     |     |     |--cycle_counter
+     |     |     |     |     |     |     |     |--ident
+     |     |     |     |     |--forto_direction
+     |     |     |     |     |   v01--"TO"
+     |     |     |     |     |   v02--"DOWNTO"
+     |     |     |     |     |--cycle_counter_last_value
+     |     |     |     |     |     |--cycle_end_expression
+     |     |     |     |     |     |     |--expression
+     |     |     |     |     |--cycle_body
+     |     |     |     |     |     |--"DO"
+     |     |     |     |     |     |--statement__or__block_statements
+     |     |     |     |     |     |   v01--statement
+     |     |     |     |     |     |   v02--block_statements
+     |     |     |   v05--while_cycle
+     |     |     |     |     |--"WHILE"
+     |     |     |     |     |--while_cycle_head_expression
+     |     |     |     |     |     |--expression
+     |     |     |     |     |--block_statements_in_while_and_if_body
+     |     |     |   v06--repeat_until_cycle
+     |     |     |     |     |--"REPEAT"
+     |     |     |     |     |--statement__or__block_statements
+     |     |     |     |     |--"UNTIL"
+     |     |     |     |     |--repeat_until_cycle_cond
+     |     |     |     |     |     |--expression
+     |     |     |   v07--input_rule
+     |     |     |     |     |--"GET"
+     |     |     |     |     |--argument_for_input
+     |     |     |     |     |   v01--ident
+     |     |     |     |     |     |--index_action__optional
+     |     |     |     |     |   v02--"("
+     |     |     |     |     |     |--ident
+     |     |     |     |     |     |--index_action__optional
+     |     |     |     |     |     |--")"
+     |     |     |   v08--output_rule
+     |     |     |     |     |--"PUT"
+     |     |     |     |     |--expression
+     |     |     |   v09--";"
+     |     |     |--statement__iteration
+     |     |   v02--""
+     |     |--"END"
